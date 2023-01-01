@@ -1,0 +1,57 @@
+.scroll-hide {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.interface-menu {
+  @extend .scroll-hide;
+  height: 100vh;
+  width: 393px;
+}
+.chat-navbar {
+  @extend .scroll-hide;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100vh;
+}
+.img-person {
+  width: 4rem;
+  height: 4rem;
+  margin-top: 4rem;
+  border: 0.2rem solid white;
+  border-radius: 4rem;
+  background-color: $blue;
+  font-size: 1.5rem;
+  color: white;
+}
+.text-chat-interface{
+    color: $gray-600;
+    &:focus{
+        color: $gray-600;
+    }
+}
+.input-text{
+    @extend .text-chat-interface;
+    background-color: #E6F0FF;
+    border: none;
+    &:focus{
+        box-shadow: none;
+        background-color: #E6F0FF;
+    }
+}
+.input-group-text{
+    @extend .text-chat-interface;
+    border: none;
+    background-color: #E6F0FF;
+}
+.circle-button{
+    background-color: transparent;
+    border: none;
+    div{
+        width: 3px;
+        height: 3px;
+        border-radius: 3px;
+        background-color: $gray-300;
+    }
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brocella</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="icon" href="../Bootstrap/icons/icon-page.svg" />
+  </head>
+  <body class="login-bg">
+    <main>
+      <!--Imagenes de fondo-->
+      <div class="d-none d-sm-block">
+        <div class="circle-logo position-absolute">
+          <img src="../Assets/Logo.png" alt="logo" width="98" height="114" />
+        </div>
+        <div class="position-absolute z-n1 top-0 end-0">
+          <img
+            src="../Assets/Login-img-1.png"
+            alt="login-img"
+            class="img-fluid"
+          />
+        </div>
+        <div class="position-absolute z-n1 bottom-0 start-0">
+          <img
+            src="../Assets/Login-img-2.png"
+            alt="login-img"
+            class="img-fluid"
+          />
+        </div>
+      </div>
+      <!--Formulario-->
+      <div class="form-container">
+        <div class="form-login rounded w-auto">
+          <form>
+            <fieldset>
+              <legend align="center">Sign in</legend>
+              <!--Botones de registro-->
+              <div class="mb-3 d-grid gap-2 d-sm-block justify-content-center pt-3">
+                <a href="#" class="btn-facebook text-center me-2 ms-2">Facebook</a>
+                <a href="#" class="btn-google text-center ms-2 me-2"
+                  ><img
+                    src="../Assets/google-icon.jpg"
+                    alt="google"
+                    width="24"
+                    height="24"
+                  />Google</a
+                >
+              </div>
+              <!--Usuario-->
+              <div class="mb-3">
+                <label for="username-login" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username-login" />
+              </div>
+              <!--Contraseña-->
+              <div class="mb-3">
+                <label for="password-login" class="form-label"
+                  >Password
+                  <a href="#" class="link-secondary form-text"
+                    >Forgot?</a
+                  ></label
+                >
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password-login"
+                />
+              </div>
+              <!--Boton de enviar-->
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+              <br/>
+              <!--Enlace de pagina registro de usuario-->
+              <div class="d-flex justify-content-center">
+                <a class="form-text link-secondary" href="sign-up.html">
+                  Not a member? Sign up</a
+                >
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </main>
+    <script src="../Bootstrap/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

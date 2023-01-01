@@ -1,0 +1,97 @@
+//ESTILOS SESSION
+.login-bg {
+  background: linear-gradient(
+      330deg,
+      rgba(31, 51, 202, 1) 0%,
+      rgba(50, 98, 219, 1) 50%,
+      rgba(82, 166, 242, 1) 100%
+    )
+    fixed no-repeat;
+}
+.circle-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding-left: 1rem;
+  padding-top: 1rem;
+  left: -3rem;
+  top: -3rem;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 100px;
+  z-index: -1;
+}
+.z-n1{
+  z-index: -1;
+}
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  height: 100vh;
+  .form-login {
+    background-color: white;
+    padding: 2rem 4rem;
+    fieldset{
+      legend{
+        color: $gray-600;
+      }
+      label{
+        color: $gray-600;
+      }
+      p{
+        color: $gray-500;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (width >= 576px) {
+      width: 75%;
+    }
+    @media (width >= 768px) {
+      width: 50%;
+    }
+  }
+}
+.btn-login {
+  padding: 0.6rem 0.75rem;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 1px 2px 2px lightgray;
+  transition: box-shadow, background-color, color;
+  transition-duration: 0.3s;
+  color: white;
+  &:hover {
+    color: white;
+  }
+  &:active {
+    color: white;
+    box-shadow: none;
+  }
+}
+.btn-facebook {
+  @extend .btn-login;
+  background-color: $facebook-color;
+  &:active {
+    background-color: darken($facebook-color, 10%);
+  }
+}
+.btn-google {
+  @extend .btn-login;
+  background-color: $google-color;
+
+  &:active {
+    background-color: darken($google-color, 10%);
+  }
+  img {
+    @extend .me-2;
+    @extend .d-inline-block;
+    margin-bottom: 0.2rem;
+  }
+}
+
+

@@ -1,0 +1,17 @@
+//bootstrap 5.3.0 - Alpha
+@import "../Bootstrap/scss/bootstrap.scss";
+
+//tipografia montserrat
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap");
+
+//variables
+@import "variables";
+
+//Estilos de la pagina de inicio
+@import "homeStyles";
+
+//Estilos del login y registro de usuario
+@import "sessionStyles";
+
+//Estilos del programa CHAT
+@import "chat";
