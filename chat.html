@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -82,9 +82,9 @@
           </li>
           <!--Boton Tema-->
           <li class="nav-item mb-3">
-            <a class="nav-link link-primary" href="#"
-              ><i class="bi bi-sun-fill"></i
-            ></a>
+            <button class="link-primary btn-link" id="btnSwitch">
+              <i class="bi bi-moon-fill"></i>
+            </button>
           </li>
           <!--Boton Ajustes-->
           <li class="nav-item mb-3">
@@ -99,7 +99,10 @@
           </li>
         </ul>
         <!--Menu / Interface-->
-        <div class="interface-menu p-3 overflow-auto tab-content" id="myTabContent">
+        <div
+          class="interface-menu p-3 overflow-auto tab-content"
+          id="myTabContent"
+        >
           <!--Interface de nuevo mensaje-->
           <div
             class="tab-pane fade show active"
@@ -108,7 +111,8 @@
             aria-labelledby="message-tab"
             tabindex="0"
           >
-            Mensaje
+            <!--Titulo-->
+            <div class="py-4"><h4 class="fw-bolder">Create chat</h4></div>
           </div>
 
           <!--Interface Boton de amigos-->
@@ -121,6 +125,7 @@
           >
             <!--Titulo-->
             <div class="py-4"><h4 class="fw-bolder">Friends</h4></div>
+
             <!--Busqueda-->
             <div class="input-group mb-3">
               <i class="input-group-text py-2 px-3 bi bi-search"></i>
@@ -387,7 +392,7 @@
             aria-labelledby="chat-tab"
             tabindex="0"
           >
-          Chats
+            Chats
           </div>
 
           <!--Interface de notificaciones-->
@@ -470,6 +475,5 @@
     </div>
 
     <script src="Bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="Bootstrap/dist/js/bootstrap.js"></script>
   </body>
 </html>
