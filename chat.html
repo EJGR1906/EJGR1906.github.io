@@ -18,28 +18,55 @@
       <div class="d-flex">
         <!--Barra de navegacion-->
         <ul
-          class="bg-primary bg-opacity-10 chat-navbar navbar-nav flex-column py-3 px-3 text-center"
+          class="bg-primary bg-opacity-10 chat-navbar nav nav-tabs align-items-center flex-column py-3 px-3 text-center"
         >
           <a href="./chat" class="navbar-brand mb-auto d-lg-block d-none">
             <img src="Assets/Logo.png" alt="Logo" width="32" height="40"
           /></a>
           <!--Boton crear chat-->
-          <li class="nav-item mb-3">
-            <a href="#" class="nav-link link-primary"
-              ><i class="bi bi-pencil-square"></i
-            ></a>
+          <li class="nav-item mb-3" role="presentation">
+            <button
+              class="link-primary btn-link active"
+              id="message-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#message-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="message-tab-pane"
+              aria-selected="true"
+            >
+              <i class="bi bi-pencil-square"></i>
+            </button>
           </li>
           <!--Boton Amigos-->
-          <li class="nav-item mb-3">
-            <a class="nav-link link-primary" href="#">
-              <i class="bi bi-people-fill"></i
-            ></a>
+          <li class="nav-item mb-3" role="presentation">
+            <button
+              class="link-primary btn-link"
+              id="friends-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#friends-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="friends-tab-pane"
+              aria-selected="true"
+            >
+              <i class="bi bi-people-fill"></i>
+            </button>
           </li>
-          <!--Boton mensajes-->
-          <li class="nav-item mb-3">
-            <a class="nav-link link-primary" href="#"
-              ><i class="bi bi-chat-left-fill"></i
-            ></a>
+          <!--Boton mensajeria-->
+          <li class="nav-item mb-3" role="presentation">
+            <button
+              class="link-primary btn-link"
+              id="chat-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#chat-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="chat-tab-pane"
+              aria-selected="true"
+            >
+              <i class="bi bi-chat-left-fill"></i>
+            </button>
           </li>
           <!--Boton notificaciones-->
           <li class="nav-item mb-3">
@@ -72,265 +99,338 @@
           </li>
         </ul>
         <!--Menu / Interface-->
-        <div class="interface-menu p-3 overflow-auto">
-          <!--Titulo-->
-          <div class="py-4"><h4 class="fw-bolder">Friends</h4></div>
-          <!--Busqueda-->
-          <div class="input-group mb-3">
-            <i class="input-group-text py-2 px-3 bi bi-search"></i>
-            <input type="text" class="py-2 form-control input-text" />
+        <div class="interface-menu p-3 overflow-auto tab-content" id="myTabContent">
+          <!--Interface de nuevo mensaje-->
+          <div
+            class="tab-pane fade show active"
+            id="message-tab-pane"
+            role="tabpanel"
+            aria-labelledby="message-tab"
+            tabindex="0"
+          >
+            Mensaje
           </div>
 
-          <!--Boton de buscar amigos-->
-          <div class="d-grid mb-3">
-            <button
-              class="btn btn-primary d-flex py-2 px-3"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            >
-              Find Friends<i class="ms-auto bi bi-person-plus"></i>
-            </button>
+          <!--Interface Boton de amigos-->
+          <div
+            class="tab-pane fade"
+            id="friends-tab-pane"
+            role="tabpanel"
+            aria-labelledby="friends-tab"
+            tabindex="0"
+          >
+            <!--Titulo-->
+            <div class="py-4"><h4 class="fw-bolder">Friends</h4></div>
+            <!--Busqueda-->
+            <div class="input-group mb-3">
+              <i class="input-group-text py-2 px-3 bi bi-search"></i>
+              <input type="text" class="py-2 form-control input-text" />
+            </div>
+
+            <!--Boton de buscar amigos-->
+            <div class="d-grid mb-3">
+              <button
+                class="btn btn-primary d-flex py-2 px-3"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                Find Friends<i class="ms-auto bi bi-person-plus"></i>
+              </button>
+            </div>
+
+            <!--Contactos-->
+            <div>
+              <!--Grupo de tarjetas-->
+              <p class="mb-4 text-chat-interface">A</p>
+              <!--Tarjeta de contacto-->
+              <div class="card mb-4 border border-0">
+                <div class="card-body d-flex">
+                  <div
+                    class="img-person me-2 d-flex justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="d-flex justify-content-center flex-column">
+                    <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
+                    <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
+                  </div>
+                  <div class="dropdown ms-auto align-self-center">
+                    <button
+                      class="circle-button d-flex gap-1 flex-column"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item link-danger" href="#"
+                          >Something else here</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!--Grupo de tarjetas-->
+              <p class="mb-4 text-chat-interface">B</p>
+              <!--Tarjeta de contacto-->
+              <div class="card mb-4 border border-0">
+                <div class="card-body d-flex">
+                  <div
+                    class="img-person me-2 d-flex justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="d-flex justify-content-center flex-column">
+                    <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
+                    <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
+                  </div>
+                  <div class="dropdown ms-auto align-self-center">
+                    <button
+                      class="circle-button d-flex gap-1 flex-column"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item link-danger" href="#"
+                          >Something else here</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!--Tarjeta de contacto-->
+              <div class="card mb-4 border border-0">
+                <div class="card-body d-flex">
+                  <div
+                    class="img-person me-2 d-flex justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="d-flex justify-content-center flex-column">
+                    <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
+                    <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
+                  </div>
+                  <div class="dropdown ms-auto align-self-center">
+                    <button
+                      class="circle-button d-flex gap-1 flex-column"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item link-danger" href="#"
+                          >Something else here</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!--Grupo de tarjetas-->
+              <p class="mb-4 text-chat-interface">C</p>
+              <!--Tarjeta de contacto-->
+              <div class="card mb-4 border border-0">
+                <div class="card-body d-flex">
+                  <div
+                    class="img-person me-2 d-flex justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="d-flex justify-content-center flex-column">
+                    <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
+                    <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
+                  </div>
+                  <div class="dropdown ms-auto align-self-center">
+                    <button
+                      class="circle-button d-flex gap-1 flex-column"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item link-danger" href="#"
+                          >Something else here</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!--Tarjeta de contacto-->
+              <div class="card mb-4 border border-0">
+                <div class="card-body d-flex">
+                  <div
+                    class="img-person me-2 d-flex justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="d-flex justify-content-center flex-column">
+                    <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
+                    <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
+                  </div>
+                  <div class="dropdown ms-auto align-self-center">
+                    <button
+                      class="circle-button d-flex gap-1 flex-column"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item link-danger" href="#"
+                          >Something else here</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!--Tarjeta de contacto-->
+              <div class="card mb-4 border border-0">
+                <div class="card-body d-flex">
+                  <div
+                    class="img-person me-2 d-flex justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="d-flex justify-content-center flex-column">
+                    <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
+                    <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
+                  </div>
+                  <div class="dropdown ms-auto align-self-center">
+                    <button
+                      class="circle-button d-flex gap-1 flex-column"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                      <div class="circle-button"></div>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item link-danger" href="#"
+                          >Something else here</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!--Contactos-->
-          <div>
-            <!--Grupo de tarjetas-->
-            <p class="mb-4 text-chat-interface">A</p>
-            <!--Tarjeta de contacto-->
-            <div class="card mb-4 border border-0">
-              <div class="card-body d-flex">
-                <div
-                  class="img-person me-2 d-flex justify-content-center align-items-center"
-                >
-                  <i class="bi bi-person-fill"></i>
-                </div>
-                <div class="d-flex justify-content-center flex-column">
-                  <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
-                  <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
-                </div>
-                <div class="dropdown ms-auto align-self-center">
-                  <button
-                    class="circle-button d-flex gap-1 flex-column"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li>
-                      <a class="dropdown-item" href="#">Another action</a>
-                    </li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li>
-                      <a class="dropdown-item link-danger" href="#"
-                        >Something else here</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!--Grupo de tarjetas-->
-            <p class="mb-4 text-chat-interface">B</p>
-            <!--Tarjeta de contacto-->
-            <div class="card mb-4 border border-0">
-              <div class="card-body d-flex">
-                <div
-                  class="img-person me-2 d-flex justify-content-center align-items-center"
-                >
-                  <i class="bi bi-person-fill"></i>
-                </div>
-                <div class="d-flex justify-content-center flex-column">
-                  <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
-                  <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
-                </div>
-                <div class="dropdown ms-auto align-self-center">
-                  <button
-                    class="circle-button d-flex gap-1 flex-column"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li>
-                      <a class="dropdown-item" href="#">Another action</a>
-                    </li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li>
-                      <a class="dropdown-item link-danger" href="#"
-                        >Something else here</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <!--Tarjeta de contacto-->
-            <div class="card mb-4 border border-0">
-              <div class="card-body d-flex">
-                <div
-                  class="img-person me-2 d-flex justify-content-center align-items-center"
-                >
-                  <i class="bi bi-person-fill"></i>
-                </div>
-                <div class="d-flex justify-content-center flex-column">
-                  <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
-                  <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
-                </div>
-                <div class="dropdown ms-auto align-self-center">
-                  <button
-                    class="circle-button d-flex gap-1 flex-column"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li>
-                      <a class="dropdown-item" href="#">Another action</a>
-                    </li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li>
-                      <a class="dropdown-item link-danger" href="#"
-                        >Something else here</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!--Grupo de tarjetas-->
-            <p class="mb-4 text-chat-interface">C</p>
-            <!--Tarjeta de contacto-->
-            <div class="card mb-4 border border-0">
-              <div class="card-body d-flex">
-                <div
-                  class="img-person me-2 d-flex justify-content-center align-items-center"
-                >
-                  <i class="bi bi-person-fill"></i>
-                </div>
-                <div class="d-flex justify-content-center flex-column">
-                  <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
-                  <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
-                </div>
-                <div class="dropdown ms-auto align-self-center">
-                  <button
-                    class="circle-button d-flex gap-1 flex-column"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li>
-                      <a class="dropdown-item" href="#">Another action</a>
-                    </li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li>
-                      <a class="dropdown-item link-danger" href="#"
-                        >Something else here</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <!--Tarjeta de contacto-->
-            <div class="card mb-4 border border-0">
-              <div class="card-body d-flex">
-                <div
-                  class="img-person me-2 d-flex justify-content-center align-items-center"
-                >
-                  <i class="bi bi-person-fill"></i>
-                </div>
-                <div class="d-flex justify-content-center flex-column">
-                  <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
-                  <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
-                </div>
-                <div class="dropdown ms-auto align-self-center">
-                  <button
-                    class="circle-button d-flex gap-1 flex-column"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li>
-                      <a class="dropdown-item" href="#">Another action</a>
-                    </li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li>
-                      <a class="dropdown-item link-danger" href="#"
-                        >Something else here</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <!--Tarjeta de contacto-->
-            <div class="card mb-4 border border-0">
-              <div class="card-body d-flex">
-                <div
-                  class="img-person me-2 d-flex justify-content-center align-items-center"
-                >
-                  <i class="bi bi-person-fill"></i>
-                </div>
-                <div class="d-flex justify-content-center flex-column">
-                  <a class="p-0 m-0 mb-1 text-decoration-none">Nombre</a>
-                  <p class="text-secondary p-0 m-0">Ultima vez conectado</p>
-                </div>
-                <div class="dropdown ms-auto align-self-center">
-                  <button
-                    class="circle-button d-flex gap-1 flex-column"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                    <div class="circle-button"></div>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li>
-                      <a class="dropdown-item" href="#">Another action</a>
-                    </li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li>
-                      <a class="dropdown-item link-danger" href="#"
-                        >Something else here</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+          <!--Interface de conversaciones-->
+          <div
+            class="tab-pane fade"
+            id="chat-tab-pane"
+            role="tabpanel"
+            aria-labelledby="chat-tab"
+            tabindex="0"
+          >
+          Chats
           </div>
+
+          <!--Interface de notificaciones-->
+          <div
+            class="tab-pane fade"
+            id="notification-tab-pane"
+            role="tabpanel"
+            aria-labelledby="notification-tab"
+            tabindex="0"
+          >
+            Notificaciones
+          </div>
+
+          <!--Interface de Soporte-->
+          <div
+            class="tab-pane fade"
+            id="support-tab-pane"
+            role="tabpanel"
+            aria-labelledby="support-tab"
+            tabindex="0"
+          >
+            Soporte
+          </div>
+
+          <!--Interface Ajustes-->
+          <div
+            class="tab-pane fade"
+            id="settings-tab-pane"
+            role="tabpanel"
+            aria-labelledby="settings-tab"
+            tabindex="0"
+          >
+            Ajustes
+          </div>
+
+          <!--Interface de Cuenta-->
+          <div
+            class="tab-pane fade"
+            id="account-tab-pane"
+            role="tabpanel"
+            aria-labelledby="account-tab"
+            tabindex="0"
+          ></div>
         </div>
       </div>
     </main>
@@ -370,5 +470,6 @@
     </div>
 
     <script src="Bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="Bootstrap/dist/js/bootstrap.js"></script>
   </body>
 </html>

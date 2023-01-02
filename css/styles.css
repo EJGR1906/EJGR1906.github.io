@@ -11832,4 +11832,10 @@ textarea.form-control-lg {
   background-color: #dee2e6;
 }
 
+.btn-link {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+}
+
 /*# sourceMappingURL=styles.css.map */
