@@ -16,14 +16,13 @@
   height: 100vh;
 }
 .img-person {
-  min-width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border: 0.2rem solid $blue;
-  border-radius: 4rem;
+  border-radius: 3.5rem;
   background-color: transparent;
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: $blue;
-  font-size: 3rem;
 }
 .text-chat-interface {
   color: $gray-600;
