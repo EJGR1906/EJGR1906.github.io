@@ -18,12 +18,12 @@
 .img-person {
   width: 4rem;
   height: 4rem;
-  margin-top: 4rem;
-  border: 0.2rem solid white;
+  border: 0.2rem solid  $blue;
   border-radius: 4rem;
-  background-color: $blue;
+  background-color: transparent;
   font-size: 1.5rem;
-  color: white;
+  color: $blue;
+  font-size: 3rem;
 }
 .text-chat-interface{
     color: $gray-600;
