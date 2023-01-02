@@ -11790,7 +11790,7 @@ textarea.form-control-lg {
 }
 
 .img-person {
-  width: 4rem;
+  min-width: 4rem;
   height: 4rem;
   border: 0.2rem solid #0d6efd;
   border-radius: 4rem;
@@ -11808,17 +11808,17 @@ textarea.form-control-lg {
 }
 
 .input-text {
-  background-color: #E6F0FF;
+  background-color: #e6f0ff;
   border: none;
 }
 .input-text:focus {
   box-shadow: none;
-  background-color: #E6F0FF;
+  background-color: #e6f0ff;
 }
 
 .input-group-text {
   border: none;
-  background-color: #E6F0FF;
+  background-color: #e6f0ff;
 }
 
 .circle-button {

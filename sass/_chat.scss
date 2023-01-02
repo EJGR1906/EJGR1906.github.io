@@ -16,46 +16,46 @@
   height: 100vh;
 }
 .img-person {
-  width: 4rem;
+  min-width: 4rem;
   height: 4rem;
-  border: 0.2rem solid  $blue;
+  border: 0.2rem solid $blue;
   border-radius: 4rem;
   background-color: transparent;
   font-size: 1.5rem;
   color: $blue;
   font-size: 3rem;
 }
-.text-chat-interface{
+.text-chat-interface {
+  color: $gray-600;
+  &:focus {
     color: $gray-600;
-    &:focus{
-        color: $gray-600;
-    }
+  }
 }
-.input-text{
-    @extend .text-chat-interface;
-    background-color: #E6F0FF;
-    border: none;
-    &:focus{
-        box-shadow: none;
-        background-color: #E6F0FF;
-    }
+.input-text {
+  @extend .text-chat-interface;
+  background-color: #e6f0ff;
+  border: none;
+  &:focus {
+    box-shadow: none;
+    background-color: #e6f0ff;
+  }
 }
-.input-group-text{
-    @extend .text-chat-interface;
-    border: none;
-    background-color: #E6F0FF;
+.input-group-text {
+  @extend .text-chat-interface;
+  border: none;
+  background-color: #e6f0ff;
 }
-.circle-button{
-    background-color: transparent;
-    border: none;
-    div{
-        width: 3px;
-        height: 3px;
-        border-radius: 3px;
-        background-color: $gray-300;
-    }
+.circle-button {
+  background-color: transparent;
+  border: none;
+  div {
+    width: 3px;
+    height: 3px;
+    border-radius: 3px;
+    background-color: $gray-300;
+  }
 }
-.btn-link{
+.btn-link {
   background-color: transparent;
   border: none;
   font-size: 1.5rem;
