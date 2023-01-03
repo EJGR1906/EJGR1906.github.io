@@ -11859,11 +11859,14 @@ textarea.form-control-lg {
 }
 .scrollbar-chat::-webkit-scrollbar-thumb {
   background: #2c3237;
-  border-radius: 10px;
   border: none;
 }
 .scrollbar-chat::-webkit-scrollbar-track {
   background: transparent;
+}
+
+.bg-chat {
+  background-color: #6eb8f5;
 }
 
 /*# sourceMappingURL=styles.css.map */
