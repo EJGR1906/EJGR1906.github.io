@@ -54,7 +54,7 @@
             </button>
           </li>
           <!--Boton ayuda-->
-          <li class="nav-item mb-3">
+          <li class="nav-item mb-3" role="presentation">
             <button
               class="link-primary btn-link"
               id="support-tab"
@@ -120,7 +120,7 @@
             tabindex="0"
           >
             <!--Titulo-->
-            <div class="py-4"><h4 class="fw-bolder">Create chat</h4></div>
+            <div class="py-4"><h4 class="fw-bolder">Nuevo mensaje</h4></div>
 
             <!--Busqueda-->
             <div class="input-group mb-3">
@@ -128,7 +128,7 @@
               <input
                 type="text"
                 class="py-2 form-control input-text"
-                placeholder="Search"
+                placeholder="Buscar contactos"
               />
             </div>
 
@@ -139,14 +139,14 @@
                 data-bs-toggle="modal"
                 data-bs-target="#NewGroup"
               >
-                New Group<i class="bi bi-people-fill"></i>
+                Crear grupo<i class="bi bi-people-fill"></i>
               </button>
               <button
                 class="btn btn-primary d-flex gap-2 justify-content-center align-items-center"
                 data-bs-toggle="modal"
                 data-bs-target="#FindFriends"
               >
-                Find Friends<i class="bi bi-person-plus-fill"></i>
+                Invitar amigos<i class="bi bi-person-plus-fill"></i>
               </button>
             </div>
 
@@ -426,7 +426,7 @@
             tabindex="0"
           >
             <!--Titulo-->
-            <div class="py-4"><h4 class="fw-bolder">Chats</h4></div>
+            <div class="py-4"><h4 class="fw-bolder">Mensajería</h4></div>
 
             <!--Busqueda-->
             <div class="input-group mb-3">
@@ -434,16 +434,16 @@
               <input
                 type="text"
                 class="py-2 form-control input-text"
-                placeholder="Search"
+                placeholder="Buscar conversion"
               />
             </div>
 
             <!--Conversaciones-->
             <div>
               <!--Chat-->
-              <div>
-                <div class="card border border-0">
-                  <div class="row">
+              <div class="mb-2">
+                <div class="card border border-0 mb-2">
+                  <button class="row btn-chat">
                     <div class="col-2 align-items-center">
                       <div
                         class="img-person d-flex justify-content-center align-items-center"
@@ -460,19 +460,18 @@
                         My name is Bernard. Quiero sexo
                       </p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
-                <div class="row justify-content-end">
-                  <hr style="width: 77%" class="mb-2" />
+                <div class="d-flex justify-content-end">
+                  <hr style="width: 77%" class="m-0 p-0" />
                 </div>
               </div>
-
               <!--Chat-->
-              <div>
-                <div class="card border border-0">
-                  <div class="row">
-                    <div class="col-2">
+              <div class="mb-2">
+                <div class="card border border-0 mb-2">
+                  <button class="row btn-chat">
+                    <div class="col-2 align-items-center">
                       <div
                         class="img-person d-flex justify-content-center align-items-center"
                       >
@@ -488,19 +487,19 @@
                         My name is Bernard. Quiero sexo
                       </p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
-                <div class="row justify-content-end">
-                  <hr style="width: 77%" class="mb-2" />
+                <div class="d-flex justify-content-end">
+                  <hr style="width: 77%" class="m-0 p-0" />
                 </div>
               </div>
 
               <!--Chat-->
-              <div>
-                <div class="card border border-0">
-                  <div class="row">
-                    <div class="col-2">
+              <div class="mb-2">
+                <div class="card border border-0 mb-2">
+                  <button class="row btn-chat">
+                    <div class="col-2 align-items-center">
                       <div
                         class="img-person d-flex justify-content-center align-items-center"
                       >
@@ -516,19 +515,19 @@
                         My name is Bernard. Quiero sexo
                       </p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
-                <div class="row justify-content-end">
-                  <hr style="width: 77%" class="mb-2" />
+                <div class="d-flex justify-content-end">
+                  <hr style="width: 77%" class="m-0 p-0" />
                 </div>
               </div>
 
               <!--Chat-->
-              <div>
-                <div class="card border border-0">
-                  <div class="row">
-                    <div class="col-2">
+              <div class="mb-2">
+                <div class="card border border-0 mb-2">
+                  <button class="row btn-chat">
+                    <div class="col-2 align-items-center">
                       <div
                         class="img-person d-flex justify-content-center align-items-center"
                       >
@@ -544,19 +543,19 @@
                         My name is Bernard. Quiero sexo
                       </p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
-                <div class="row justify-content-end">
-                  <hr style="width: 77%" class="mb-2" />
+                <div class="d-flex justify-content-end">
+                  <hr style="width: 77%" class="m-0 p-0" />
                 </div>
               </div>
 
               <!--Chat-->
-              <div>
-                <div class="card border border-0">
-                  <div class="row">
-                    <div class="col-2">
+              <div class="mb-2">
+                <div class="card border border-0 mb-2">
+                  <button class="row btn-chat">
+                    <div class="col-2 align-items-center">
                       <div
                         class="img-person d-flex justify-content-center align-items-center"
                       >
@@ -572,19 +571,19 @@
                         My name is Bernard. Quiero sexo
                       </p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
-                <div class="row justify-content-end">
-                  <hr style="width: 77%" class="mb-2" />
+                <div class="d-flex justify-content-end">
+                  <hr style="width: 77%" class="m-0 p-0" />
                 </div>
               </div>
 
               <!--Chat-->
-              <div>
-                <div class="card border border-0">
-                  <div class="row">
-                    <div class="col-2">
+              <div class="mb-2">
+                <div class="card border border-0 mb-2">
+                  <button class="row btn-chat">
+                    <div class="col-2 align-items-center">
                       <div
                         class="img-person d-flex justify-content-center align-items-center"
                       >
@@ -600,19 +599,19 @@
                         My name is Bernard. Quiero sexo
                       </p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
-                <div class="row justify-content-end">
-                  <hr style="width: 77%" class="mb-2" />
+                <div class="d-flex justify-content-end">
+                  <hr style="width: 77%" class="m-0 p-0" />
                 </div>
               </div>
 
               <!--Chat-->
-              <div>
-                <div class="card border border-0">
-                  <div class="row">
-                    <div class="col-2">
+              <div class="mb-2">
+                <div class="card border border-0 mb-2">
+                  <button class="row btn-chat">
+                    <div class="col-2 align-items-center">
                       <div
                         class="img-person d-flex justify-content-center align-items-center"
                       >
@@ -628,11 +627,11 @@
                         My name is Bernard. Quiero sexo
                       </p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
-                <div class="row justify-content-end">
-                  <hr style="width: 77%" class="mb-2" />
+                <div class="d-flex justify-content-end">
+                  <hr style="width: 77%" class="m-0 p-0" />
                 </div>
               </div>
             </div>
@@ -647,7 +646,16 @@
             tabindex="0"
           >
             <!--Titulo-->
-            <div class="py-4"><h4 class="fw-bolder">Chats</h4></div>
+            <div class="py-4"><h4 class="fw-bolder">Soporte</h4></div>
+            <!--Busqueda-->
+            <div class="input-group mb-3">
+              <i class="input-group-text py-2 px-3 bi bi-search"></i>
+              <input
+                type="text"
+                class="py-2 form-control input-text"
+                placeholder="Buscar ayuda"
+              />
+            </div>
           </div>
 
           <!--Interface Ajustes-->
