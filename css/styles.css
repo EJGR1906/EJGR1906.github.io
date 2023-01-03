@@ -11851,4 +11851,19 @@ textarea.form-control-lg {
   background-color: #16181b;
 }
 
+.scrollbar-chat {
+  /* ===== Scrollbar CSS ===== */
+}
+.scrollbar-chat::-webkit-scrollbar {
+  width: 10px;
+}
+.scrollbar-chat::-webkit-scrollbar-thumb {
+  background: #2c3237;
+  border-radius: 10px;
+  border: none;
+}
+.scrollbar-chat::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 /*# sourceMappingURL=styles.css.map */
