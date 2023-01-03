@@ -11787,7 +11787,7 @@ textarea.form-control-lg {
   overflow-y: scroll;
   overflow-x: hidden;
   height: 100vh;
-  min-width: 2.5rem;
+  width: 2.5rem;
 }
 
 .img-person {
