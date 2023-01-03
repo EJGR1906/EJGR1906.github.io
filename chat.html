@@ -26,7 +26,7 @@
           <!--Boton crear chat-->
           <li class="nav-item mb-3" role="presentation">
             <button
-              class="link-primary btn-link active"
+              class="link-primary btn-link"
               id="message-tab"
               data-bs-toggle="tab"
               data-bs-target="#message-tab-pane"
@@ -41,7 +41,7 @@
           <!--Boton mensajeria-->
           <li class="nav-item mb-3" role="presentation">
             <button
-              class="link-primary btn-link"
+              class="link-primary btn-link active"
               id="chat-tab"
               data-bs-toggle="tab"
               data-bs-target="#chat-tab-pane"
@@ -113,7 +113,7 @@
         >
           <!--Interface de nuevo mensaje-->
           <div
-            class="tab-pane fade show active border border-0"
+            class="tab-pane fade"
             id="message-tab-pane"
             role="tabpanel"
             aria-labelledby="message-tab"
@@ -419,7 +419,7 @@
 
           <!--Interface de conversaciones-->
           <div
-            class="tab-pane fade"
+            class="tab-pane fade show active"
             id="chat-tab-pane"
             role="tabpanel"
             aria-labelledby="chat-tab"
@@ -467,6 +467,7 @@
                   <hr style="width: 77%" class="m-0 p-0" />
                 </div>
               </div>
+
               <!--Chat-->
               <div class="mb-2">
                 <div class="card border border-0 mb-2">
@@ -655,6 +656,88 @@
                 class="py-2 form-control input-text"
                 placeholder="Buscar ayuda"
               />
+            </div>
+
+            <div class="card bg-light mb-3">
+              <div class="card-body ps-0">
+                <div class="row g-0">
+                  <div
+                    class="col-2 d-flex justify-content-center align-items-center"
+                  >
+                    <img
+                      src="Assets/Logo.png"
+                      alt="logo"
+                      width="40"
+                      height="48"
+                    />
+                  </div>
+                  <div class="col-8">
+                    <h6 class="text-dark">Documentacion</h6>
+                    <small class="text-secondary"
+                      >Conoce la documentacion</small
+                    >
+                  </div>
+                  <div
+                    class="col-2 d-flex align-items-center justify-content-center"
+                  >
+                    <button
+                      class="btn btn-primary rounded-circle"
+                      style="width: 3rem; height: 3rem"
+                    >
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h6 class="card-text mb-2">
+              <small class="text-muted">Pages</small>
+            </h6>
+          </div>
+
+          <div class="card bg-light mb-3">
+            <div class="card-body ps-0">
+              <div class="d-flex align-items-center">
+                <div class="text-dark ms-3 me-auto"><p class="mb-1">Inicio de sesion</p>
+                <small class="text-secondary">Inicio de sesion en la pagina</small></div>
+                <button
+                class="btn btn-primary rounded-circle"
+                style="width: 3rem; height: 3rem"
+              >
+                <i class="bi bi-arrow-right"></i>
+              </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-light mb-3">
+            <div class="card-body ps-0">
+              <div class="d-flex align-items-center">
+                <div class="text-dark ms-3 me-auto"><p class="mb-1">Registrarse</p>
+                <small class="text-secondary">Registrarse en la pagina</small></div>
+                <button
+                class="btn btn-primary rounded-circle"
+                style="width: 3rem; height: 3rem"
+              >
+                <i class="bi bi-arrow-right"></i>
+              </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-light mb-3">
+            <div class="card-body ps-0">
+              <div class="d-flex align-items-center">
+                <div class="text-dark ms-3 me-auto"><p class="mb-1">Cambio de contraseña</p>
+                <small class="text-secondary">Cambio de contraseña en la pagina</small></div>
+                <button
+                class="btn btn-primary rounded-circle"
+                style="width: 3rem; height: 3rem"
+              >
+                <i class="bi bi-arrow-right"></i>
+              </button>
+              </div>
             </div>
           </div>
 
