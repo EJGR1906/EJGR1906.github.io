@@ -13,11 +13,14 @@
 /*=======================Variables=======================*/
 $primary: #FF43BB;
 $secondary: #0D0A4C;
+$third: #1F2C3F;
 
 $facebook-color: #3b5998;
 $google-color: #4285F4;
 
 $bg-nav-search: #e6f0ff;
+
+
 
 .text-primary{
   color: $primary;
@@ -47,12 +50,8 @@ $bg-nav-search: #e6f0ff;
 .btn-secondary{
   background-color: $secondary;
 }
-
 .bg-primary{
-  background-color: $primary;
-}
-.bg-secondary{
-  background-color: $secondary;
+  background-color: $third !important;
 }
 .link-primary{
   color: $primary !important;
@@ -240,10 +239,10 @@ $bg-nav-search: #e6f0ff;
     background-color: inherit;
   }
   &:hover {
-    background-color: darken($dark, 2%);
+    background-color: darken($body-color, 2%);
   }
   &:focus {
-    background-color: darken($dark, 5%);
+    background-color: darken($body-color, 5%);
   }
 
 }
@@ -297,9 +296,9 @@ $bg-nav-search: #e6f0ff;
 .bg-login {
   background: linear-gradient(
       330deg,
-      rgba(31, 51, 202, 1) 0%,
-      rgba(50, 98, 219, 1) 50%,
-      rgba(82, 166, 242, 1) 100%
+      rgba(243,33,252, 1) 0%,
+      rgba(90,1,111, 1) 50%,
+      rgba(5,0,32, 1) 100%
     )
     fixed no-repeat;
 }

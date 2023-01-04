@@ -11646,11 +11646,7 @@ textarea.form-control-lg {
 }
 
 .bg-primary {
-  background-color: #FF43BB;
-}
-
-.bg-secondary {
-  background-color: #0D0A4C;
+  background-color: #1F2C3F !important;
 }
 
 .link-primary {
@@ -11853,7 +11849,7 @@ textarea.form-control-lg {
 }
 
 .bg-login {
-  background: linear-gradient(330deg, rgb(31, 51, 202) 0%, rgb(50, 98, 219) 50%, rgb(82, 166, 242) 100%) fixed no-repeat;
+  background: linear-gradient(330deg, rgb(243, 33, 252) 0%, rgb(90, 1, 111) 50%, rgb(5, 0, 32) 100%) fixed no-repeat;
 }
 
 .bg-circle-logo {
