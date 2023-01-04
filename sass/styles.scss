@@ -172,10 +172,10 @@ $bg-nav-search: #e6f0ff;
   color: $gray-500;
 
   &:hover {
-    background-color: darken($dark, 2%);
+    background-color: rgba(128, 128, 128, 0.2);
   }
   &:focus {
-    background-color: darken($dark, 5%);
+    background-color: rgba(128, 128, 128, 0.4);
   }
 }
 
@@ -221,7 +221,7 @@ $bg-nav-search: #e6f0ff;
 /*=======================Backgrounds=======================*/
 //Fondo del chat
 .bg-chat{
-  background-color: $secondary;
+  background-image: url("https://i.pinimg.com/originals/8f/55/6a/8f556a3fc9667315dd1d3e03f6de4999.png");
 }
 
 //Fondo del inicio de sesion/registro

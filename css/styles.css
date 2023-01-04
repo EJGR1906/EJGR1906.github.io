@@ -11745,10 +11745,10 @@ textarea.form-control-lg {
   color: #adb5bd;
 }
 .btn-chat:hover {
-  background-color: #1c2023;
+  background-color: rgba(128, 128, 128, 0.2);
 }
 .btn-chat:focus {
-  background-color: #16181b;
+  background-color: rgba(128, 128, 128, 0.4);
 }
 
 .btn-login, .btn-google, .btn-facebook {
@@ -11785,7 +11785,7 @@ textarea.form-control-lg {
 
 /*=======================Backgrounds=======================*/
 .bg-chat {
-  background-color: #6eb8f5;
+  background-image: url("https://i.pinimg.com/originals/8f/55/6a/8f556a3fc9667315dd1d3e03f6de4999.png");
 }
 
 .bg-login {
