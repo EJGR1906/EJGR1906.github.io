@@ -11624,6 +11624,10 @@ textarea.form-control-lg {
   color: #0D0A4C;
 }
 
+.link-muted {
+  color: #adb5bd;
+}
+
 .btn-primary {
   background-color: #FF43BB;
   border-color: #FF43BB;
