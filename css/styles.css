@@ -11691,7 +11691,7 @@ textarea.form-control-lg {
 .navbar-side {
   overflow-y: scroll;
   overflow-x: hidden;
-  width: 50px;
+  width: 4rem;
 }
 
 .nav-link {
