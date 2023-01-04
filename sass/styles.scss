@@ -1,17 +1,255 @@
+//Imports
 //bootstrap 5.3.0 - Alpha
 @import "../Bootstrap/scss/bootstrap.scss";
 
-//tipografia montserrat
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap");
 
-//variables
-@import "variables";
 
-//Estilos de la pagina de inicio
-@import "homeStyles";
+//tipografia montserrat
+* {
+  font-family: "Montserrat", sans-serif;
+}
 
-//Estilos del login y registro de usuario
-@import "sessionStyles";
+/*=======================Variables=======================*/
+$primary: #2196f3;
+$secondary: #6eb8f5;
 
-//Estilos del programa CHAT
-@import "chat";
+$facebook-color: #3b5998;
+$google-color: #4285F4;
+
+$bg-nav-search: #e6f0ff;
+
+
+/*=======================Texts=======================*/
+//Texto principal en la pagina inicial
+.text-page {
+  margin: auto 2.2rem;
+  color: $secondary;
+  h1 {
+    color: $primary;
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+  }
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+  }
+}
+
+/*=======================Forms=======================*/
+//Estilos del formulario del inicio de sesion/Registro
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  height: 100vh;
+  .form-login {
+    background-color: white;
+    padding: 2rem 4rem;
+    fieldset{
+      legend{
+        color: $gray-600;
+      }
+      label{
+        color: $gray-600;
+      }
+      p{
+        color: $gray-500;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (width >= 576px) {
+      width: 75%;
+    }
+    @media (width >= 768px) {
+      width: 50%;
+    }
+  }
+}
+
+
+/*=======================Nav/Navbars=======================*/
+//Esconder el scroll
+.scroll-hide {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+//Scrollbar del chat
+.scrollbar-chat {
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: lighten($dark, 5%);
+    border: none;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+//Interface de navegacion de mensajes, etc.
+.nav-menu {
+  @extend .scroll-hide;
+  height: 100vh;
+  width: 393px;
+}
+
+//Barra lateral del chat
+.navbar-side {
+  @extend .scroll-hide;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100vh;
+  width: 2.5rem;
+}
+
+//Links del header en la pagina de inicio
+.nav-link {
+  color: $secondary;
+  font-size: 1.5rem;
+
+  &:focus {
+    color: $primary;
+  }
+  &:hover {
+    color: $primary;
+  }
+}
+
+/*=======================Inputs=======================*/
+//Texto del buscador
+.input-text {
+  background-color: $bg-nav-search;
+  border: none;
+  &:focus {
+    box-shadow: none;
+    background-color: $bg-nav-search;
+  }
+}
+
+//Lupa en el buscador
+.input-search-icon {
+  @extend .input-group-text;
+  border: none;
+  background-color: $bg-nav-search;
+}
+
+
+/*=======================Buttons=======================*/
+//Boton tres puntos
+.btn-circle {
+  background-color: transparent;
+  border: none;
+  div {
+    width: 3px;
+    height: 3px;
+    border-radius: 3px;
+    background-color: $gray-300;
+  }
+}
+
+//Boton --> Link
+.btn-link {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+}
+
+//Boton al seleccionar una conversacion
+.btn-chat {
+  background-color: transparent;
+  padding: 0.5rem 0.375rem;
+  border: none;
+  color: $gray-500;
+
+  &:hover {
+    background-color: darken($dark, 2%);
+  }
+  &:focus {
+    background-color: darken($dark, 5%);
+  }
+}
+
+//Estilos para btn-facebook y btn-google
+.btn-login {
+  padding: 0.6rem 0.75rem;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 1px 2px 2px lightgray;
+  transition: box-shadow, background-color, color;
+  transition-duration: 0.3s;
+  color: white;
+  &:hover {
+    color: white;
+  }
+  &:active {
+    color: white;
+    box-shadow: none;
+  }
+}
+
+//Boton de facebook
+.btn-facebook {
+  @extend .btn-login;
+  background-color: $facebook-color;
+  &:active {
+    background-color: darken($facebook-color, 10%);
+  }
+}
+
+//Boton de google
+.btn-google {
+
+  @extend .btn-login;
+  background-color: $google-color;
+  &:active {
+    background-color: darken($google-color, 10%);
+  }
+}
+
+
+/*=======================Backgrounds=======================*/
+//Fondo del chat
+.bg-chat{
+  background-color: $secondary;
+}
+
+//Fondo del inicio de sesion/registro
+.bg-login {
+  background: linear-gradient(
+      330deg,
+      rgba(31, 51, 202, 1) 0%,
+      rgba(50, 98, 219, 1) 50%,
+      rgba(82, 166, 242, 1) 100%
+    )
+    fixed no-repeat;
+}
+
+//Fondo en el logo
+.bg-circle-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding-left: 1rem;
+  padding-top: 1rem;
+  left: -3rem;
+  top: -3rem;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 100px;
+  z-index: -1;
+}
+
+
+
