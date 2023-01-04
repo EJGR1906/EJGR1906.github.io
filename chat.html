@@ -107,7 +107,10 @@
           </li>
         </ul>
         <!--Menu / Interface-->
-        <div class="nav-menu p-3 overflow-auto tab-content" id="myTabContent">
+        <div
+          class="nav-menu p-3 overflow-auto tab-content bg-body chat-sm-width"
+          id="myTabContent"
+        >
           <!--Interface de nuevo mensaje-->
           <div
             class="tab-pane fade"
@@ -430,7 +433,15 @@
             <!--Conversaciones-->
             <div>
               <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
+              <button
+                class="btn-chat mb-2 px-2 w-100"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#open-collapse"
+                aria-expanded="false"
+                aria-controls="open-collapse"
+                onclick="open_collapse()"
+              >
                 <div class="card border border-0">
                   <div class="row">
                     <div
@@ -453,9 +464,7 @@
               </button>
 
               <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
+              <hr class="nav-divider mb-2" />
 
               <!--Chat-->
               <button class="btn-chat mb-2 px-2 w-100">
@@ -481,289 +490,7 @@
               </button>
 
               <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
-
-              <!--Chat-->
-              <button class="btn-chat mb-2 px-2 w-100">
-                <div class="card border border-0">
-                  <div class="row">
-                    <div
-                      class="col-2 ms-1 fs-1 d-flex justify-content-center align-items-center"
-                    >
-                      <div class="bi bi-person-circle color-theme-mode"></div>
-                    </div>
-                    <div class="card-body col-8 py-1 ps-2">
-                      <h6 class="d-flex">
-                        Nombre
-                        <small class="ms-auto text-muted">12:45 PM </small>
-                      </h6>
-                      <p class="card-text text-truncate text-secondary">
-                        Laborum duis nisi sunt est velit cillum nulla sit
-                        nostrud consectetur non occaecat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-
-              <!--Linea divisora-->
-              <div class="d-flex justify-content-end mb-2">
-                <hr style="width: 82%" class="m-0 p-0" />
-              </div>
+              <hr class="nav-divider mb-2" />
             </div>
           </div>
 
@@ -906,227 +633,258 @@
         </div>
 
         <!--Chat / Persona a persona -->
-        <div class="overflow-hidden d-grid bg-chat" style="width: 72%">
-          <div class="d-flex align-items-center py-2 pe-3 bg-body">
-            <div class="d-flex me-auto">
+        <div class="collapse" id="open-collapse">
+          <div class="overflow-hidden d-grid bg-chat chat-position chat-sm-width chat-height">
+            <!--Header del chat-->
+            <div
+              class="d-flex align-items-center justify-content-between py-2 pe-3 bg-body"
+            >
+              <button
+                class="btn-close ms-2"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#close-collapse"
+                aria-expanded="false"
+                aria-controls="close-collapse"
+                onclick="close_collapse()"
+              >
+                
+              </button>
+              <div class="d-flex">
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                  alt="avatar 3"
+                  style="width: 45px; height: 100%"
+                  class="mx-2"
+                />
+                <div class="d-grid align-items-center">
+                  <h6 class="m-0">name</h6>
+                  <small>Is typing...</small>
+                </div>
+              </div>
+              <button class="btn-circle d-flex gap-1 me-2">
+                <div></div>
+                <div></div>
+                <div></div>
+              </button>
+            </div>
+            <!--Conversacion-->
+            <div
+              class="pt-3 pe-3 container-fluid overflow-auto scrollbar-chat text-dark"
+            >
+              <div class="d-flex justify-content-start">
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                  alt="avatar 1"
+                  width="45"
+                  height="45"
+                />
+                <div>
+                  <p
+                    class="small p-2 ms-3 mb-1 rounded-3"
+                    style="background-color: #f5f6f7"
+                  >
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </p>
+                  <p class="small ms-3 mb-3 rounded-3 float-end">
+                    12:00 PM | Aug 13
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <div>
+                  <p
+                    class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light"
+                  >
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat.
+                  </p>
+                  <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
+                </div>
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                  alt="avatar 1"
+                  style="width: 45px; height: 100%"
+                />
+              </div>
+
+              <div class="d-flex justify-content-start">
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                  alt="avatar 1"
+                  width="45"
+                  height="45"
+                />
+                <div>
+                  <p
+                    class="small p-2 ms-3 mb-1 rounded-3"
+                    style="background-color: #f5f6f7"
+                  >
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </p>
+                  <p class="small ms-3 mb-3 rounded-3 float-end">
+                    12:00 PM | Aug 13
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <div>
+                  <p
+                    class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light"
+                  >
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat.
+                  </p>
+                  <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
+                </div>
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                  alt="avatar 1"
+                  style="width: 45px; height: 100%"
+                />
+              </div>
+
+              <div class="d-flex justify-content-start">
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                  alt="avatar 1"
+                  width="45"
+                  height="45"
+                />
+                <div>
+                  <p
+                    class="small p-2 ms-3 mb-1 rounded-3"
+                    style="background-color: #f5f6f7"
+                  >
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </p>
+                  <p class="small ms-3 mb-3 rounded-3 float-end">
+                    12:00 PM | Aug 13
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <div>
+                  <p
+                    class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light"
+                  >
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat.
+                  </p>
+                  <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
+                </div>
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                  alt="avatar 1"
+                  style="width: 45px; height: 100%"
+                />
+              </div>
+
+              <div class="d-flex justify-content-start">
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                  alt="avatar 1"
+                  width="45"
+                  height="45"
+                />
+                <div>
+                  <p
+                    class="small p-2 ms-3 mb-1 rounded-3"
+                    style="background-color: #f5f6f7"
+                  >
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </p>
+                  <p class="small ms-3 mb-3 rounded-3 float-end">
+                    12:00 PM | Aug 13
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <div>
+                  <p
+                    class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light"
+                  >
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat.
+                  </p>
+                  <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
+                </div>
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                  alt="avatar 1"
+                  style="width: 45px; height: 100%"
+                />
+              </div>
+
+              <div class="d-flex justify-content-start">
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                  alt="avatar 1"
+                  width="45"
+                  height="45"
+                />
+                <div>
+                  <p
+                    class="small p-2 ms-3 mb-1 rounded-3"
+                    style="background-color: #f5f6f7"
+                  >
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </p>
+                  <p class="small ms-3 mb-3 rounded-3 float-end">
+                    12:00 PM | Aug 13
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <div>
+                  <p
+                    class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light"
+                  >
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat.
+                  </p>
+                  <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
+                </div>
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                  alt="avatar 1"
+                  style="width: 45px; height: 100%"
+                />
+              </div>
+            </div>
+            <!--Textbox-->
+            <div class="d-flex gap-2 align-items-center pb-2 pe-3 mt-2">
               <img
                 src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
                 alt="avatar 3"
-                style="width: 45px; height: 100%"
+                style="width: 45px"
                 class="mx-2"
               />
-              <div class="d-grid align-items-center">
-                <h6 class="m-0">name</h6>
-                <small>Is typing...</small>
-              </div>
-            </div>
-            <button class="btn-circle d-flex gap-1 me-2">
-              <div></div>
-              <div></div>
-              <div></div>
-            </button>
-          </div>
-
-          <div
-            class="pt-3 pe-3 container-fluid overflow-auto scrollbar-chat text-dark"
-          >
-            <div class="d-flex justify-content-start">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                alt="avatar 1"
-                width="45"
-                height="45"
+              <input
+                type="text"
+                class="form-control rounded-5"
+                id="exampleFormControlInput2"
+                placeholder="Type message"
               />
-              <div>
-                <p
-                  class="small p-2 ms-3 mb-1 rounded-3"
-                  style="background-color: #f5f6f7"
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <p class="small ms-3 mb-3 rounded-3 float-end">
-                  12:00 PM | Aug 13
-                </p>
-              </div>
+              <button class="btn btn-primary rounded-5 py-2">
+                <i class="bi bi-send"></i>
+              </button>
             </div>
-
-            <div class="d-flex justify-content-end">
-              <div>
-                <p class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light">
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
-              </div>
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                alt="avatar 1"
-                style="width: 45px; height: 100%"
-              />
-            </div>
-
-            <div class="d-flex justify-content-start">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                alt="avatar 1"
-                width="45"
-                height="45"
-              />
-              <div>
-                <p
-                  class="small p-2 ms-3 mb-1 rounded-3"
-                  style="background-color: #f5f6f7"
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <p class="small ms-3 mb-3 rounded-3 float-end">
-                  12:00 PM | Aug 13
-                </p>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-end">
-              <div>
-                <p class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light">
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
-              </div>
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                alt="avatar 1"
-                style="width: 45px; height: 100%"
-              />
-            </div>
-
-            <div class="d-flex justify-content-start">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                alt="avatar 1"
-                width="45"
-                height="45"
-              />
-              <div>
-                <p
-                  class="small p-2 ms-3 mb-1 rounded-3"
-                  style="background-color: #f5f6f7"
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <p class="small ms-3 mb-3 rounded-3 float-end">
-                  12:00 PM | Aug 13
-                </p>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-end">
-              <div>
-                <p class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light">
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
-              </div>
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                alt="avatar 1"
-                style="width: 45px; height: 100%"
-              />
-            </div>
-
-            <div class="d-flex justify-content-start">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                alt="avatar 1"
-                width="45"
-                height="45"
-              />
-              <div>
-                <p
-                  class="small p-2 ms-3 mb-1 rounded-3"
-                  style="background-color: #f5f6f7"
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <p class="small ms-3 mb-3 rounded-3 float-end">
-                  12:00 PM | Aug 13
-                </p>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-end">
-              <div>
-                <p class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light">
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
-              </div>
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                alt="avatar 1"
-                style="width: 45px; height: 100%"
-              />
-            </div>
-
-            <div class="d-flex justify-content-start">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                alt="avatar 1"
-                width="45"
-                height="45"
-              />
-              <div>
-                <p
-                  class="small p-2 ms-3 mb-1 rounded-3"
-                  style="background-color: #f5f6f7"
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <p class="small ms-3 mb-3 rounded-3 float-end">
-                  12:00 PM | Aug 13
-                </p>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-end">
-              <div>
-                <p class="small p-2 me-3 mb-1 rounded-3 bg-primary text-light">
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="small me-3 mb-3 rounded-3">12:00 PM | Aug 13</p>
-              </div>
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                alt="avatar 1"
-                style="width: 45px; height: 100%"
-              />
-            </div>
-          </div>
-
-          <div class="d-flex gap-2 align-items-center pb-2 pe-3 mt-2">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-              alt="avatar 3"
-              style="width: 45px"
-              class="mx-2"
-            />
-            <input
-              type="text"
-              class="form-control rounded-5"
-              id="exampleFormControlInput2"
-              placeholder="Type message"
-            />
-            <button class="btn btn-primary rounded-5 py-2">
-              <i class="bi bi-send"></i>
-            </button>
           </div>
         </div>
       </div>
@@ -1197,5 +955,7 @@
     </div>
 
     <script src="Bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="js/custom-collapse.js"></script>
   </body>
 </html>

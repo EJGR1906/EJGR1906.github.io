@@ -11824,4 +11824,27 @@ textarea.form-control-lg {
   }
 }
 
+@media (width < 768px) {
+  .chat-sm-width {
+    width: 100vh;
+  }
+}
+
+.chat-position {
+  width: 100%;
+}
+@media (width < 768px) {
+  .chat-position {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+  }
+}
+
+.nav-divider {
+  width: 80%;
+  margin: 0;
+  margin-left: 20%;
+}
+
 /*# sourceMappingURL=styles.css.map */
