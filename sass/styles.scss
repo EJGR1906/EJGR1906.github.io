@@ -222,7 +222,7 @@ $bg-nav-search: #e6f0ff;
 }
 
 
-/*=======================Backgrounds=======================*/
+/*=======================Backgrounds y colors=======================*/
 //Fondo del chat
 .bg-chat{
   background-image: url("https://i.pinimg.com/originals/8f/55/6a/8f556a3fc9667315dd1d3e03f6de4999.png");
@@ -255,8 +255,13 @@ $bg-nav-search: #e6f0ff;
   z-index: -1;
 }
 
+//Color de los iconos en los botones
+.color-theme-mode{
+  color: var(--bs-body-color);
+}
 
-/*=======================Otros=======================*/
+
+/*=======================Others=======================*/
 //Altura del chat
 .chat-height{
   @media (height<1024px) {
@@ -267,11 +272,6 @@ $bg-nav-search: #e6f0ff;
     
   
   }
-}
-
-//Color de los iconos en los botones
-.color-theme-mode{
-  color: var(--bs-body-color);
 }
 
 

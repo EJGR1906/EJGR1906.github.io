@@ -11784,7 +11784,7 @@ textarea.form-control-lg {
   background-color: #1266f1;
 }
 
-/*=======================Backgrounds=======================*/
+/*=======================Backgrounds y colors=======================*/
 .bg-chat {
   background-image: url("https://i.pinimg.com/originals/8f/55/6a/8f556a3fc9667315dd1d3e03f6de4999.png");
 }
@@ -11808,7 +11808,11 @@ textarea.form-control-lg {
   z-index: -1;
 }
 
-/*=======================Otros=======================*/
+.color-theme-mode {
+  color: var(--bs-body-color);
+}
+
+/*=======================Others=======================*/
 @media (height < 1024px) {
   .chat-height {
     height: 100vh;
@@ -11818,10 +11822,6 @@ textarea.form-control-lg {
   .chat-height {
     height: 1024px;
   }
-}
-
-.color-theme-mode {
-  color: var(--bs-body-color);
 }
 
 /*# sourceMappingURL=styles.css.map */
