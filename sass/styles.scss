@@ -71,13 +71,13 @@ $bg-nav-search: #e6f0ff;
   color: $secondary !important;
 
   &:focus{
-    color: darken($secondary, 5%)  !important;
+    color: lighten($secondary, 10%)  !important;
   }
   &:hover{
-    color: darken($secondary, 5%)  !important;
+    color: lighten($secondary, 10%)  !important;
   }
   &:active{
-    color: darken($secondary, 5%)  !important;
+    color: lighten($secondary, 10%)  !important;
   }
 }
 
