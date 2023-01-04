@@ -110,7 +110,7 @@ $bg-nav-search: #e6f0ff;
   @extend .scroll-hide;
   overflow-y: scroll;
   overflow-x: hidden;
-  width: 2.5rem;
+  width: 3rem;
 
 }
 
@@ -155,7 +155,7 @@ $bg-nav-search: #e6f0ff;
     width: 3px;
     height: 3px;
     border-radius: 3px;
-    background-color: $gray-300;
+    background-color: var(--bs-body-color);
   }
 }
 
@@ -168,17 +168,19 @@ $bg-nav-search: #e6f0ff;
 
 //Boton al seleccionar una conversacion
 .btn-chat {
-  background-color: transparent;
-  padding: 0.5rem 0.375rem;
+  background-color: inherit;
   border: none;
-  color: $gray-500;
 
+  .card{
+    background-color: inherit;
+  }
   &:hover {
-    background-color: rgba(128, 128, 128, 0.2);
+    background-color: darken($dark, 2%);
   }
   &:focus {
-    background-color: rgba(128, 128, 128, 0.4);
+    background-color: darken($dark, 5%);
   }
+
 }
 
 //Estilos para btn-facebook y btn-google
@@ -252,7 +254,10 @@ $bg-nav-search: #e6f0ff;
   border-radius: 100px;
   z-index: -1;
 }
+
+
 /*=======================Otros=======================*/
+//Altura del chat
 .chat-height{
   @media (height<1024px) {
     height: 100vh;
@@ -264,6 +269,10 @@ $bg-nav-search: #e6f0ff;
   }
 }
 
+//Color de los iconos en los botones
+.color-theme-mode{
+  color: var(--bs-body-color);
+}
 
 
 

@@ -11691,7 +11691,7 @@ textarea.form-control-lg {
 .navbar-side {
   overflow-y: scroll;
   overflow-x: hidden;
-  width: 2.5rem;
+  width: 3rem;
 }
 
 .nav-link {
@@ -11729,7 +11729,7 @@ textarea.form-control-lg {
   width: 3px;
   height: 3px;
   border-radius: 3px;
-  background-color: #dee2e6;
+  background-color: var(--bs-body-color);
 }
 
 .btn-link {
@@ -11739,16 +11739,17 @@ textarea.form-control-lg {
 }
 
 .btn-chat {
-  background-color: transparent;
-  padding: 0.5rem 0.375rem;
+  background-color: inherit;
   border: none;
-  color: #adb5bd;
+}
+.btn-chat .card {
+  background-color: inherit;
 }
 .btn-chat:hover {
-  background-color: rgba(128, 128, 128, 0.2);
+  background-color: #1c2023;
 }
 .btn-chat:focus {
-  background-color: rgba(128, 128, 128, 0.4);
+  background-color: #16181b;
 }
 
 .btn-login, .btn-google, .btn-facebook {
@@ -11817,6 +11818,10 @@ textarea.form-control-lg {
   .chat-height {
     height: 1024px;
   }
+}
+
+.color-theme-mode {
+  color: var(--bs-body-color);
 }
 
 /*# sourceMappingURL=styles.css.map */
