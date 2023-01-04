@@ -11616,13 +11616,76 @@ textarea.form-control-lg {
 }
 
 /*=======================Variables=======================*/
+.text-primary {
+  color: #FF43BB;
+}
+
+.text-secondary {
+  color: #0D0A4C;
+}
+
+.btn-primary {
+  background-color: #FF43BB;
+  border-color: #FF43BB;
+}
+.btn-primary:focus {
+  background-color: #ff2ab2;
+  border-color: #ff2ab2;
+}
+.btn-primary:hover {
+  background-color: #ff2ab2;
+  border-color: #ff2ab2;
+}
+.btn-primary:active {
+  background-color: #ff2ab2 !important;
+  border-color: #ff2ab2 !important;
+}
+
+.btn-secondary {
+  background-color: #0D0A4C;
+}
+
+.bg-primary {
+  background-color: #FF43BB;
+}
+
+.bg-secondary {
+  background-color: #0D0A4C;
+}
+
+.link-primary {
+  color: #FF43BB !important;
+}
+.link-primary:focus {
+  color: #ff2ab2 !important;
+}
+.link-primary:hover {
+  color: #ff2ab2 !important;
+}
+.link-primary:active {
+  color: #ff2ab2 !important;
+}
+
+.link-secondary {
+  color: #0D0A4C !important;
+}
+.link-secondary:focus {
+  color: #090735 !important;
+}
+.link-secondary:hover {
+  color: #090735 !important;
+}
+.link-secondary:active {
+  color: #090735 !important;
+}
+
 /*=======================Texts=======================*/
 .text-page {
   margin: auto 2.2rem;
-  color: #6eb8f5;
+  color: #0D0A4C;
 }
 .text-page h1, .text-page .h1 {
-  color: #2196f3;
+  color: #FF43BB;
   font-size: 2rem;
   font-weight: 800;
   margin: 0;
@@ -11695,14 +11758,14 @@ textarea.form-control-lg {
 }
 
 .nav-link {
-  color: #6eb8f5;
+  color: #0D0A4C;
   font-size: 1.5rem;
 }
 .nav-link:focus {
-  color: #2196f3;
+  color: #FF43BB;
 }
 .nav-link:hover {
-  color: #2196f3;
+  color: #FF43BB;
 }
 
 /*=======================Inputs=======================*/

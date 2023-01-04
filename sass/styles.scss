@@ -11,13 +11,78 @@
 }
 
 /*=======================Variables=======================*/
-$primary: #2196f3;
-$secondary: #6eb8f5;
+$primary: #FF43BB;
+$secondary: #0D0A4C;
 
 $facebook-color: #3b5998;
 $google-color: #4285F4;
 
 $bg-nav-search: #e6f0ff;
+
+.text-primary{
+  color: $primary;
+}
+.text-secondary{
+  color: $secondary;
+}
+
+.btn-primary{
+  background-color: $primary;
+  border-color: $primary;
+
+  &:focus{
+    background-color: darken($primary, 5%);
+    border-color: darken($primary, 5%);
+  }
+  &:hover{
+    background-color: darken($primary, 5%);
+    border-color: darken($primary, 5%);
+  }
+  &:active{
+    background-color: darken($primary, 5%) !important;
+    border-color: darken($primary, 5%) !important;
+  }
+
+}
+.btn-secondary{
+  background-color: $secondary;
+}
+
+.bg-primary{
+  background-color: $primary;
+}
+.bg-secondary{
+  background-color: $secondary;
+}
+.link-primary{
+  color: $primary !important;
+
+  &:focus{
+    color: darken($primary, 5%)  !important;
+  }
+  &:hover{
+    color: darken($primary, 5%)  !important;
+  }
+  &:active{
+    color: darken($primary, 5%)  !important;
+  }
+}
+.link-secondary{
+  color: $secondary !important;
+
+  &:focus{
+    color: darken($secondary, 5%)  !important;
+  }
+  &:hover{
+    color: darken($secondary, 5%)  !important;
+  }
+  &:active{
+    color: darken($secondary, 5%)  !important;
+  }
+}
+
+
+
 
 
 /*=======================Texts=======================*/
