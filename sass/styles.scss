@@ -72,7 +72,7 @@ $bg-nav-search: #e6f0ff;
 }
 
 
-/*=======================Nav/Navbars=======================*/
+/*=======================Scroll=======================*/
 //Esconder el scroll
 .scroll-hide {
   &::-webkit-scrollbar {
@@ -96,6 +96,8 @@ $bg-nav-search: #e6f0ff;
   }
 }
 
+
+/*=======================Nav/Navbars=======================*/
 //Interface de navegacion de mensajes, etc.
 .nav-menu {
   @extend .scroll-hide;
@@ -108,8 +110,8 @@ $bg-nav-search: #e6f0ff;
   @extend .scroll-hide;
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 100vh;
   width: 2.5rem;
+
 }
 
 //Links del header en la pagina de inicio
@@ -250,6 +252,18 @@ $bg-nav-search: #e6f0ff;
   border-radius: 100px;
   z-index: -1;
 }
+/*=======================Otros=======================*/
+.chat-height{
+  @media (height<1024px) {
+    height: 100vh;
+  }
+  @media (height>=1024px) {
+    height: 1024px;
+    
+  
+  }
+}
+
 
 
 

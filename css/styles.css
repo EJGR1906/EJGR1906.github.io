@@ -11666,7 +11666,7 @@ textarea.form-control-lg {
   }
 }
 
-/*=======================Nav/Navbars=======================*/
+/*=======================Scroll=======================*/
 .scroll-hide::-webkit-scrollbar, .navbar-side::-webkit-scrollbar, .nav-menu::-webkit-scrollbar {
   display: none;
 }
@@ -11682,6 +11682,7 @@ textarea.form-control-lg {
   background: transparent;
 }
 
+/*=======================Nav/Navbars=======================*/
 .nav-menu {
   height: 100vh;
   width: 393px;
@@ -11690,7 +11691,6 @@ textarea.form-control-lg {
 .navbar-side {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 100vh;
   width: 2.5rem;
 }
 
@@ -11805,6 +11805,18 @@ textarea.form-control-lg {
   height: 12rem;
   border-radius: 100px;
   z-index: -1;
+}
+
+/*=======================Otros=======================*/
+@media (height < 1024px) {
+  .chat-height {
+    height: 100vh;
+  }
+}
+@media (height >= 1024px) {
+  .chat-height {
+    height: 1024px;
+  }
 }
 
 /*# sourceMappingURL=styles.css.map */
