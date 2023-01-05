@@ -1,0 +1,41 @@
+//Fondo del chat
+.bg-chat {
+  background-image: url("https://i.pinimg.com/originals/8f/55/6a/8f556a3fc9667315dd1d3e03f6de4999.png");
+}
+
+//Fondo del inicio de sesion/registro
+.bg-login {
+  background: linear-gradient(
+      330deg,
+      rgba(243, 33, 252, 1) 0%,
+      rgba(90, 1, 111, 1) 50%,
+      rgba(5, 0, 32, 1) 100%
+    )
+    fixed no-repeat;
+}
+
+//Fondo en el logo
+.bg-circle-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding-left: 1rem;
+  padding-top: 1rem;
+  left: -3rem;
+  top: -3rem;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 100px;
+  z-index: -1;
+}
+
+//Color de los iconos en los botones
+.color-theme-mode {
+  color: var(--bs-body-color);
+}
+/*=======================Bootstrap bg custom=======================*/
+//Fondo de los mensajes del chat y la barra lateral
+.bg-primary {
+  background-color: $third !important;
+}

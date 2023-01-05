@@ -1,0 +1,21 @@
+//Esconder el scroll
+.scroll-hide {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+//Scrollbar del chat
+.scrollbar-chat {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: lighten($dark, 5%);
+    border: none;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}

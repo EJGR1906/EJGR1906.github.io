@@ -1,0 +1,97 @@
+//Boton tres puntos
+.btn-circle {
+  background-color: transparent;
+  border: none;
+  div {
+    width: 3px;
+    height: 3px;
+    border-radius: 3px;
+    background-color: var(--bs-body-color);
+  }
+}
+
+//Boton --> Link
+.btn-link {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+}
+
+//Boton al seleccionar una conversacion
+.btn-chat {
+  background-color: inherit;
+  border: none;
+
+  .card{
+    background-color: inherit;
+  }
+  &:hover {
+    background-color: darken($body-color, 2%);
+  }
+  &:focus {
+    background-color: darken($body-color, 5%);
+  }
+
+}
+
+//Estilos para btn-facebook y btn-google
+.btn-login {
+  padding: 0.6rem 0.75rem;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 1px 2px 2px lightgray;
+  transition: box-shadow, background-color, color;
+  transition-duration: 0.3s;
+  color: white;
+  &:hover {
+    color: white;
+  }
+  &:active {
+    color: white;
+    box-shadow: none;
+  }
+}
+
+//Boton de facebook
+.btn-facebook {
+  @extend .btn-login;
+  background-color: $facebook-color;
+  &:active {
+    background-color: darken($facebook-color, 10%);
+  }
+}
+
+//Boton de google
+.btn-google {
+
+  @extend .btn-login;
+  background-color: $google-color;
+  &:active {
+    background-color: darken($google-color, 10%);
+  }
+}
+
+
+/*=======================Bootstrap btn custom=======================*/
+.btn-primary{
+  background-color: $primary;
+  border-color: $primary;
+
+  &:focus{
+    background-color: darken($primary, 5%);
+    border-color: darken($primary, 5%);
+  }
+  &:hover{
+    background-color: darken($primary, 5%);
+    border-color: darken($primary, 5%);
+  }
+  &:active{
+    background-color: darken($primary, 5%) !important;
+    border-color: darken($primary, 5%) !important;
+  }
+
+}
+.btn-secondary{
+  background-color: $secondary;
+}

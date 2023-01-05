@@ -1,0 +1,35 @@
+//Altura del chat
+.chat-height{
+    @media (height<1024px) {
+      height: 100vh;
+    }
+    @media (height>=1024px) {
+      height: 1024px;
+      
+    
+    }
+  }
+  
+  //Anchura del chat en sm
+  .chat-sm-width{
+    @media (width < 768px) {
+      width: 100vh;
+    }
+  }
+  //Posicion del chat en sm
+  .chat-sm-position{
+    width: 100%;
+    @media (width < 768px) {
+      position: absolute;
+      left: 0;
+      z-index: 1;
+    }
+  }
+  
+  //Linea divisora de los chats
+  .chat-divider{
+    width: 80%; 
+    margin: 0;
+    margin-left: 20%;
+  
+  }

@@ -1,0 +1,22 @@
+//Texto principal en la pagina inicial
+.text-page {
+    margin: auto 2.2rem;
+    color: $secondary;
+    h1 {
+      color: $primary;
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0;
+    }
+    h3 {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
+  }
+  /*=======================Bootstrap btn custom=======================*/
+  .text-primary{
+    color: $primary;
+  }
+  .text-secondary{
+    color: $secondary;
+  }

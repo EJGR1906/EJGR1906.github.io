@@ -1,0 +1,32 @@
+.link-muted {
+  color: $gray-500;
+}
+
+/*=======================Bootstrap links custom=======================*/
+
+.link-primary {
+  color: $primary !important;
+
+  &:focus {
+    color: darken($primary, 5%) !important;
+  }
+  &:hover {
+    color: darken($primary, 5%) !important;
+  }
+  &:active {
+    color: darken($primary, 5%) !important;
+  }
+}
+.link-secondary {
+  color: $secondary !important;
+
+  &:focus {
+    color: lighten($secondary, 10%) !important;
+  }
+  &:hover {
+    color: lighten($secondary, 10%) !important;
+  }
+  &:active {
+    color: lighten($secondary, 10%) !important;
+  }
+}

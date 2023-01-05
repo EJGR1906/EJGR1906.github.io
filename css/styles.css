@@ -11616,43 +11616,13 @@ textarea.form-control-lg {
 }
 
 /*=======================Variables=======================*/
-.text-primary {
-  color: #FF43BB;
-}
-
-.text-secondary {
-  color: #0D0A4C;
-}
-
+/*=======================Bootstrap links custom=======================*/
+/*=======================Bootstrap links custom=======================*/
 .link-muted {
   color: #adb5bd;
 }
 
-.btn-primary {
-  background-color: #FF43BB;
-  border-color: #FF43BB;
-}
-.btn-primary:focus {
-  background-color: #ff2ab2;
-  border-color: #ff2ab2;
-}
-.btn-primary:hover {
-  background-color: #ff2ab2;
-  border-color: #ff2ab2;
-}
-.btn-primary:active {
-  background-color: #ff2ab2 !important;
-  border-color: #ff2ab2 !important;
-}
-
-.btn-secondary {
-  background-color: #0D0A4C;
-}
-
-.bg-primary {
-  background-color: #1F2C3F !important;
-}
-
+/*=======================Bootstrap links custom=======================*/
 .link-primary {
   color: #FF43BB !important;
 }
@@ -11695,7 +11665,66 @@ textarea.form-control-lg {
   margin-bottom: 2rem;
 }
 
-/*=======================Forms=======================*/
+/*=======================Bootstrap btn custom=======================*/
+.text-primary {
+  color: #FF43BB;
+}
+
+.text-secondary {
+  color: #0D0A4C;
+} /*=======================Scroll=======================*/
+.scroll-hide::-webkit-scrollbar, .navbar-side::-webkit-scrollbar, .nav-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-chat::-webkit-scrollbar {
+  width: 10px;
+}
+.scrollbar-chat::-webkit-scrollbar-thumb {
+  background: #2c3237;
+  border: none;
+}
+.scrollbar-chat::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/*=======================Nav/Navbars=======================*/
+.nav-menu {
+  height: 100vh;
+  width: 393px;
+}
+
+.navbar-side {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 4rem;
+}
+
+/*=======================Bootstrap links custom=======================*/
+.nav-link {
+  color: #0D0A4C;
+  font-size: 1.5rem;
+}
+.nav-link:focus {
+  color: #FF43BB;
+}
+.nav-link:hover {
+  color: #FF43BB;
+} /*=======================Inputs=======================*/
+.input-text {
+  background-color: #e6f0ff;
+  border: none;
+}
+.input-text:focus {
+  box-shadow: none;
+  background-color: #e6f0ff;
+}
+
+.input-search-icon {
+  border: none;
+  background-color: #e6f0ff;
+}
+
 .form-container {
   display: flex;
   justify-content: center;
@@ -11727,60 +11756,6 @@ textarea.form-control-lg {
   .form-container .form-login {
     width: 50%;
   }
-}
-
-/*=======================Scroll=======================*/
-.scroll-hide::-webkit-scrollbar, .navbar-side::-webkit-scrollbar, .nav-menu::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-chat::-webkit-scrollbar {
-  width: 10px;
-}
-.scrollbar-chat::-webkit-scrollbar-thumb {
-  background: #2c3237;
-  border: none;
-}
-.scrollbar-chat::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/*=======================Nav/Navbars=======================*/
-.nav-menu {
-  height: 100vh;
-  width: 393px;
-}
-
-.navbar-side {
-  overflow-y: scroll;
-  overflow-x: hidden;
-  width: 4rem;
-}
-
-.nav-link {
-  color: #0D0A4C;
-  font-size: 1.5rem;
-}
-.nav-link:focus {
-  color: #FF43BB;
-}
-.nav-link:hover {
-  color: #FF43BB;
-}
-
-/*=======================Inputs=======================*/
-.input-text {
-  background-color: #e6f0ff;
-  border: none;
-}
-.input-text:focus {
-  box-shadow: none;
-  background-color: #e6f0ff;
-}
-
-.input-search-icon {
-  border: none;
-  background-color: #e6f0ff;
 }
 
 /*=======================Buttons=======================*/
@@ -11847,6 +11822,28 @@ textarea.form-control-lg {
   background-color: #1266f1;
 }
 
+/*=======================Bootstrap btn custom=======================*/
+.btn-primary {
+  background-color: #FF43BB;
+  border-color: #FF43BB;
+}
+.btn-primary:focus {
+  background-color: #ff2ab2;
+  border-color: #ff2ab2;
+}
+.btn-primary:hover {
+  background-color: #ff2ab2;
+  border-color: #ff2ab2;
+}
+.btn-primary:active {
+  background-color: #ff2ab2 !important;
+  border-color: #ff2ab2 !important;
+}
+
+.btn-secondary {
+  background-color: #0D0A4C;
+}
+
 /*=======================Backgrounds y colors=======================*/
 .bg-chat {
   background-image: url("https://i.pinimg.com/originals/8f/55/6a/8f556a3fc9667315dd1d3e03f6de4999.png");
@@ -11875,7 +11872,12 @@ textarea.form-control-lg {
   color: var(--bs-body-color);
 }
 
-/*=======================Others=======================*/
+/*=======================Bootstrap bg custom=======================*/
+.bg-primary {
+  background-color: #1F2C3F !important;
+}
+
+/*=======================Estilos del chat=======================*/
 @media (height < 1024px) {
   .chat-height {
     height: 100vh;
@@ -11893,18 +11895,18 @@ textarea.form-control-lg {
   }
 }
 
-.chat-position {
+.chat-sm-position {
   width: 100%;
 }
 @media (width < 768px) {
-  .chat-position {
+  .chat-sm-position {
     position: absolute;
     left: 0;
     z-index: 1;
   }
 }
 
-.nav-divider {
+.chat-divider {
   width: 80%;
   margin: 0;
   margin-left: 20%;

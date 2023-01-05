@@ -1,0 +1,49 @@
+//Texto del buscador
+.input-text {
+  background-color: $bg-nav-search;
+  border: none;
+  &:focus {
+    box-shadow: none;
+    background-color: $bg-nav-search;
+  }
+}
+
+//Lupa en el buscador
+.input-search-icon {
+  @extend .input-group-text;
+  border: none;
+  background-color: $bg-nav-search;
+}
+
+//Estilos del formulario del inicio de sesion/Registro
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  height: 100vh;
+  .form-login {
+    background-color: white;
+    padding: 2rem 4rem;
+    fieldset{
+      legend{
+        color: $gray-600;
+      }
+      label{
+        color: $gray-600;
+      }
+      p{
+        color: $gray-500;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (width >= 576px) {
+      width: 75%;
+    }
+    @media (width >= 768px) {
+      width: 50%;
+    }
+  }
+}
