@@ -1,0 +1,209 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Check, Pencil, Plus, Trash2 } from "lucide-react";
+import AppShell from "../components/layout/AppShell";
+import { db, type Account, type Category, type CurrencyCode, type Transaction, type TransactionType } from "../database/db";
+import { deleteTransaction, getAllTransactions } from "../repositories/transactionRepository";
+import { createExpense, createIncome, createTransfer, editTransaction } from "../services/transactionService";
+
+const today = new Date().toISOString().slice(0, 10);
+
+interface TransactionsProps {
+    onNavigate?: (label: string) => void;
+}
+
+function Transactions({ onNavigate }: TransactionsProps) {
+    const [type, setType] = useState<TransactionType>("expense");
+    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+    const [saved, setSaved] = useState(false);
+    const [form, setForm] = useState({
+        accountId: "",
+        categoryId: "",
+        amount: "",
+        currency: "USD" as CurrencyCode,
+        fromAccountId: "",
+        toAccountId: "",
+        toAmount: "",
+        description: "",
+        date: today,
+    });
+
+    const loadData = useCallback(async () => {
+        const [accountData, categoryData, transactionData] = await Promise.all([
+            db.accounts.filter((account) => account.active).toArray(),
+            db.categories.toArray(),
+            getAllTransactions(),
+        ]);
+        setAccounts(accountData);
+        setCategories(categoryData);
+        setTransactions(transactionData);
+        setForm((current) => ({
+            ...current,
+            accountId: current.accountId || accountData[0]?.id || "",
+            fromAccountId: current.fromAccountId || accountData[0]?.id || "",
+            toAccountId: current.toAccountId || accountData[1]?.id || accountData[0]?.id || "",
+            categoryId: current.categoryId || categoryData.find((category) => category.type === type)?.id || "",
+        }));
+    }, [type]);
+
+    useEffect(() => {
+        // IndexedDB must be loaded after the screen mounts.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        void loadData();
+    }, [loadData]);
+
+    const filteredCategories = useMemo(
+        () => categories.filter((category) => category.type === (type === "income" ? "income" : "expense")),
+        [categories, type],
+    );
+    const selectedAccount = accounts.find((account) => account.id === form.accountId);
+    const fromAccount = accounts.find((account) => account.id === form.fromAccountId);
+    const toAccount = accounts.find((account) => account.id === form.toAccountId);
+
+    const setField = (field: keyof typeof form, value: string) => {
+        setForm((current) => ({ ...current, [field]: value }));
+    };
+
+    const changeType = (nextType: TransactionType) => {
+        setType(nextType);
+        setEditingTransaction(null);
+        setForm((current) => ({
+            ...current,
+            categoryId: categories.find((category) => category.type === (nextType === "income" ? "income" : "expense"))?.id || "",
+        }));
+    };
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const amount = Number(form.amount);
+        const destinationAmount = Number(form.toAmount || form.amount);
+        if (!form.date || amount <= 0) return;
+        const date = new Date(`${form.date}T12:00:00`).toISOString();
+
+        if (type === "transfer") {
+            if (!form.fromAccountId || !form.toAccountId || form.fromAccountId === form.toAccountId || destinationAmount <= 0) return;
+            const input = {
+                fromAccountId: form.fromAccountId,
+                toAccountId: form.toAccountId,
+                fromAmount: amount,
+                fromCurrency: fromAccount?.currency || "USD",
+                toAmount: destinationAmount,
+                toCurrency: toAccount?.currency || "USD",
+                exchangeRate: destinationAmount / amount,
+                description: form.description,
+                date,
+            };
+            if (editingTransaction) await editTransaction(editingTransaction.id, { type: "transfer", ...input });
+            else await createTransfer(input);
+        } else {
+            if (!form.accountId || !form.categoryId) return;
+            const input = {
+                accountId: form.accountId,
+                categoryId: form.categoryId,
+                amount,
+                currency: selectedAccount?.currency || form.currency,
+                description: form.description,
+                date,
+            };
+            if (type === "income") {
+                if (editingTransaction) await editTransaction(editingTransaction.id, { type: "income", ...input });
+                else await createIncome(input);
+            } else if (editingTransaction) {
+                await editTransaction(editingTransaction.id, { type: "expense", ...input });
+            } else {
+                await createExpense(input);
+            }
+        }
+
+        setForm((current) => ({ ...current, amount: "", toAmount: "", description: "" }));
+        setEditingTransaction(null);
+        setSaved(true);
+        await loadData();
+        window.setTimeout(() => setSaved(false), 2400);
+    };
+
+    const removeTransaction = async (id: string) => {
+        await deleteTransaction(id);
+        if (editingTransaction?.id === id) setEditingTransaction(null);
+        await loadData();
+    };
+
+    const startEdit = (transaction: Transaction) => {
+        setEditingTransaction(transaction);
+        setType(transaction.type);
+        setForm((current) => ({
+            ...current,
+            accountId: transaction.accountId || current.accountId,
+            categoryId: transaction.categoryId || current.categoryId,
+            amount: String(transaction.amount ?? transaction.fromAmount ?? ""),
+            currency: transaction.currency || transaction.fromCurrency || current.currency,
+            fromAccountId: transaction.fromAccountId || current.fromAccountId,
+            toAccountId: transaction.toAccountId || current.toAccountId,
+            toAmount: String(transaction.toAmount ?? ""),
+            description: transaction.description || "",
+            date: transaction.date.slice(0, 10),
+        }));
+    };
+
+    const cancelEdit = () => {
+        setEditingTransaction(null);
+        setForm((current) => ({ ...current, amount: "", toAmount: "", description: "" }));
+    };
+
+    const formatAmount = (transaction: Transaction) => {
+        const amount = transaction.type === "transfer" ? transaction.fromAmount : transaction.amount;
+        const currency = transaction.type === "transfer" ? transaction.fromCurrency : transaction.currency;
+        return `${(amount || 0).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency || "USD"}`;
+    };
+
+    return (
+        <AppShell activeItem="Movimientos" onNavigate={onNavigate}>
+            <div className="p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto max-w-6xl">
+                    <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-primary">Registro financiero</p>
+                            <h1 className="mt-1 text-2xl font-bold tracking-tight text-primary-dark sm:text-3xl">Movimientos</h1>
+                            <p className="mt-1 text-sm text-primary-dark/60">Registra cada entrada, salida o transferencia para mantener tus saldos al día.</p>
+                        </div>
+                        {saved && <div className="flex items-center gap-2 self-start rounded-full bg-success/10 px-3 py-2 text-sm font-semibold text-success"><Check size={16} /> Movimiento guardado</div>}
+                    </header>
+
+                    <div className="grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+                        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                            <div className="mb-5 flex items-center gap-2"><Plus size={19} className="text-primary" /><h2 className="font-bold text-primary-dark">{editingTransaction ? "Editar movimiento" : "Nuevo movimiento"}</h2></div>
+                            <div className="mb-5 grid grid-cols-3 gap-1 rounded-2xl bg-primary-dark/5 p-1">
+                                {(["expense", "income", "transfer"] as TransactionType[]).map((item) => <button key={item} type="button" onClick={() => changeType(item)} className={`rounded-xl px-2 py-2.5 text-xs font-semibold transition sm:text-sm ${type === item ? "bg-white text-primary shadow-sm" : "text-primary-dark/55 hover:text-primary-dark"}`}>{item === "expense" ? "Gasto" : item === "income" ? "Ingreso" : "Transferencia"}</button>)}
+                            </div>
+                            <form className="space-y-4" onSubmit={handleSubmit}>
+                                {type === "transfer" ? <>
+                                    <label className="block text-sm font-medium text-primary-dark">Cuenta origen<select value={form.fromAccountId} onChange={(event) => setField("fromAccountId", event.target.value)} className="field mt-1">{accounts.map((account) => <option key={account.id} value={account.id}>{account.name} · {account.currency}</option>)}</select></label>
+                                    <label className="block text-sm font-medium text-primary-dark">Cuenta destino<select value={form.toAccountId} onChange={(event) => setField("toAccountId", event.target.value)} className="field mt-1">{accounts.map((account) => <option key={account.id} value={account.id}>{account.name} · {account.currency}</option>)}</select></label>
+                                    <div className="grid grid-cols-2 gap-3"><label className="block text-sm font-medium text-primary-dark">Sale<input required min="0.01" step="0.01" type="number" value={form.amount} onChange={(event) => setField("amount", event.target.value)} className="field mt-1" placeholder="0,00" /></label><label className="block text-sm font-medium text-primary-dark">Llega<input required min="0.01" step="0.01" type="number" value={form.toAmount} onChange={(event) => setField("toAmount", event.target.value)} className="field mt-1" placeholder="0,00" /></label></div>
+                                    <p className="rounded-xl bg-background px-3 py-2 text-xs text-primary-dark/60">{fromAccount?.currency || "USD"} → {toAccount?.currency || "USD"}. La tasa se calcula automáticamente.</p>
+                                </> : <>
+                                    <label className="block text-sm font-medium text-primary-dark">Cuenta<select value={form.accountId} onChange={(event) => setField("accountId", event.target.value)} className="field mt-1">{accounts.map((account) => <option key={account.id} value={account.id}>{account.name} · {account.currency}</option>)}</select></label>
+                                    <div className="grid grid-cols-2 gap-3"><label className="block text-sm font-medium text-primary-dark">Monto<input required min="0.01" step="0.01" type="number" value={form.amount} onChange={(event) => setField("amount", event.target.value)} className="field mt-1" placeholder="0,00" /></label><div><span className="block text-sm font-medium text-primary-dark">Moneda</span><div className="field mt-1 flex items-center bg-primary-dark/5 text-primary-dark">{selectedAccount?.currency || form.currency}</div></div></div>
+                                    <label className="block text-sm font-medium text-primary-dark">Categoría<select value={form.categoryId} onChange={(event) => setField("categoryId", event.target.value)} className="field mt-1">{filteredCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+                                </>}
+                                <label className="block text-sm font-medium text-primary-dark">Fecha<input required type="date" value={form.date} onChange={(event) => setField("date", event.target.value)} className="field mt-1" /></label>
+                                <label className="block text-sm font-medium text-primary-dark">Descripción <span className="font-normal text-primary-dark/40">(opcional)</span><input type="text" value={form.description} onChange={(event) => setField("description", event.target.value)} className="field mt-1" placeholder="Ej. Compra del supermercado" /></label>
+                                <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-sky shadow-sm transition hover:bg-primary-dark"><Check size={18} /> Guardar movimiento</button>
+                                {editingTransaction && <button type="button" onClick={cancelEdit} className="w-full text-sm font-semibold text-primary-dark/60">Cancelar edición</button>}
+                            </form>
+                        </section>
+
+                        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                            <div className="flex items-start justify-between gap-4"><div><p className="text-sm font-medium text-primary">Historial</p><h2 className="mt-1 text-lg font-bold text-primary-dark">Todos tus movimientos</h2></div><span className="rounded-full bg-sky/35 px-3 py-1 text-xs font-semibold text-primary">{transactions.length} registros</span></div>
+                            {transactions.length === 0 ? <div className="mt-8 rounded-2xl bg-background px-5 py-10 text-center text-sm text-primary-dark/55">Todavía no hay movimientos registrados.</div> : <div className="mt-5 divide-y divide-primary-dark/5">{transactions.map((transaction) => { const income = transaction.type === "income"; const transfer = transaction.type === "transfer"; return <div key={transaction.id} className="flex items-center gap-3 py-4 first:pt-0"><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${income ? "bg-success/10 text-success" : transfer ? "bg-sky/40 text-primary" : "bg-primary/5 text-primary"}`}>{income ? <ArrowDownLeft size={18} /> : transfer ? <ArrowLeftRight size={18} /> : <ArrowUpRight size={18} />}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-primary-dark">{transaction.description || (income ? "Ingreso" : transfer ? "Transferencia" : "Gasto")}</p><p className="mt-0.5 text-xs text-primary-dark/50">{new Date(transaction.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" })}</p></div><div className="text-right"><p className={`text-sm font-bold ${income ? "text-success" : "text-primary-dark"}`}>{income ? "+" : transfer ? "↔" : "-"} {formatAmount(transaction)}</p><div className="mt-1 flex justify-end gap-2"><button type="button" onClick={() => startEdit(transaction)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-primary"><Pencil size={13} /> Editar</button><button type="button" onClick={() => void removeTransaction(transaction.id)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-red-600"><Trash2 size={13} /> Eliminar</button></div></div></div>; })}</div>}
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </AppShell>
+    );
+}
+
+export default Transactions;

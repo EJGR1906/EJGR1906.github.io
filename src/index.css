@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-dark: #082F49;
+  --color-primary: #0E7490;
+  --color-success: #22C55E;
+  --color-sky: #BAE6FD;
+  --color-background: #F0FDFF;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-primary-dark);
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: 160ms;
+  transition-timing-function: ease-out;
+}
+
+button:not(:disabled):hover,
+a:hover {
+  transition-duration: 180ms;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  transition-duration: 120ms;
+}
+
+.page-transition {
+  animation: page-enter 180ms ease-out both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+[data-theme="dark"] {
+  --color-primary-dark: #e2e8f0;
+  --color-primary: rgb(173,228,36);
+  --color-success: #4ade80;
+  --color-sky: #164e63;
+  --color-background: #0f172a;
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-white\/95 {
+  background-color: #172033;
+}
+
+[data-theme="dark"] .bg-primary-dark {
+  background-color: #082f49;
+}
+
+[data-theme="dark"] .bg-primary-dark .text-sky {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .bg-slate-50 {
+  background-color: #111827;
+}
+
+[data-theme="dark"] .bg-sky-50 {
+  background-color: #164e63;
+}
+
+[data-theme="dark"] .hover\:bg-sky-50:hover {
+  background-color: #164e63;
+}
+
+[data-theme="dark"] .border-slate-200,
+[data-theme="dark"] .border-slate-100,
+[data-theme="dark"] .border-sky-100,
+[data-theme="dark"] .border-primary\/10,
+[data-theme="dark"] .ring-primary\/5 {
+  border-color: rgb(148 163 184 / 0.2);
+  --tw-ring-color: rgb(148 163 184 / 0.2);
+}
+
+[data-theme="dark"] .text-slate-500,
+[data-theme="dark"] .text-slate-400 {
+  color: rgb(203 213 225 / 0.72);
+}
+
+[data-theme="dark"] .text-slate-300 {
+  color: rgb(226 232 240 / 0.82);
+}
+
+[data-theme="dark"] .text-primary-dark\/60,
+[data-theme="dark"] .text-primary-dark\/70,
+[data-theme="dark"] .text-primary-dark\/50,
+[data-theme="dark"] .text-primary-dark\/45,
+[data-theme="dark"] .text-primary-dark\/55 {
+  color: rgb(203 213 225 / 0.72);
+}
+
+[data-theme="dark"] .divide-primary-dark\/5 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgb(148 163 184 / 0.14);
+}
+
+[data-theme="dark"] .field {
+  border-color: rgb(148 163 184 / 0.28);
+  background-color: #111827;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .field option {
+  background-color: #111827;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] input::placeholder {
+  color: rgb(148 163 184 / 0.7);
+}
+
+[data-theme="dark"] .shadow-sm,
+[data-theme="dark"] .shadow-lg {
+  --tw-shadow-color: rgb(2 6 23 / 0.35);
+}
+
+@layer components {
+  .field {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary-dark) 12%, transparent);
+    background: white;
+    padding: 0.7rem 0.8rem;
+    color: var(--color-primary-dark);
+    outline: none;
+  }
+
+  .field:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+  }
+}
