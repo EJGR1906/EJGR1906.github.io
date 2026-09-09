@@ -80,8 +80,8 @@ function CashFlowChart({ data, currency }: CashFlowChartProps) {
                             type="monotone"
                             dataKey="income"
                             name="income"
-                            stroke="var(--color-success)"
-                            fill="var(--color-success)"
+                            stroke="#22C55E"
+                            fill="#22C55E"
                             fillOpacity={0.12}
                             strokeWidth={2}
                         />
@@ -90,8 +90,8 @@ function CashFlowChart({ data, currency }: CashFlowChartProps) {
                             type="monotone"
                             dataKey="expense"
                             name="expense"
-                            stroke="var(--color-expense)"
-                            fill="var(--color-expense)"
+                            stroke="#F28B82"
+                            fill="#F28B82"
                             fillOpacity={0.10}
                             strokeWidth={2}
                         />
@@ -109,7 +109,7 @@ function CashFlowChart({ data, currency }: CashFlowChartProps) {
 
                 <div className="flex items-center gap-2">
 
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: "var(--color-expense)" }} />
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: "#F28B82" }} />
                     <span className="text-primary-dark/60">
                         Gastos
                     </span>
