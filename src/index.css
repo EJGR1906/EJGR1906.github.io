@@ -200,12 +200,7 @@ textarea:focus-visible {
   }
 
   [data-theme="dark"] .menu-grid-item span:first-child {
-    background-color: rgba(148, 163, 184, 0.12);
-    color: rgba(226, 232, 240, 0.82);
-  }
-
-  [data-theme="dark"] .menu-grid-item:hover span:first-child {
-    background-color: rgba(173, 228, 36, 0.12);
-    color: rgb(173, 228, 36);
+    background-color: rgba(148, 163, 184, 0.12) !important;
+    color: rgb(173, 228, 36) !important;
   }
 }
