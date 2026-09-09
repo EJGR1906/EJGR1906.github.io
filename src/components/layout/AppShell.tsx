@@ -141,7 +141,7 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
             </div>
 
             {/* Mobile header */}
-            <header className="sticky top-0 z-40 flex h-16 items-center border-b border-primary/10 bg-white/95 px-4 backdrop-blur lg:hidden">
+            <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-primary/10 bg-white/95 px-4 backdrop-blur lg:hidden">
                 <div>
                     <p className="font-bold text-primary-dark">
                         Finanzas
@@ -151,7 +151,9 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                         Control financiero
                     </p>
                 </div>
-
+                <p className="text-sm font-semibold text-primary-dark/65">
+                    {activeItem}
+                </p>
             </header>
 
             {/* Main content */}
