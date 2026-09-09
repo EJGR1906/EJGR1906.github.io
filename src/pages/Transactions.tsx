@@ -214,8 +214,8 @@ function Transactions({ onNavigate }: TransactionsProps) {
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
                         <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
                             <div className="mb-5 flex items-center gap-2"><Plus size={19} className="text-primary" /><h2 className="font-bold text-primary-dark">{editingTransaction ? "Editar movimiento" : "Nuevo movimiento"}</h2></div>
-                            <div className="mb-5 grid grid-cols-3 gap-1 rounded-2xl bg-primary-dark/5 p-1">
-                                {(["expense", "income", "transfer", "goal_contribution", "goal_withdrawal"] as TransactionType[]).map((item) => <button key={item} type="button" onClick={() => changeType(item)} className={`rounded-xl px-2 py-2.5 text-xs font-semibold transition sm:text-sm ${type === item ? "bg-white text-primary shadow-sm" : "text-primary-dark/55 hover:text-primary-dark"}`}>{item === "expense" ? "Gasto" : item === "income" ? "Ingreso" : item === "transfer" ? "Transferencia" : item === "goal_contribution" ? "Aporte a meta" : "Retiro de meta"}</button>)}
+                            <div className="mb-5 flex gap-1 overflow-x-auto rounded-2xl bg-primary-dark/5 p-1">
+                                {(["expense", "income", "transfer", "goal_contribution", "goal_withdrawal"] as TransactionType[]).map((item) => <button key={item} type="button" onClick={() => changeType(item)} className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-2.5 text-xs font-semibold transition sm:text-sm ${type === item ? "bg-white text-primary shadow-sm" : "text-primary-dark/55 hover:text-primary-dark"}`}>{item === "expense" ? "Gasto" : item === "income" ? "Ingreso" : item === "transfer" ? "Transferencia" : item === "goal_contribution" ? "Aporte a meta" : "Retiro de meta"}</button>)}
                             </div>
                             <form className="space-y-4" onSubmit={handleSubmit}>
                                 {type === "transfer" ? <>

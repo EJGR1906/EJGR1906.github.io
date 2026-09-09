@@ -78,7 +78,7 @@ function Accounts({ onNavigate }: AccountsProps) {
     const formatMoney = (amount: number, currency: CurrencyCode) => `${amount.toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 
     return (
-        <AppShell activeItem="Configuración" onNavigate={onNavigate}>
+        <AppShell activeItem="Cuentas" onNavigate={onNavigate}>
             <div className="p-4 sm:p-6 lg:p-8"><div className="mx-auto max-w-5xl">
                 <header className="mb-6"><p className="text-sm font-medium text-primary">Patrimonio</p><h1 className="mt-1 text-2xl font-bold text-primary-dark sm:text-3xl">Cuentas</h1><p className="mt-1 text-sm text-primary-dark/60">Administra saldos, deudas y límites. Los ajustes quedan registrados como movimientos.</p></header>
                 {portfolio && <section className="mb-6 grid gap-3 sm:grid-cols-3"><div className="rounded-2xl bg-white p-4 shadow-sm"><p className="text-xs text-primary-dark/55">Total de activos</p><p className="mt-1 text-xl font-bold text-success">${formatMoney(portfolio.totalAssets, "USD")}</p></div><div className="rounded-2xl bg-white p-4 shadow-sm"><p className="text-xs text-primary-dark/55">Total de deudas</p><p className="mt-1 text-xl font-bold text-red-600">${formatMoney(portfolio.totalLiabilities, "USD")}</p></div><div className="rounded-2xl bg-primary-dark p-4 text-white shadow-sm"><p className="text-xs text-white/65">Patrimonio neto consolidado</p><p className="mt-1 text-xl font-bold">${formatMoney(portfolio.netWorth, "USD")}</p></div></section>}

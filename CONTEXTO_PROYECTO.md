@@ -952,6 +952,18 @@ Se mantiene la arquitectura `React -> Services -> Repositories -> IndexedDB/Dexi
 - Las recurrencias generan movimientos normales como máximo una vez por fecha programada y pueden pausarse.
 - El futuro Health Score solo se muestra como 1-100 cuando sus cuatro componentes tienen reglas y datos suficientes.
 
+## Ajuste UX movil en Movimientos - 2026-09-08
+
+- El header movil queda simplificado y conserva solo la identidad de la aplicacion; se eliminaron accesos duplicados de Cuentas, Categorias, Configuracion y el menu hamburguesa.
+- Los accesos secundarios se mantienen disponibles desde la pagina Menu del footer movil.
+- Los cinco tipos de movimiento se presentan en una sola fila horizontal desplazable, evitando el bloque estatico de dos filas en telefonos compactos.
+
+### Verificaciones UX movil
+
+- `npm test` -> correcto; 2 archivos y 4 pruebas aprobadas.
+- `npm run lint` -> correcto.
+- `npm run build` -> correcto; permanece la advertencia conocida de bundle mayor a 500 kB.
+
 ## Implementacion iniciada - 2026-09-08
 
 ### Cambios completados en la primera fase

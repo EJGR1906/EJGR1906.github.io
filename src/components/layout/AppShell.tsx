@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
     Home,
     ArrowLeftRight,
@@ -6,7 +5,6 @@ import {
     Target,
     Activity,
     Menu,
-    X,
     Settings,
     Calculator,
     Tags,
@@ -53,7 +51,6 @@ const mobileNavigation = [
 ];
 
 function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps) {
-    const [menuOpen, setMenuOpen] = useState(false);
     const navigate = (label: string) => {
         onNavigate?.(label);
         window.dispatchEvent(new CustomEvent("finanzas:navigate", { detail: label }));
@@ -108,16 +105,18 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
 
             {/* Desktop quick actions */}
             <div className="fixed right-8 top-4 z-40 hidden items-center gap-2 lg:flex">
-                <button
-                    type="button"
-                    onClick={() => navigate("Cuentas")}
-                    className="flex items-center gap-2 rounded-xl border border-primary/10 bg-white px-3 py-2 text-sm font-medium text-primary-dark shadow-sm transition hover:border-primary/20 hover:bg-primary/5"
-                    title="Cuentas"
-                    aria-label="Cuentas"
-                >
-                    <Wallet size={17} />
-                    Cuentas
-                </button>
+                {activeItem !== "Cuentas" && (
+                    <button
+                        type="button"
+                        onClick={() => navigate("Cuentas")}
+                        className="flex items-center gap-2 rounded-xl border border-primary/10 bg-white px-3 py-2 text-sm font-medium text-primary-dark shadow-sm transition hover:border-primary/20 hover:bg-primary/5"
+                        title="Cuentas"
+                        aria-label="Cuentas"
+                    >
+                        <Wallet size={17} />
+                        Cuentas
+                    </button>
+                )}
                 {activeItem === "Movimientos" && (
                     <button
                         type="button"
@@ -142,7 +141,7 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
             </div>
 
             {/* Mobile header */}
-            <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-primary/10 bg-white/95 px-4 backdrop-blur lg:hidden">
+            <header className="sticky top-0 z-40 flex h-16 items-center border-b border-primary/10 bg-white/95 px-4 backdrop-blur lg:hidden">
                 <div>
                     <p className="font-bold text-primary-dark">
                         Finanzas
@@ -153,67 +152,7 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                     </p>
                 </div>
 
-                <div className="flex items-center gap-1">
-                    <button onClick={() => navigate("Cuentas")} className="rounded-xl p-2 text-primary-dark hover:bg-primary/5" title="Cuentas" aria-label="Cuentas">
-                        <Wallet size={19} />
-                    </button>
-                    {activeItem === "Movimientos" && (
-                        <button onClick={() => navigate("Categorías")} className="rounded-xl p-2 text-primary-dark hover:bg-primary/5" title="Categorías" aria-label="Categorías">
-                            <Tags size={19} />
-                        </button>
-                    )}
-                    <button onClick={() => navigate("Configuración")} className="rounded-xl p-2 text-primary-dark hover:bg-primary/5" title="Configuración" aria-label="Configuración">
-                        <Settings size={19} />
-                    </button>
-                    <button
-                        onClick={() => setMenuOpen(!menuOpen)}
-                        className="rounded-xl p-2 text-primary-dark hover:bg-primary/5"
-                        aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-                        aria-expanded={menuOpen}
-                    >
-                        {menuOpen ? <X size={22} /> : <Menu size={22} />}
-                    </button>
-                </div>
             </header>
-
-            {/* Mobile menu */}
-            {menuOpen && (
-                <div className="fixed inset-x-0 top-16 z-30 border-b border-primary/10 bg-white p-4 shadow-lg lg:hidden">
-                    <nav className="space-y-2">
-                        {navigation.map((item) => {
-                            const Icon = item.icon;
-                            const active = item.label === activeItem;
-
-                            return (
-                                <button
-                                    key={item.label}
-                                    onClick={() => {
-                                        setMenuOpen(false);
-                                        navigate(item.label);
-                                    }}
-                                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium ${active
-                                        ? "bg-primary/10 text-primary"
-                                        : "text-primary-dark/70"
-                                        }`}
-                                >
-                                    <Icon size={20} />
-                                    {item.label}
-                                </button>
-                            );
-                        })}
-                        <button
-                            onClick={() => {
-                                setMenuOpen(false);
-                                navigate("Configuración");
-                            }}
-                            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-primary-dark/70"
-                        >
-                            <Settings size={20} />
-                            Configuración
-                        </button>
-                    </nav>
-                </div>
-            )}
 
             {/* Main content */}
             <main className="pb-24 lg:ml-64 lg:pb-8">
