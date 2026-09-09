@@ -1,16 +1,15 @@
 import type { CurrencyCode } from "../../database/db";
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 
 interface FinancialOverviewProps {
   totalIncome: number;
   totalExpenses: number;
-  savings: number;
   currency: CurrencyCode;
 }
 
 function FinancialOverview({
   totalIncome,
   totalExpenses,
-  savings,
   currency,
 }: FinancialOverviewProps) {
   const symbol = currency === "VES" ? "Bs. " : currency === "USDT" ? "USDT " : "$";
@@ -22,11 +21,14 @@ function FinancialOverview({
     })}`;
 
   return (
-    <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="rounded-2xl bg-white p-5 shadow-sm">
-        <p className="text-sm text-primary-dark/60">
-          Ingresos
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success text-white">
+            <ArrowDownLeft size={19} />
+          </div>
+          <p className="text-sm text-primary-dark/60">Ingresos</p>
+        </div>
 
         <p className="mt-2 text-2xl font-bold text-success">
           +{formatAmount(totalIncome)}
@@ -34,24 +36,18 @@ function FinancialOverview({
       </div>
 
       <div className="rounded-2xl bg-white p-5 shadow-sm">
-        <p className="text-sm text-primary-dark/60">
-          Gastos
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white">
+            <ArrowUpRight size={19} />
+          </div>
+          <p className="text-sm text-primary-dark/60">Gastos</p>
+        </div>
 
         <p className="mt-2 text-2xl font-bold text-primary-dark">
           {formatAmount(totalExpenses)}
         </p>
       </div>
 
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
-        <p className="text-sm text-primary-dark/60">
-          Ahorro
-        </p>
-
-        <p className="mt-2 text-2xl font-bold text-primary">
-          {formatAmount(savings)}
-        </p>
-      </div>
     </section>
   );
 }

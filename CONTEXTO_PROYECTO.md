@@ -674,7 +674,7 @@ No debe considerarse todavía listo para una versión financiera estable. Los ri
 4. **Validar edición de transacciones:** ingresos, gastos y transferencias ya pueden editarse con validación y recálculo derivado; faltan pruebas de regresión.
 5. **Completar edición de cuentas:** el saldo inicial efectivo es modificable y el ajuste mediante ingreso/gasto compensatorio es el mecanismo aceptado porque conserva el historial derivado. La relación VES/USD todavía necesita edición y desactivación consistente.
 6. **Alinear moneda base:** presupuestos y algunas etiquetas de diagnóstico siguen mostrando USD fijo aunque el Dashboard usa la moneda base seleccionada. El modelo de presupuesto debe almacenar moneda o declararse explícitamente USD.
-7. **Corregir navegación incompleta:** `RecentTransactions` tiene botones `Ver todas` sin acción, y el menú inferior móvil mantiene seis opciones en cuatro columnas, lo que reduce legibilidad y requiere una decisión responsive.
+7. **Corregir navegación incompleta:** `RecentTransactions` tiene botones `Ver todas` sin acción, y el menú inferior móvil mantiene seis opciones en tres columnas, lo que reduce legibilidad y requiere una decisión responsive.
 8. **Ampliar pruebas automatizadas:** ya existe Vitest y una prueba inicial; faltan pruebas de servicios para conversiones, selección de tasas, saldos, transferencias, metas, migraciones y edición.
 9. **Mejorar rendimiento del build:** Vite informa un chunk JavaScript minificado de aproximadamente 807 kB. Conviene evaluar carga diferida por pantalla y componentes pesados de Recharts antes de producción.
 10. **Revisar UX y accesibilidad:** faltan confirmaciones para eliminar movimientos/categorías, mensajes de error consistentes, estados de carga/error en varias pantallas, navegación por teclado validada y revisión visual real en móvil/tablet/desktop.
@@ -697,3 +697,239 @@ Medio-alto. La base funcional y persistencia existen, pero las tareas restantes 
 - Mantener el ajuste compensatorio como el tratamiento histórico de cambios en `initialBalance` y definir únicamente sus validaciones, descripción y comportamiento para cuentas VES/USD vinculadas.
 - Definir si una meta permite retiros parciales y si una meta completada permanece activa para nuevos aportes.
 - Elegir la estrategia de pruebas local: Vitest u otra herramienta compatible, sin convertir el proyecto en una aplicación remota.
+
+## Solicitud registrada: navegación móvil, dashboard, calculadora y evolución financiera
+
+### Objetivo
+
+Esta solicitud agrupa correcciones de experiencia móvil, ajustes de presentación y una ampliación del modelo financiero para que la aplicación pueda soportar exportación de datos, movimientos recurrentes y un diagnóstico integral de salud financiera de 1 a 100.
+
+El estado de esta sección es **analizado y pendiente de implementación**. No se modificó código de producción durante esta revisión.
+
+### Hechos verificados antes de planificar
+
+- `AppShell` renderiza actualmente seis opciones en el footer móvil y un menú desplegable con las mismas opciones. El header móvil usa `sticky`, mientras que el menú se posiciona respecto al inicio del contenido (`top-16`); esto explica que el menú no permanezca disponible cuando el usuario está al final de una página larga.
+- `Transactions` usa el mismo `AppShell` y no tiene una confirmación antes de llamar a `deleteTransaction`.
+- `BalanceDetails` muestra `account.type` directamente, por lo que presenta valores internos como `bank`, `cash` o `crypto` en inglés.
+- `CurrencyCalculator` construye ambos selectores con las tres monedas, permite seleccionar la misma moneda en ambos lados y formatea VES con hasta seis decimales en la salida.
+- `Dashboard` muestra `summary.savings` dentro de `BalanceCard`, `FinancialOverview` y el bloque `Resumen del período`. `summary.savings` se calcula como ingresos menos gastos del período; no es una métrica independiente del patrimonio total.
+- El Dashboard ya tiene accesos de encabezado para Cuentas, Categorías y Configuración en escritorio, pero no existe una página `Menú` ni una página de movimientos recurrentes.
+- El modelo actual de Dexie contiene `accounts`, `categories`, `goals`, `transactions` y `exchangeRates`. No contiene exportación/importación, recurrencias, clasificación esencial/discrecional, pasivos, APR, activos no líquidos ni seguros.
+- La suite ejecutada sigue siendo mínima: existe una prueba de generación de IDs y no hay pruebas de regresión para estas nuevas reglas.
+
+### Modificaciones solicitadas y estado
+
+#### 1. Navegación y responsive móvil
+
+**Pendiente:**
+
+- En móvil, el footer debe conservar únicamente `Inicio`, `Diagnóstico` y `Menú`.
+- Crear una página `Menú` que reúna Inicio, Movimientos, Presupuestos, Metas, Diagnóstico, Calculadora, Cuentas, Categorías, Configuración y, cuando exista, Recurrentes.
+- En escritorio se conservará la navegación principal y los accesos de apoyo existentes, salvo que una etapa posterior defina otra estructura.
+- Convertir el header móvil y el botón de navegación en elementos persistentemente visibles durante el scroll. El contenido deberá reservar espacio para el header y el footer para evitar solapamientos.
+- Mantener accesibles los destinos de Cuentas, Categorías y Configuración desde Inicio y desde las demás pantallas según el diseño final, sin duplicar estados de navegación.
+
+**Decisión técnica recomendada:** ampliar el contrato de `AppShell` con una navegación móvil de tres elementos y centralizar el resto en `Menu.tsx`. La solución debe mantener el estado local de `App.tsx` y no introducir React Router solo por esta mejora.
+
+#### 2. Dashboard y presentación
+
+**Pendiente:**
+
+- En el Dashboard, colocar una fila superior de accesos solo con iconos SVG/Lucide para Calculadora, Movimientos, Cuentas y Configuración, con `aria-label` y `title`.
+- Presentar Ingresos y Gastos en una misma fila. Ingresos usará una flecha blanca dentro de un círculo verde; Gastos, una flecha blanca dentro de un círculo rojo.
+- Eliminar la tarjeta o bloque visual de Ahorro solicitado por el usuario, evitando que desaparezca la información necesaria para el diagnóstico sin decidir antes dónde se mostrará la tasa de ahorro.
+- Resolver la duplicación entre Patrimonio financiero y Resumen del período. La opción recomendada es que Patrimonio muestre únicamente saldo patrimonial y que Resumen del período muestre ingresos, gastos y resultado neto del período; ambos deben tener títulos y métricas no redundantes.
+
+La decisión sobre el destino de la tasa de ahorro queda abierta: puede permanecer en Diagnóstico o en el Resumen del período, pero no debe mostrarse como una tercera tarjeta que repita el mismo resultado sin contexto.
+
+#### 3. Movimientos y seguridad operativa
+
+**Pendiente:** añadir confirmación antes de eliminar un movimiento, indicando si se eliminará un gasto, ingreso o transferencia y mostrando una acción explícita de cancelar. La confirmación debe ejecutarse antes de `deleteTransaction`; no debe ser solo un cambio visual.
+
+La confirmación debe cubrir también transferencias y considerar que borrar un movimiento modifica saldos derivados. En una etapa posterior conviene reemplazar `window.confirm` por un diálogo accesible y reutilizable, pero una confirmación nativa puede ser la primera entrega de bajo esfuerzo.
+
+#### 4. Balance por moneda y calculadora
+
+**Pendiente:**
+
+- Traducir los tipos de cuenta en `BalanceDetails` mediante un mapa de presentación (`Banco`, `Efectivo`, `Cripto`, `Billetera`, `Otra`) sin modificar los valores persistidos ni el tipo de dominio.
+- Excluir la moneda seleccionada del selector opuesto de `CurrencyCalculator`; por ejemplo, VES no debe aparecer como destino si el origen es VES. Si se cambia el origen y deja inválido el destino, seleccionar automáticamente la primera moneda disponible.
+- Para conversiones VES a USD o USDT, limitar la salida a dos decimales. La precisión interna de tasas y conversiones debe mantenerse; el redondeo es únicamente de presentación.
+- Mantener una tasa manual editable para USD/VES y no usarla implícitamente en balances ni reportes.
+
+#### 5. Exportación e importación local de datos
+
+**Pendiente:** agregar en Configuración una sección de exportación e importación en JSON y CSV para facilitar pruebas con datasets reales o ficticios.
+
+**Solución recomendada:**
+
+- Implementar un servicio de respaldo local que exporte un JSON versionado con todas las tablas (`accounts`, `categories`, `goals`, `transactions`, `exchangeRates`) y metadatos de formato.
+- Permitir CSV por entidad; para la primera entrega, varios CSV descargables son más simples y transparentes que un CSV plano que mezcle tablas relacionadas.
+- Validar el archivo importado con Zod antes de escribirlo, comprobar referencias entre cuentas, categorías, metas y movimientos, rechazar duplicados incompatibles y mostrar un resumen de errores.
+- Importar mediante una transacción Dexie `rw` y ofrecer modo reemplazo o combinación de forma explícita. El modo reemplazo debe requerir confirmación porque puede eliminar datos locales.
+- No incluir credenciales, backend ni sincronización. Los archivos deben generarse y procesarse en el navegador.
+
+**Riesgos:** CSV no conserva de forma natural relaciones ni tipos opcionales; los montos, fechas, monedas y tasas requieren normalización estricta. La importación debe ser reversible mediante una exportación previa y nunca sobrescribir silenciosamente la base.
+
+#### 6. Movimientos recurrentes
+
+**Pendiente:** crear la página `Recurrentes` para administrar gastos, ingresos y transferencias que se repiten con una periodicidad definida.
+
+**Modelo recomendado:** una entidad `RecurringTransaction` separada de `transactions`, con tipo, cuentas, categoría, moneda, montos, descripción, frecuencia, próxima fecha, fecha final opcional, activo y `lastGeneratedAt`. La recurrencia debe ser una plantilla; cada ejecución debe crear un movimiento normal con referencia a la plantilla y no alterar movimientos históricos.
+
+La generación automática requiere una decisión explícita sobre cuándo se ejecuta en una aplicación local-first: al abrir la app, al entrar a Recurrentes o mediante una acción `Generar pendientes`. La primera versión debe evitar duplicados usando una clave de ejecución por plantilla y fecha, registrar errores y permitir pausar una plantilla.
+
+#### 7. Clasificación financiera adicional
+
+**Pendiente y de impacto medio-alto:**
+
+- Añadir a las categorías de gasto una clasificación `essential`/`discretionary` para distinguir gasto esencial de gasto discrecional.
+- Diferenciar cuentas de liquidez inmediata, inversión y deuda/tarjeta. No se debe reutilizar `Account.type` sin definir antes el efecto contable de cada clase.
+- Clasificar transferencias hacia inversión como movimientos patrimoniales y no como gastos, conservando la trazabilidad entre cuenta origen y destino.
+- Para deudas, definir una entidad explícita con saldo pendiente, APR, pago mínimo, fecha de corte/vencimiento y cuenta asociada. Un gasto de pago de deuda no debe confundirse con el saldo total del pasivo.
+
+Estas reglas requieren pruebas de dominio antes de modificar el Dashboard, porque pueden cambiar ahorro, patrimonio, gasto esencial y disponibilidad.
+
+#### 8. Patrimonio neto, salud financiera y deudas
+
+**Propuesta de siguientes módulos:**
+
+- **Patrimonio neto:** registrar activos no representados por cuentas (efectivo, inversiones, inmuebles y vehículos) y pasivos (hipotecas, préstamos y tarjetas). La métrica será `Patrimonio neto = Total activos - Total pasivos`.
+- **Multiplicador de Stanley:** calcularlo solo cuando existan edad e ingreso anual bruto válidos: `Patrimonio neto real / ((Edad * Ingreso anual bruto) / 10)`. Debe mostrarse como referencia educativa y no como evaluación normativa.
+- **Health Score 1-100:** crear un servicio de dominio con cuatro componentes de 0 a 25: fondo de emergencia, relación deuda/ingreso, tasa de ahorro y adherencia al presupuesto/coberturas.
+- **Fondo de emergencia:** `efectivo líquido / promedio mensual de gastos esenciales`.
+- **DTI:** `(pagos mensuales de deuda / ingreso neto) * 100`.
+- **Tasa de ahorro:** definir claramente si incluye ahorro líquido, aportes a metas y transferencias a inversión, sin duplicar una transferencia como ingreso o gasto.
+- **Adherencia y coberturas:** comparar gastos reales contra presupuesto y añadir un checklist persistido de seguros; no presentar un puntaje completo mientras falten datos necesarios.
+- **Debt Payoff Planner:** permitir ordenar deudas por tasa o saldo y simular Bola de Nieve y Avalancha. La simulación debe ser informativa y no crear movimientos hasta que el usuario confirme una acción.
+
+El diagnóstico actual solo deriva una señal simple principalmente desde la tasa de ahorro mensual. Por tanto, no debe etiquetarse como el Health Score 1-100 completo hasta contar con datos de esenciales, deudas, liquidez, presupuestos y coberturas.
+
+### Arquitectura y archivos previstos
+
+- `src/components/layout/AppShell.tsx`: header/footer persistentes y navegación móvil de tres elementos.
+- `src/pages/Menu.tsx`: índice de páginas para móvil.
+- `src/pages/Recurring.tsx`, `src/services/recurringService.ts` y `src/repositories/recurringRepository.ts`: plantillas y generación controlada de movimientos recurrentes.
+- `src/services/exportService.ts` y componentes de Configuración: respaldo JSON/CSV validado en el navegador.
+- `src/database/db.ts`: nuevas entidades e índices solo mediante una migración Dexie versionada, después de cerrar los contratos.
+- `src/services/dashboardService.ts` y componentes del Dashboard: separación entre patrimonio, resumen de período, ahorro y nuevas métricas.
+- `src/services/financialService.ts` y nuevos servicios de dominio: patrimonio neto, disponibilidad, deuda y Health Score.
+- `src/pages/Diagnostic.tsx` y una futura página de deudas: presentación de métricas con estados de datos insuficientes.
+
+Se mantiene la arquitectura `React -> Services -> Repositories -> IndexedDB/Dexie`. No se propone backend, API remota, autenticación ni sincronización.
+
+### Plan de desarrollo por etapas
+
+#### Etapa 1: correcciones móviles y seguridad de operaciones
+
+**Prioridad:** imprescindible. **Esfuerzo:** medio. **Riesgo:** medio.
+
+1. Corregir header y footer móviles con posición persistente, espacio de contenido y prueba visual en páginas largas.
+2. Crear Menú y limitar el footer a Inicio, Diagnóstico y Menú.
+3. Añadir confirmación de borrado de movimientos.
+4. Traducir tipos de cuenta y ajustar la fila de accesos e indicadores del Dashboard.
+5. Eliminar la duplicación visual del resumen del período y definir la ubicación de la tasa de ahorro.
+
+#### Etapa 2: calculadora, navegación y pruebas de regresión
+
+**Prioridad:** alta. **Esfuerzo:** bajo-medio. **Riesgo:** bajo.
+
+1. Filtrar monedas iguales en la calculadora y fijar a dos decimales las salidas VES a USD/USDT.
+2. Añadir pruebas para selección de moneda, formato, borrado confirmado y traducción de tipos.
+3. Validar responsive y accesibilidad con navegación por teclado y tamaños móvil, tablet y escritorio.
+
+#### Etapa 3: respaldo e importación de datos
+
+**Prioridad:** alta antes de pruebas de estrés. **Esfuerzo:** medio-alto. **Riesgo:** alto por pérdida o corrupción de datos.
+
+1. Definir esquema versionado de respaldo.
+2. Implementar exportación JSON completa y CSV por entidad.
+3. Validar referencias y ejecutar importaciones dentro de una transacción Dexie.
+4. Añadir confirmación, modo reemplazo/combinar, reporte de errores y pruebas con datasets pequeños y grandes.
+
+#### Etapa 4: recurrentes y clasificación de dominio
+
+**Prioridad:** media-alta. **Esfuerzo:** alto. **Riesgo:** alto por duplicación de movimientos y cambios en métricas.
+
+1. Implementar plantillas recurrentes y generación idempotente.
+2. Añadir esencial/discrecional en categorías.
+3. Definir tipos de cuenta patrimoniales y transferencias a inversión.
+4. Modelar deudas y sus pagos sin confundir flujo de caja con pasivo.
+
+#### Etapa 5: diagnóstico integral y planner de deudas
+
+**Prioridad:** media, después de estabilizar el dominio. **Esfuerzo:** alto. **Riesgo:** alto.
+
+1. Implementar activos, pasivos y patrimonio neto.
+2. Implementar los cuatro componentes del Health Score con datos faltantes explícitos.
+3. Añadir cobertura de seguros y adherencia presupuestaria.
+4. Incorporar simulación Bola de Nieve/Avalancha sin escritura automática de movimientos.
+5. Cubrir fórmulas, conversiones, periodos, monedas, deuda y migraciones con pruebas de dominio.
+
+### Criterios de aceptación de esta solicitud
+
+- En móvil, el footer muestra solo Inicio, Diagnóstico y Menú; Menú permite abrir todas las páginas disponibles.
+- El header móvil y su navegación se pueden abrir desde cualquier posición vertical sin desplazar manualmente al inicio.
+- El borrado de cualquier gasto, ingreso o transferencia requiere confirmación explícita.
+- El Dashboard muestra los accesos iconográficos solicitados, Ingresos y Gastos en una fila y no duplica el resultado neto entre Patrimonio y Resumen del período.
+- Los tipos de cuenta del detalle por moneda aparecen en español.
+- La calculadora no permite la misma moneda a ambos lados y muestra solo dos decimales en VES a USD/USDT sin perder precisión interna.
+- Una exportación JSON puede restaurar las tablas y relaciones locales; los CSV se importan con validación y reporte de errores.
+- Las recurrencias generan movimientos normales como máximo una vez por fecha programada y pueden pausarse.
+- El futuro Health Score solo se muestra como 1-100 cuando sus cuatro componentes tienen reglas y datos suficientes.
+
+## Implementacion iniciada - 2026-09-08
+
+### Cambios completados en la primera fase
+
+- La navegacion inferior movil ahora muestra unicamente Inicio, Diagnostico y Menu.
+- Se creo `src/pages/Menu.tsx` con acceso a Inicio, Movimientos, Presupuestos, Metas, Diagnostico, Calculadora, Cuentas, Categorias y Configuracion.
+- `App.tsx` reconoce la pagina Menu usando el mecanismo existente de estado local y eventos `finanzas:navigate`; no se introdujo router.
+- En escritorio, el sidebar conserva solo Configuracion en la zona inferior y AppShell muestra una barra fija arriba a la derecha con Cuentas y Configuracion en todas las paginas; Categorias aparece en esa barra unicamente en Movimientos. En movil se conserva el mismo criterio mediante el encabezado fijo.
+- El borrado de gastos, ingresos, transferencias y movimientos de metas pide confirmacion antes de llamar a `deleteTransaction`, indicando que modifica saldos derivados.
+- El bloque de Patrimonio del Dashboard ya no muestra ahorro ni tasa de ahorro duplicados.
+- Ingresos y Gastos se muestran en una misma fila con iconos de entrada y salida.
+- El resumen del periodo usa el concepto Resultado neto en lugar de repetir Ahorro.
+- Los tipos de cuenta del detalle por moneda se presentan como Banco, Efectivo, Cripto, Billetera u Otra.
+
+### Verificaciones ejecutadas
+
+- `npm test` -> correcto; 1 archivo y 1 prueba aprobada.
+- `npm run lint` -> correcto.
+- `npm run build` -> correcto; permanece la advertencia conocida de bundle mayor a 500 kB.
+
+### Pendiente inmediato
+
+- Validar visualmente en movil, tablet y escritorio el nuevo Menu y el footer persistente.
+- La calculadora ya excluye la moneda origen, selecciona un destino valido al cambiarla y limita la salida VES hacia USD/USDT a dos decimales sin alterar la precision interna.
+- Continuar con pruebas de dominio antes de implementar respaldo, recurrencias, deudas y Health Score.
+
+### Verificacion adicional de calculadora
+
+- `npm test` -> correcto; 2 archivos y 3 pruebas aprobadas.
+- `npm run lint` -> correcto.
+- La logica pura de seleccion y formato vive en `src/components/calculator/calculatorUtils.ts` y tiene cobertura unitaria.
+
+### Ajustes posteriores
+
+- Los presupuestos se expresan y se guardan exclusivamente en USD, sin depender de la moneda preferida en Configuracion.
+- El gasto mensual usado para comparar presupuestos se calcula en USD.
+- Los accesos fijos de escritorio permanecen anclados al viewport: la animacion de `.page-transition` ya no aplica `transform`, que creaba un contexto de posicionamiento y hacia que Configuracion se desplazara con el contenido.
+- `Configuracion` permanece disponible en la barra fija superior de escritorio y en el sidebar; `Categorias` continua limitada a Movimientos.
+
+### Riesgos y decisiones abiertas
+
+- Definir si `Menu` sustituye por completo al menú desplegable actual o si este se conserva como acceso rápido; la recomendación es un único patrón para evitar navegación duplicada.
+- Definir si la persistencia del header requiere `position: fixed` global o basta con `sticky` dentro de un contenedor sin scroll propio; debe validarse en teléfonos reales.
+- Definir el formato CSV por tabla y la política exacta de combinación de registros antes de habilitar importación destructiva.
+- Definir el calendario y zona horaria de recurrencias, especialmente para fechas vencidas durante varios días sin abrir la aplicación.
+- Definir qué activos y pasivos forman parte del patrimonio convertible y cómo se registran sus monedas y tasas.
+- Definir escalas y límites de cada componente del Health Score; las fórmulas propuestas no son suficientes para asignar puntajes sin reglas de normalización.
+- Resolver primero la alineación de moneda base de presupuestos y diagnóstico para no construir métricas nuevas con etiquetas contradictorias.
+
+### Verificaciones de esta revisión
+
+- `npm run lint` -> correcto.
+- `npm run test` -> correcto; 1 archivo y 1 prueba aprobada.
+- `npm run build` -> correcto; Vite transforma 2749 módulos y genera un bundle JavaScript de aproximadamente 814 kB, con la advertencia existente de superar 500 kB.
+- No se realizaron cambios de código, migraciones ni pruebas visuales; todas las funcionalidades de esta solicitud permanecen pendientes.

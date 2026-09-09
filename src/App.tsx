@@ -9,6 +9,7 @@ import BalanceDetails from "./pages/BalanceDetails";
 import Settings from "./pages/Settings";
 import Accounts from "./pages/Accounts";
 import Categories from "./pages/Categories";
+import MenuPage from "./pages/Menu";
 import AppShell from "./components/layout/AppShell";
 
 
@@ -34,6 +35,9 @@ function App() {
   }
   if (page === "Diagnóstico") {
     return <Diagnostic />;
+  }
+  if (page === "Menú") {
+    return <MenuPage onNavigate={setPage} />;
   }
   if (page === "Calculadora") {
     return <CurrencyCalculatorPage onNavigate={setPage} />;

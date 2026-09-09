@@ -2,18 +2,13 @@ import type { CurrencyCode } from "../../database/db";
 
 interface BalanceCardProps {
   totalBalance: number;
-  savings: number;
-  savingsRate: number;
   currency: CurrencyCode;
 }
 
 function BalanceCard({
   totalBalance,
-  savings,
-  savingsRate,
   currency,
 }: BalanceCardProps) {
-  const savingsIsPositive = savings >= 0;
   const currencySymbol =
     currency === "VES" ? "Bs. " : currency === "USDT" ? "USDT " : "$";
 
@@ -45,40 +40,6 @@ function BalanceCard({
         {formatAmount(totalBalance)}
       </p>
 
-      <div className="my-6 h-px bg-white/10" />
-
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-xs text-white/50">
-            Ahorro del período
-          </p>
-
-          <p
-            className={`mt-1 text-xl font-bold ${savingsIsPositive
-              ? "text-success"
-              : "text-red-300"
-              }`}
-          >
-            {savingsIsPositive ? "+" : "-"}
-            {formatAmount(savings)}
-          </p>
-        </div>
-
-        <div className="text-right">
-          <p className="text-xs text-white/50">
-            Tasa de ahorro
-          </p>
-
-          <p
-            className={`mt-1 text-xl font-bold ${savingsIsPositive
-              ? "text-success"
-              : "text-red-300"
-              }`}
-          >
-            {savingsRate.toFixed(2)}%
-          </p>
-        </div>
-      </div>
     </section>
   );
 }

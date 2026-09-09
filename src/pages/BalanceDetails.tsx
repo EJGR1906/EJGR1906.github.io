@@ -10,6 +10,13 @@ interface BalanceDetailsProps {
 }
 
 const labels: Record<CurrencyCode, string> = { VES: "Bolívares", USD: "Dólares", USDT: "Tether" };
+const accountTypeLabels: Record<DashboardAccount["type"], string> = {
+    bank: "Banco",
+    cash: "Efectivo",
+    crypto: "Cripto",
+    wallet: "Billetera",
+    other: "Otra",
+};
 
 function BalanceDetails({ currency, onNavigate }: BalanceDetailsProps) {
     const [accounts, setAccounts] = useState<DashboardAccount[]>([]);
@@ -24,7 +31,7 @@ function BalanceDetails({ currency, onNavigate }: BalanceDetailsProps) {
     const Icon = currency === "USDT" ? Bitcoin : currency === "USD" ? Wallet : Banknote;
 
     return (
-        <AppShell activeItem="Inicio" onNavigate={onNavigate}>
+        <AppShell activeItem="Balances" onNavigate={onNavigate}>
             <div className="p-4 sm:p-6 lg:p-8">
                 <div className="mx-auto max-w-4xl">
                     <button type="button" onClick={() => onNavigate("Inicio")} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-dark"><ArrowLeft size={17} /> Volver al inicio</button>
@@ -40,7 +47,7 @@ function BalanceDetails({ currency, onNavigate }: BalanceDetailsProps) {
                         <div className="mt-6 divide-y divide-primary-dark/5">
                             {accounts.length === 0 ? <p className="rounded-2xl bg-background p-5 text-sm text-primary-dark/60">No hay cuentas activas en esta moneda.</p> : accounts.map((account) => (
                                 <div key={account.id} className="flex items-center justify-between gap-4 py-4 first:pt-0">
-                                    <div><p className="font-semibold text-primary-dark">{account.name}</p><p className="mt-1 text-sm text-primary-dark/55">{account.type}</p></div>
+                                    <div><p className="font-semibold text-primary-dark">{account.name}</p><p className="mt-1 text-sm text-primary-dark/55">{accountTypeLabels[account.type]}</p></div>
                                     <p className="font-bold text-primary-dark">{account.balance.toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</p>
                                 </div>
                             ))}

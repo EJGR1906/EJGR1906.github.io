@@ -9,6 +9,8 @@ import {
     X,
     Settings,
     Calculator,
+    Tags,
+    Wallet,
 } from "lucide-react";
 
 interface AppShellProps {
@@ -42,6 +44,12 @@ const navigation = [
         label: "Calculadora",
         icon: Calculator,
     },
+];
+
+const mobileNavigation = [
+    { label: "Inicio", icon: Home },
+    { label: "Diagnóstico", icon: Activity },
+    { label: "Menú", icon: Menu },
 ];
 
 function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps) {
@@ -98,6 +106,41 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                 </div>
             </aside>
 
+            {/* Desktop quick actions */}
+            <div className="fixed right-8 top-4 z-40 hidden items-center gap-2 lg:flex">
+                <button
+                    type="button"
+                    onClick={() => navigate("Cuentas")}
+                    className="flex items-center gap-2 rounded-xl border border-primary/10 bg-white px-3 py-2 text-sm font-medium text-primary-dark shadow-sm transition hover:border-primary/20 hover:bg-primary/5"
+                    title="Cuentas"
+                    aria-label="Cuentas"
+                >
+                    <Wallet size={17} />
+                    Cuentas
+                </button>
+                {activeItem === "Movimientos" && (
+                    <button
+                        type="button"
+                        onClick={() => navigate("Categorías")}
+                        className="flex items-center gap-2 rounded-xl border border-primary/10 bg-white px-3 py-2 text-sm font-medium text-primary-dark shadow-sm transition hover:border-primary/20 hover:bg-primary/5"
+                        title="Categorías"
+                        aria-label="Categorías"
+                    >
+                        <Tags size={17} />
+                        Categorías
+                    </button>
+                )}
+                <button
+                    type="button"
+                    onClick={() => navigate("Configuración")}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/10 bg-white text-primary-dark shadow-sm transition hover:border-primary/20 hover:bg-primary/5"
+                    title="Configuración"
+                    aria-label="Configuración"
+                >
+                    <Settings size={18} />
+                </button>
+            </div>
+
             {/* Mobile header */}
             <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-primary/10 bg-white/95 px-4 backdrop-blur lg:hidden">
                 <div>
@@ -110,13 +153,27 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                     </p>
                 </div>
 
-                <button
-                    onClick={() => setMenuOpen(!menuOpen)}
-                    className="rounded-xl p-2 text-primary-dark hover:bg-primary/5"
-                    aria-label="Abrir menú"
-                >
-                    {menuOpen ? <X size={22} /> : <Menu size={22} />}
-                </button>
+                <div className="flex items-center gap-1">
+                    <button onClick={() => navigate("Cuentas")} className="rounded-xl p-2 text-primary-dark hover:bg-primary/5" title="Cuentas" aria-label="Cuentas">
+                        <Wallet size={19} />
+                    </button>
+                    {activeItem === "Movimientos" && (
+                        <button onClick={() => navigate("Categorías")} className="rounded-xl p-2 text-primary-dark hover:bg-primary/5" title="Categorías" aria-label="Categorías">
+                            <Tags size={19} />
+                        </button>
+                    )}
+                    <button onClick={() => navigate("Configuración")} className="rounded-xl p-2 text-primary-dark hover:bg-primary/5" title="Configuración" aria-label="Configuración">
+                        <Settings size={19} />
+                    </button>
+                    <button
+                        onClick={() => setMenuOpen(!menuOpen)}
+                        className="rounded-xl p-2 text-primary-dark hover:bg-primary/5"
+                        aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+                        aria-expanded={menuOpen}
+                    >
+                        {menuOpen ? <X size={22} /> : <Menu size={22} />}
+                    </button>
+                </div>
             </header>
 
             {/* Mobile menu */}
@@ -166,7 +223,7 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
             {/* Mobile bottom navigation */}
             <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-primary/10 bg-white lg:hidden">
                 <div className="grid grid-cols-3">
-                    {navigation.map((item) => {
+                    {mobileNavigation.map((item) => {
                         const Icon = item.icon;
                         const active = item.label === activeItem;
 

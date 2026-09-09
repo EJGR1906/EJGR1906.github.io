@@ -125,6 +125,21 @@ function Transactions({ onNavigate }: TransactionsProps) {
     };
 
     const removeTransaction = async (id: string) => {
+        const transaction = transactions.find((item) => item.id === id);
+        if (!transaction) return;
+
+        const transactionLabel = transaction.type === "income"
+            ? "ingreso"
+            : transaction.type === "expense"
+                ? "gasto"
+                : transaction.type === "transfer"
+                    ? "transferencia"
+                    : "movimiento de meta";
+        const confirmed = window.confirm(
+            `¿Eliminar este ${transactionLabel}? Esta acción modificará los saldos derivados y no se puede deshacer.`,
+        );
+        if (!confirmed) return;
+
         await deleteTransaction(id);
         if (editingTransaction?.id === id) setEditingTransaction(null);
         await loadData();

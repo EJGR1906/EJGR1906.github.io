@@ -15,7 +15,6 @@ import {
     type ExpenseCategoryPoint,
 } from "../services/dashboardService";
 import ExpenseChart from "../components/dashboard/ExpenseChart";
-import { Settings, Tags, WalletCards } from "lucide-react";
 
 import { getBaseCurrency } from "../services/settingsService";
 
@@ -91,33 +90,6 @@ function Dashboard({ onNavigate }: DashboardProps) {
                             </p>
                         </div>
 
-                        <div className="hidden items-center gap-2 sm:flex">
-                            <button
-                                type="button"
-                                onClick={() => onNavigate?.("Cuentas")}
-                                className="flex items-center gap-2 rounded-xl border border-primary/10 bg-white px-4 py-2 text-sm font-medium text-primary-dark shadow-sm transition hover:border-primary/20 hover:bg-primary/5"
-                            >
-                                <WalletCards size={17} />
-                                Cuentas
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => onNavigate?.("Categorías")}
-                                className="flex items-center gap-2 rounded-xl border border-primary/10 bg-white px-4 py-2 text-sm font-medium text-primary-dark shadow-sm transition hover:border-primary/20 hover:bg-primary/5"
-                            >
-                                <Tags size={17} />
-                                Categorías
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => onNavigate?.("Configuración")}
-                                title="Configuración"
-                                aria-label="Configuración"
-                                className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/10 bg-white text-primary-dark shadow-sm transition hover:border-primary/20 hover:bg-primary/5"
-                            >
-                                <Settings size={18} />
-                            </button>
-                        </div>
                     </header>
 
                     {/* Selector de perÃ­odo */}
@@ -166,8 +138,6 @@ function Dashboard({ onNavigate }: DashboardProps) {
                     {/* Patrimonio */}
                     <BalanceCard
                         totalBalance={summary.totalBalance}
-                        savings={summary.savings}
-                        savingsRate={summary.savingsRate}
                         currency={baseCurrency}
                     />
 
@@ -175,7 +145,6 @@ function Dashboard({ onNavigate }: DashboardProps) {
                     <FinancialOverview
                         totalIncome={summary.totalIncome}
                         totalExpenses={summary.totalExpenses}
-                        savings={summary.savings}
                         currency={baseCurrency}
                     />
                     <AccountsOverview
@@ -221,7 +190,7 @@ function Dashboard({ onNavigate }: DashboardProps) {
 
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-primary-dark/60">
-                                        Ahorro
+                                        Resultado neto
                                     </span>
 
                                     <span className="font-semibold text-primary">

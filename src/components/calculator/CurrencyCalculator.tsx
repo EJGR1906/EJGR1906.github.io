@@ -11,17 +11,16 @@ import {
 import {
     refreshExchangeRates,
 } from "../../services/exchangeRateService";
+import {
+    currencies,
+    formatConvertedAmount,
+    getValidTargetCurrency,
+} from "./calculatorUtils";
 
 interface CurrencyCalculatorProps {
     defaultFrom?: CurrencyCode;
     defaultTo?: CurrencyCode;
 }
-
-const currencies: CurrencyCode[] = [
-    "VES",
-    "USD",
-    "USDT",
-];
 
 const currencyLabels: Record<
     CurrencyCode,
@@ -64,7 +63,9 @@ export function CurrencyCalculator({
         useState<CurrencyCode>(defaultFrom);
 
     const [toCurrency, setToCurrency] =
-        useState<CurrencyCode>(defaultTo);
+        useState<CurrencyCode>(() =>
+            getValidTargetCurrency(defaultFrom, defaultTo)
+        );
 
     const [amount, setAmount] =
         useState("1");
@@ -99,6 +100,9 @@ export function CurrencyCalculator({
     const isUsdVesPair =
         (fromCurrency === "USD" && toCurrency === "VES") ||
         (fromCurrency === "VES" && toCurrency === "USD");
+    const targetCurrencies = currencies.filter(
+        (currency) => currency !== fromCurrency,
+    );
 
     useEffect(() => {
         let cancelled = false;
@@ -333,11 +337,13 @@ export function CurrencyCalculator({
 
                     <select
                         value={fromCurrency}
-                        onChange={(event) =>
-                            setFromCurrency(
-                                event.target.value as CurrencyCode
-                            )
-                        }
+                        onChange={(event) => {
+                            const nextFromCurrency = event.target.value as CurrencyCode;
+                            setFromCurrency(nextFromCurrency);
+                            setToCurrency((currentToCurrency) =>
+                                getValidTargetCurrency(nextFromCurrency, currentToCurrency)
+                            );
+                        }}
                         className="rounded-xl border border-slate-200 bg-white px-3 py-3 font-semibold text-primary-dark outline-none focus:border-primary"
                     >
                         {currencies.map(
@@ -384,8 +390,9 @@ export function CurrencyCalculator({
                             {loading
                                 ? "Calculando..."
                                 : convertedAmount !== null
-                                    ? formatNumber(
+                                    ? formatConvertedAmount(
                                         convertedAmount,
+                                        fromCurrency,
                                         toCurrency
                                     )
                                     : "—"}
@@ -401,7 +408,7 @@ export function CurrencyCalculator({
                         }
                         className="rounded-xl border border-slate-200 bg-white px-3 py-3 font-semibold text-primary-dark outline-none focus:border-primary"
                     >
-                        {currencies.map(
+                        {targetCurrencies.map(
                             (currency) => (
                                 <option
                                     key={currency}
