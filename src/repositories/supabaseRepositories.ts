@@ -3,95 +3,95 @@ import { getActiveUserId } from "../database/persistence";
 import type { Account, Category, ExchangeRate, Goal, RecurringTransaction, Transaction } from "../database/db";
 
 function userId(): string {
-  const value = getActiveUserId();
-  if (!value) throw new Error("No hay una sesión activa.");
-  return value;
+    const value = getActiveUserId();
+    if (!value) throw new Error("No hay una sesión activa.");
+    return value;
 }
 
 function record(value: unknown): Record<string, unknown> {
-  return (value ?? {}) as Record<string, unknown>;
+    return (value ?? {}) as Record<string, unknown>;
 }
 
 function accountFromCloud(value: unknown): Account {
-  const row = record(value);
-  return {
-    id: String(row.id), name: String(row.name), institutionId: typeof row.institution_id === "string" ? row.institution_id : undefined,
-    type: row.type as Account["type"], currency: row.currency as Account["currency"], initialBalance: Number(row.initial_balance ?? 0),
-    active: Boolean(row.active), nature: row.nature as Account["nature"], creditLimit: row.credit_limit == null ? undefined : Number(row.credit_limit),
-  };
+    const row = record(value);
+    return {
+        id: String(row.id), name: String(row.name), institutionId: typeof row.institution_id === "string" ? row.institution_id : undefined,
+        type: row.type as Account["type"], currency: row.currency as Account["currency"], initialBalance: Number(row.initial_balance ?? 0),
+        active: Boolean(row.active), nature: row.nature as Account["nature"], creditLimit: row.credit_limit == null ? undefined : Number(row.credit_limit),
+    };
 }
 
 function accountToCloud(value: Account, owner: string) {
-  return { id: value.id, user_id: owner, name: value.name, institution_id: value.institutionId ?? null, type: value.type, currency: value.currency, initial_balance: value.initialBalance, active: value.active, nature: value.nature ?? "asset", credit_limit: value.creditLimit ?? null };
+    return { id: value.id, user_id: owner, name: value.name, institution_id: value.institutionId ?? null, type: value.type, currency: value.currency, initial_balance: value.initialBalance, active: value.active, nature: value.nature ?? "asset", credit_limit: value.creditLimit ?? null };
 }
 
 function categoryFromCloud(value: unknown): Category {
-  const row = record(value);
-  return { id: String(row.id), name: String(row.name), type: row.type as Category["type"], icon: typeof row.icon === "string" ? row.icon : undefined };
+    const row = record(value);
+    return { id: String(row.id), name: String(row.name), type: row.type as Category["type"], icon: typeof row.icon === "string" ? row.icon : undefined };
 }
 
 function categoryToCloud(value: Category, owner: string) {
-  return { id: value.id, user_id: owner, name: value.name, type: value.type, icon: value.icon ?? null };
+    return { id: value.id, user_id: owner, name: value.name, type: value.type, icon: value.icon ?? null };
 }
 
 function goalFromCloud(value: unknown): Goal {
-  const row = record(value);
-  return { id: String(row.id), name: String(row.name), targetAmount: Number(row.target_amount ?? 0), currency: row.currency as Goal["currency"], backingAccountId: String(row.backing_account_id), category: row.category as Goal["category"], deadline: typeof row.deadline === "string" ? row.deadline : undefined, active: Boolean(row.active), createdAt: String(row.created_at), updatedAt: String(row.updated_at) };
+    const row = record(value);
+    return { id: String(row.id), name: String(row.name), targetAmount: Number(row.target_amount ?? 0), currency: row.currency as Goal["currency"], backingAccountId: String(row.backing_account_id), category: row.category as Goal["category"], deadline: typeof row.deadline === "string" ? row.deadline : undefined, active: Boolean(row.active), createdAt: String(row.created_at), updatedAt: String(row.updated_at) };
 }
 
 function goalToCloud(value: Goal, owner: string) {
-  return { id: value.id, user_id: owner, name: value.name, target_amount: value.targetAmount, currency: value.currency, backing_account_id: value.backingAccountId, category: value.category, deadline: value.deadline ?? null, active: value.active, created_at: value.createdAt, updated_at: value.updatedAt };
+    return { id: value.id, user_id: owner, name: value.name, target_amount: value.targetAmount, currency: value.currency, backing_account_id: value.backingAccountId, category: value.category, deadline: value.deadline ?? null, active: value.active, created_at: value.createdAt, updated_at: value.updatedAt };
 }
 
 function transactionFromCloud(value: unknown): Transaction {
-  const row = record(value);
-  return { id: String(row.id), type: row.type as Transaction["type"], amount: row.amount == null ? undefined : Number(row.amount), currency: row.currency as Transaction["currency"], accountId: row.account_id as string | undefined, categoryId: row.category_id as string | undefined, goalId: row.goal_id as string | undefined, fromAccountId: row.from_account_id as string | undefined, toAccountId: row.to_account_id as string | undefined, fromAmount: row.from_amount == null ? undefined : Number(row.from_amount), fromCurrency: row.from_currency as Transaction["fromCurrency"], toAmount: row.to_amount == null ? undefined : Number(row.to_amount), toCurrency: row.to_currency as Transaction["toCurrency"], exchangeRate: row.exchange_rate == null ? undefined : Number(row.exchange_rate), description: row.description as string | undefined, date: String(row.date), createdAt: String(row.created_at) };
+    const row = record(value);
+    return { id: String(row.id), type: row.type as Transaction["type"], amount: row.amount == null ? undefined : Number(row.amount), currency: row.currency as Transaction["currency"], accountId: row.account_id as string | undefined, categoryId: row.category_id as string | undefined, goalId: row.goal_id as string | undefined, fromAccountId: row.from_account_id as string | undefined, toAccountId: row.to_account_id as string | undefined, fromAmount: row.from_amount == null ? undefined : Number(row.from_amount), fromCurrency: row.from_currency as Transaction["fromCurrency"], toAmount: row.to_amount == null ? undefined : Number(row.to_amount), toCurrency: row.to_currency as Transaction["toCurrency"], exchangeRate: row.exchange_rate == null ? undefined : Number(row.exchange_rate), description: row.description as string | undefined, date: String(row.date), createdAt: String(row.created_at) };
 }
 
 function transactionToCloud(value: Transaction, owner: string) {
-  return { id: value.id, user_id: owner, type: value.type, amount: value.amount ?? null, currency: value.currency ?? null, account_id: value.accountId ?? null, category_id: value.categoryId ?? null, goal_id: value.goalId ?? null, from_account_id: value.fromAccountId ?? null, to_account_id: value.toAccountId ?? null, from_amount: value.fromAmount ?? null, from_currency: value.fromCurrency ?? null, to_amount: value.toAmount ?? null, to_currency: value.toCurrency ?? null, exchange_rate: value.exchangeRate ?? null, description: value.description ?? null, date: value.date, created_at: value.createdAt };
+    return { id: value.id, user_id: owner, type: value.type, amount: value.amount ?? null, currency: value.currency ?? null, account_id: value.accountId ?? null, category_id: value.categoryId ?? null, goal_id: value.goalId ?? null, from_account_id: value.fromAccountId ?? null, to_account_id: value.toAccountId ?? null, from_amount: value.fromAmount ?? null, from_currency: value.fromCurrency ?? null, to_amount: value.toAmount ?? null, to_currency: value.toCurrency ?? null, exchange_rate: value.exchangeRate ?? null, description: value.description ?? null, date: value.date, created_at: value.createdAt };
 }
 
 function exchangeRateFromCloud(value: unknown): ExchangeRate {
-  const row = record(value);
-  return { id: String(row.id), source: row.source as ExchangeRate["source"], baseCurrency: row.base_currency as ExchangeRate["baseCurrency"], quoteCurrency: row.quote_currency as ExchangeRate["quoteCurrency"], rate: Number(row.rate), timestamp: String(row.timestamp) };
+    const row = record(value);
+    return { id: String(row.id), source: row.source as ExchangeRate["source"], baseCurrency: row.base_currency as ExchangeRate["baseCurrency"], quoteCurrency: row.quote_currency as ExchangeRate["quoteCurrency"], rate: Number(row.rate), timestamp: String(row.timestamp) };
 }
 
 function exchangeRateToCloud(value: ExchangeRate, owner: string) {
-  return { id: value.id, user_id: owner, source: value.source, base_currency: value.baseCurrency, quote_currency: value.quoteCurrency, rate: value.rate, timestamp: value.timestamp };
+    return { id: value.id, user_id: owner, source: value.source, base_currency: value.baseCurrency, quote_currency: value.quoteCurrency, rate: value.rate, timestamp: value.timestamp };
 }
 
 function recurringFromCloud(value: unknown): RecurringTransaction {
-  const row = record(value);
-  return { id: String(row.id), type: row.type as RecurringTransaction["type"], accountId: row.account_id as string | undefined, fromAccountId: row.from_account_id as string | undefined, toAccountId: row.to_account_id as string | undefined, categoryId: row.category_id as string | undefined, amount: row.amount == null ? undefined : Number(row.amount), currency: row.currency as RecurringTransaction["currency"], fromAmount: row.from_amount == null ? undefined : Number(row.from_amount), fromCurrency: row.from_currency as RecurringTransaction["fromCurrency"], toAmount: row.to_amount == null ? undefined : Number(row.to_amount), toCurrency: row.to_currency as RecurringTransaction["toCurrency"], exchangeRate: row.exchange_rate == null ? undefined : Number(row.exchange_rate), description: row.description as string | undefined, frequency: row.frequency as RecurringTransaction["frequency"], nextDate: String(row.next_date), endDate: row.end_date as string | undefined, active: Boolean(row.active), lastGeneratedDate: row.last_generated_date as string | undefined };
+    const row = record(value);
+    return { id: String(row.id), type: row.type as RecurringTransaction["type"], accountId: row.account_id as string | undefined, fromAccountId: row.from_account_id as string | undefined, toAccountId: row.to_account_id as string | undefined, categoryId: row.category_id as string | undefined, amount: row.amount == null ? undefined : Number(row.amount), currency: row.currency as RecurringTransaction["currency"], fromAmount: row.from_amount == null ? undefined : Number(row.from_amount), fromCurrency: row.from_currency as RecurringTransaction["fromCurrency"], toAmount: row.to_amount == null ? undefined : Number(row.to_amount), toCurrency: row.to_currency as RecurringTransaction["toCurrency"], exchangeRate: row.exchange_rate == null ? undefined : Number(row.exchange_rate), description: row.description as string | undefined, frequency: row.frequency as RecurringTransaction["frequency"], nextDate: String(row.next_date), endDate: row.end_date as string | undefined, active: Boolean(row.active), lastGeneratedDate: row.last_generated_date as string | undefined };
 }
 
 function recurringToCloud(value: RecurringTransaction, owner: string) {
-  return { id: value.id, user_id: owner, type: value.type, account_id: value.accountId ?? null, from_account_id: value.fromAccountId ?? null, to_account_id: value.toAccountId ?? null, category_id: value.categoryId ?? null, amount: value.amount ?? null, currency: value.currency ?? null, from_amount: value.fromAmount ?? null, from_currency: value.fromCurrency ?? null, to_amount: value.toAmount ?? null, to_currency: value.toCurrency ?? null, exchange_rate: value.exchangeRate ?? null, description: value.description ?? null, frequency: value.frequency, next_date: value.nextDate, end_date: value.endDate ?? null, active: value.active, last_generated_date: value.lastGeneratedDate ?? null };
+    return { id: value.id, user_id: owner, type: value.type, account_id: value.accountId ?? null, from_account_id: value.fromAccountId ?? null, to_account_id: value.toAccountId ?? null, category_id: value.categoryId ?? null, amount: value.amount ?? null, currency: value.currency ?? null, from_amount: value.fromAmount ?? null, from_currency: value.fromCurrency ?? null, to_amount: value.toAmount ?? null, to_currency: value.toCurrency ?? null, exchange_rate: value.exchangeRate ?? null, description: value.description ?? null, frequency: value.frequency, next_date: value.nextDate, end_date: value.endDate ?? null, active: value.active, last_generated_date: value.lastGeneratedDate ?? null };
 }
 
 async function read(table: string, order?: string) {
-  let query = supabase.from(table).select("*").eq("user_id", userId());
-  if (order) query = query.order(order, { ascending: false });
-  const { data, error } = await query;
-  if (error) throw error;
-  return data ?? [];
+    let query = supabase.from(table).select("*").eq("user_id", userId());
+    if (order) query = query.order(order, { ascending: false });
+    const { data, error } = await query;
+    if (error) throw error;
+    return data ?? [];
 }
 
 async function write(table: string, value: Record<string, unknown>): Promise<string> {
-  const { data, error } = await supabase.from(table).upsert(value, { onConflict: "id" }).select("id").single();
-  if (error) throw error;
-  return String(record(data).id);
+    const { data, error } = await supabase.from(table).upsert(value, { onConflict: "id" }).select("id").single();
+    if (error) throw error;
+    return String(record(data).id);
 }
 
 async function patch(table: string, id: string, changes: Record<string, unknown>): Promise<void> {
-  const { error } = await supabase.from(table).update(changes).eq("id", id).eq("user_id", userId());
-  if (error) throw error;
+    const { error } = await supabase.from(table).update(changes).eq("id", id).eq("user_id", userId());
+    if (error) throw error;
 }
 
 async function remove(table: string, id: string): Promise<void> {
-  const { error } = await supabase.from(table).delete().eq("id", id).eq("user_id", userId());
-  if (error) throw error;
+    const { error } = await supabase.from(table).delete().eq("id", id).eq("user_id", userId());
+    if (error) throw error;
 }
 
 export async function getCloudAccounts() { return (await read("accounts", "created_at")).map(accountFromCloud); }

@@ -1,13 +1,13 @@
 let activeUserId: string | null = null;
 
 export function setActiveUser(userId: string | null): void {
-  activeUserId = userId;
+    activeUserId = userId;
 }
 
 export function getActiveUserId(): string | null {
-  return activeUserId;
+    return activeUserId;
 }
 
 export function isCloudPersistenceEnabled(): boolean {
-  return activeUserId !== null;
+    return activeUserId !== null;
 }
