@@ -12,8 +12,8 @@ import Categories from "./pages/Categories";
 import MenuPage from "./pages/Menu";
 import AppShell from "./components/layout/AppShell";
 import Recurring from "./pages/Recurring";
-
-
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 function App() {
   const [page, setPage] = useState("Inicio");
 
@@ -81,7 +81,10 @@ function CurrencyCalculatorPage({ onNavigate }: { onNavigate: (label: string) =>
           <button type="button" onClick={() => onNavigate("Inicio")} className="mt-4 text-sm font-semibold text-primary hover:text-primary-dark">Volver al inicio</button>
         </div>
       </div>
+      <Analytics />
+      <SpeedInsights dsn="romeJqQD2OuUq1I5JNsNKXN43O2" />
     </AppShell>
+
   );
 }
 
