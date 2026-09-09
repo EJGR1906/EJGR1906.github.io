@@ -3,7 +3,7 @@ import Transactions from "./pages/Transactions";
 import Budgets from "./pages/Budgets";
 import Goals from "./pages/Goals";
 import Diagnostic from "./pages/Diagnostic";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CurrencyCalculator } from "./components/calculator/CurrencyCalculator";
 import BalanceDetails from "./pages/BalanceDetails";
 import Settings from "./pages/Settings";
@@ -17,16 +17,21 @@ import Recurring from "./pages/Recurring";
 function App() {
   const [page, setPage] = useState("Inicio");
 
+  const navigate = useCallback((nextPage: string) => {
+    setPage(nextPage);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
   useEffect(() => {
     const handleNavigation = (event: Event) => {
-      setPage((event as CustomEvent<string>).detail);
+      navigate((event as CustomEvent<string>).detail);
     };
     window.addEventListener("finanzas:navigate", handleNavigation);
     return () => window.removeEventListener("finanzas:navigate", handleNavigation);
-  }, []);
+  }, [navigate]);
 
   if (page === "Movimientos") {
-    return <Transactions onNavigate={setPage} />;
+    return <Transactions onNavigate={navigate} />;
   }
   if (page === "Presupuestos") {
     return <Budgets />;
@@ -35,31 +40,31 @@ function App() {
     return <Goals />;
   }
   if (page === "Diagnóstico") {
-    return <Diagnostic onNavigate={setPage} />;
+    return <Diagnostic onNavigate={navigate} />;
   }
   if (page === "Menú") {
-    return <MenuPage onNavigate={setPage} />;
+    return <MenuPage onNavigate={navigate} />;
   }
   if (page === "Calculadora") {
-    return <CurrencyCalculatorPage onNavigate={setPage} />;
+    return <CurrencyCalculatorPage onNavigate={navigate} />;
   }
   if (page === "Recurrentes") {
-    return <Recurring onNavigate={setPage} />;
+    return <Recurring onNavigate={navigate} />;
   }
   if (page === "Configuración") {
-    return <Settings onNavigate={setPage} />;
+    return <Settings onNavigate={navigate} />;
   }
   if (page === "Cuentas") {
-    return <Accounts onNavigate={setPage} />;
+    return <Accounts onNavigate={navigate} />;
   }
   if (page === "Categorías") {
-    return <Categories onNavigate={setPage} />;
+    return <Categories onNavigate={navigate} />;
   }
   if (page.startsWith("Balances:")) {
-    return <BalanceDetails currency={page.split(":")[1] as "VES" | "USD" | "USDT"} onNavigate={setPage} />;
+    return <BalanceDetails currency={page.split(":")[1] as "VES" | "USD" | "USDT"} onNavigate={navigate} />;
   }
 
-  return <Dashboard onNavigate={setPage} />;
+  return <Dashboard onNavigate={navigate} />;
 }
 
 function CurrencyCalculatorPage({ onNavigate }: { onNavigate: (label: string) => void }) {

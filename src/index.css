@@ -189,6 +189,12 @@ textarea:focus-visible {
     font-size: 16px; /* Prevent iOS zoom on focus */
   }
 
+  .field[type="date"] {
+    display: block;
+    min-inline-size: 0;
+    inline-size: 100%;
+  }
+
   .field:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
