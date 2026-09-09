@@ -28,6 +28,8 @@ export interface Category {
 
 export type CurrencyCode = "VES" | "USD" | "USDT";
 
+export type GoalCategory = "emergency" | "purchase" | "investment";
+
 export type TransactionType =
   | "income"
   | "expense"
@@ -41,6 +43,8 @@ export interface Goal {
   targetAmount: number;
   currency: CurrencyCode;
   backingAccountId: string;
+  category: GoalCategory;
+  deadline?: string;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -161,4 +165,21 @@ db.version(3)
       "id, type, currency, accountId, categoryId, goalId, date, createdAt",
     exchangeRates:
       "id, source, baseCurrency, quoteCurrency, timestamp, [baseCurrency+quoteCurrency]",
+  });
+
+db.version(4)
+  .stores({
+    accounts: "id, currency, type, active, institutionId",
+    categories: "id, type",
+    goals: "id, backingAccountId, active, currency, category, deadline, updatedAt",
+    transactions:
+      "id, type, currency, accountId, categoryId, goalId, date, createdAt",
+    exchangeRates:
+      "id, source, baseCurrency, quoteCurrency, timestamp, [baseCurrency+quoteCurrency]",
+  })
+  .upgrade(async (transaction) => {
+    const goals = transaction.table("goals");
+    await goals.toCollection().modify((goal) => {
+      goal.category ??= "purchase";
+    });
   });

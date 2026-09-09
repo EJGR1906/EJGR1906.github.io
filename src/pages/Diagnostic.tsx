@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
-import { Activity, ArrowDownRight, CheckCircle2, Gauge, ShieldAlert } from "lucide-react";
+import { Activity, ArrowDownRight, CheckCircle2, Gauge, ShieldAlert, Target } from "lucide-react";
 import AppShell from "../components/layout/AppShell";
 import { getDashboardSummary, type DashboardSummary } from "../services/dashboardService";
 import { getBaseCurrency } from "../services/settingsService";
+import { getGoalsWithProgress, type GoalProgress } from "../services/goalService";
 
 function Diagnostic() {
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
-    useEffect(() => { void getDashboardSummary(getBaseCurrency(), "month").then(setSummary); }, []);
+    const [goals, setGoals] = useState<GoalProgress[]>([]);
+    useEffect(() => {
+        void Promise.all([
+            getDashboardSummary(getBaseCurrency(), "month"),
+            getGoalsWithProgress(),
+        ]).then(([dashboardSummary, goalProgress]) => {
+            setSummary(dashboardSummary);
+            setGoals(goalProgress);
+        });
+    }, []);
     if (!summary) return <AppShell activeItem="Diagnóstico"><div className="p-6 text-primary-dark/60">Cargando tu diagnóstico...</div></AppShell>;
     const savingsScore = Math.max(0, Math.min(100, summary.savingsRate));
     const topExpense = summary.expensesByCategory[0];
     const accountCount = summary.accounts.filter((account) => account.balance > 0).length;
     const checks = [{ label: "Tasa de ahorro", value: `${summary.savingsRate.toFixed(1)}%`, note: summary.savingsRate >= 20 ? "Buen ritmo de ahorro" : "Busca reservar al menos 10%", icon: Gauge, good: summary.savingsRate >= 10 }, { label: "Patrimonio líquido", value: `$${summary.totalBalance.toFixed(2)}`, note: `${accountCount} cuenta${accountCount === 1 ? " activa" : "s activas"}`, icon: Activity, good: summary.totalBalance > 0 }, { label: "Mayor categoría de gasto", value: topExpense?.categoryName || "Sin datos", note: topExpense ? `$${topExpense.amountInBaseCurrency.toFixed(2)} este mes` : "Registra gastos para verlo", icon: ArrowDownRight, good: !topExpense || topExpense.percentage < 50 }];
+    const goalCategoryCounts = goals.reduce((counts, item) => ({ ...counts, [item.goal.category]: (counts[item.goal.category] || 0) + 1 }), { emergency: 0, purchase: 0, investment: 0 });
+    checks.push({ label: "Metas por enfoque", value: `${goals.length} meta${goals.length === 1 ? "" : "s"}`, note: `Reserva: ${goalCategoryCounts.emergency} · Compra: ${goalCategoryCounts.purchase} · Inversión: ${goalCategoryCounts.investment}`, icon: Target, good: goals.length > 0 });
     return <AppShell activeItem="Diagnóstico"><div className="p-4 sm:p-6 lg:p-8"><div className="mx-auto max-w-6xl"><header className="mb-6"><p className="text-sm font-medium text-primary">Lectura de tus datos</p><h1 className="mt-1 text-2xl font-bold text-primary-dark sm:text-3xl">Diagnóstico financiero</h1><p className="mt-1 max-w-2xl text-sm text-primary-dark/60">Una guía sencilla basada en tus movimientos del mes. No es una calificación bancaria: es una señal para decidir mejor.</p></header><section className="mb-6 grid gap-5 rounded-3xl bg-primary-dark p-5 text-white shadow-sm sm:p-7 lg:grid-cols-[0.7fr_1.3fr] lg:items-center"><div><p className="text-sm text-sky">Salud financiera del mes</p><p className="mt-2 text-5xl font-bold">{savingsScore.toFixed(0)}<span className="text-2xl text-sky">/100</span></p><p className="mt-3 text-sm text-white/65">{summary.savingsRate >= 20 ? "Tu ahorro muestra una base sólida." : "Hay espacio para fortalecer tu margen mensual."}</p></div><div className="rounded-2xl bg-white/10 p-4"><p className="text-sm text-white/70">Resumen rápido</p><div className="mt-4 grid grid-cols-2 gap-4"><div><p className="text-xs text-white/55">Ingresos</p><p className="mt-1 text-lg font-bold">${summary.totalIncome.toFixed(2)}</p></div><div><p className="text-xs text-white/55">Gastos</p><p className="mt-1 text-lg font-bold">${summary.totalExpenses.toFixed(2)}</p></div></div></div></section><div className="grid gap-4 md:grid-cols-3">{checks.map((check) => { const Icon = check.icon; return <article key={check.label} className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5"><div className="flex items-center justify-between"><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${check.good ? "bg-success/10 text-success" : "bg-amber-100 text-amber-700"}`}><Icon size={19} /></div>{check.good ? <CheckCircle2 size={18} className="text-success" /> : <ShieldAlert size={18} className="text-amber-600" />}</div><p className="mt-5 text-sm text-primary-dark/55">{check.label}</p><p className="mt-1 truncate text-xl font-bold text-primary-dark">{check.value}</p><p className="mt-2 text-xs text-primary-dark/55">{check.note}</p></article>; })}</div></div></div></AppShell>;
 }
 

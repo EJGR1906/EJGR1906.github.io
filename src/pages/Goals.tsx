@@ -1,10 +1,11 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from "react";
-import { Plus, Target } from "lucide-react";
+import { Plus, Target, Trash2 } from "lucide-react";
 import AppShell from "../components/layout/AppShell";
 import { type Account, type Goal } from "../database/db";
 import {
     createGoal as createGoalEntity,
     getActiveGoalAccounts,
+    deleteGoalWithTransactions,
     getGoalsWithProgress,
     migrateLegacyGoals,
 } from "../services/goalService";
@@ -12,10 +13,13 @@ import {
     createGoalContribution,
     createGoalWithdrawal,
 } from "../services/transactionService";
+import { todayLocal } from "../utils/date";
 
 type GoalWithProgress = Goal & {
     savedAmount: number;
     progress: number;
+    monthsRemaining: number | null;
+    suggestedMonthlyContribution: number | null;
 };
 
 function Goals() {
@@ -26,6 +30,8 @@ function Goals() {
         target: "",
         currency: "USD" as Goal["currency"],
         backingAccountId: "",
+        category: "purchase" as Goal["category"],
+        deadline: "",
     });
     const [message, setMessage] = useState("");
     const [contributionAmount, setContributionAmount] = useState<Record<string, string>>({});
@@ -41,6 +47,8 @@ function Goals() {
             ...item.goal,
             savedAmount: item.savedAmount,
             progress: item.progressPercent,
+            monthsRemaining: item.monthsRemaining,
+            suggestedMonthlyContribution: item.suggestedMonthlyContribution,
         })));
     }, []);
 
@@ -74,9 +82,11 @@ function Goals() {
             targetAmount: Number(form.target),
             currency: form.currency,
             backingAccountId: selectedAccountId,
+            category: form.category,
+            deadline: form.deadline || undefined,
             active: true,
         });
-        setForm({ name: "", target: "", currency: "USD", backingAccountId: "" });
+        setForm({ name: "", target: "", currency: "USD", backingAccountId: "", category: "purchase", deadline: "" });
         setMessage("Meta creada correctamente.");
         await loadGoals();
     };
@@ -113,6 +123,21 @@ function Goals() {
             direction === "goal_contribution" ? "Aporte registrado en la meta." : "Retiro registrado en la meta."
         );
         await loadGoals();
+    };
+
+    const removeGoal = async (goal: GoalWithProgress) => {
+        const confirmed = window.confirm(
+            `¿Eliminar la meta "${goal.name}" y todos sus aportes y retiros? Esta acción no se puede deshacer.`,
+        );
+        if (!confirmed) return;
+
+        try {
+            await deleteGoalWithTransactions(goal.id);
+            setMessage("Meta y movimientos eliminados correctamente.");
+            await loadGoals();
+        } catch (error) {
+            setMessage(error instanceof Error ? error.message : "No se pudo eliminar la meta.");
+        }
     };
 
     return (
@@ -178,6 +203,30 @@ function Goals() {
                                 </label>
 
                                 <label className="block text-sm font-medium text-primary-dark">
+                                    Tipo de meta
+                                    <select
+                                        value={form.category}
+                                        onChange={(event) => setForm({ ...form, category: event.target.value as Goal["category"] })}
+                                        className="field mt-1"
+                                    >
+                                        <option value="emergency">Fondo de emergencia / Reserva</option>
+                                        <option value="purchase">Compra / Consumo</option>
+                                        <option value="investment">Inversión / Retiro</option>
+                                    </select>
+                                </label>
+
+                                <label className="block text-sm font-medium text-primary-dark">
+                                    Fecha límite <span className="font-normal text-primary-dark/40">(opcional)</span>
+                                    <input
+                                        className="field mt-1"
+                                        type="date"
+                                        min={todayLocal()}
+                                        value={form.deadline}
+                                        onChange={(event) => setForm({ ...form, deadline: event.target.value })}
+                                    />
+                                </label>
+
+                                <label className="block text-sm font-medium text-primary-dark">
                                     Cuenta de respaldo
                                     <select
                                         value={form.backingAccountId}
@@ -236,10 +285,24 @@ function Goals() {
                                                                 maximumFractionDigits: 2,
                                                             })} {goal.currency}
                                                         </p>
+                                                        <p className="mt-1 text-xs text-primary-dark/55">
+                                                            {goal.category === "emergency" ? "Fondo de emergencia / Reserva" : goal.category === "investment" ? "Inversión / Retiro" : "Compra / Consumo"}
+                                                        </p>
                                                     </div>
-                                                    <span className="text-xs font-semibold text-primary">
-                                                        {goal.progress.toFixed(0)}%
-                                                    </span>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-xs font-semibold text-primary">
+                                                            {goal.progress.toFixed(0)}%
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => void removeGoal(goal)}
+                                                            className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-800"
+                                                            title="Eliminar meta y movimientos"
+                                                        >
+                                                            <Trash2 size={15} />
+                                                            Eliminar
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-primary-dark/5">
@@ -255,6 +318,13 @@ function Goals() {
                                                     </span>
                                                     <span>{goal.currency}</span>
                                                 </div>
+
+                                                {goal.deadline && (
+                                                    <p className="mt-2 text-xs text-primary-dark/55">
+                                                        Fecha límite: {goal.deadline}
+                                                        {goal.suggestedMonthlyContribution !== null && ` · Aporte mensual sugerido: ${goal.suggestedMonthlyContribution.toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${goal.currency}`}
+                                                    </p>
+                                                )}
 
                                                 <div className="mt-4 flex items-center gap-2">
                                                     <input

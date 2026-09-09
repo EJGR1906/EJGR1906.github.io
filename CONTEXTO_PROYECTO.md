@@ -698,6 +698,80 @@ Medio-alto. La base funcional y persistencia existen, pero las tareas restantes 
 - Definir si una meta permite retiros parciales y si una meta completada permanece activa para nuevos aportes.
 - Elegir la estrategia de pruebas local: Vitest u otra herramienta compatible, sin convertir el proyecto en una aplicación remota.
 
+## Solicitud analizada: fecha límite, categoría y aporte mensual sugerido en metas
+
+### Objetivo y resultado del análisis
+
+Se revisó el flujo completo de metas en `src/database/db.ts`, `src/pages/Goals.tsx`, `src/services/goalService.ts`, `src/repositories/goalRepository.ts`, `src/services/transactionService.ts`, `src/pages/Transactions.tsx` y `src/pages/Diagnostic.tsx`, además de los usos de `Goal`, las utilidades de fecha, las pruebas y la configuración del proyecto.
+
+La funcionalidad no está implementada todavía. `Goal` solo contiene nombre, objetivo, moneda, cuenta de respaldo, estado y auditoría; `Goals.tsx` solo captura esos campos; `goalService.ts` valida objetivo, cuenta, moneda, aportes, retiros y disponibilidad; y `Diagnostic.tsx` actualmente consume únicamente `getDashboardSummary()`, sin leer metas.
+
+### Cambios mínimos recomendados
+
+**Modelo en `src/database/db.ts`:**
+
+- Añadir `GoalCategory = "emergency" | "purchase" | "investment"`.
+- Añadir `category: GoalCategory` como campo requerido para nuevas metas.
+- Añadir `deadline?: string`, usando exclusivamente fecha de calendario `YYYY-MM-DD`, no un `Date` serializado.
+- Añadir `suggestedMonthlyContribution?: number`, como importe positivo opcional introducido o confirmado por el usuario. Si se desea una sugerencia automática, debe calcularse desde `remainingAmount` y los meses de calendario hasta `deadline`, sin almacenarla como saldo derivado.
+
+**Migración Dexie:**
+
+- Crear `db.version(4)` conservando las tablas y los índices actuales; añadir índices `category` y `deadline` solo si se van a filtrar u ordenar desde repositorio.
+- En `upgrade`, normalizar metas existentes sin reescribir sus fechas de creación, progreso ni transacciones: asignar `category: "purchase"` como valor de compatibilidad explícito cuando no haya información histórica, dejar `deadline` ausente y dejar `suggestedMonthlyContribution` ausente.
+- La migración de `localStorage` en `migrateLegacyGoals()` debe aplicar los mismos valores por defecto y conservar el comportamiento idempotente. No se puede inferir de forma fiable la categoría, fecha límite o aporte sugerido de una meta antigua.
+- No modificar `Transaction`, porque los movimientos ya referencian `goalId` y el progreso seguirá siendo derivado de aportes/retiros.
+
+**Servicio y UI:**
+
+- En `src/services/goalService.ts`, validar categoría contra el tipo union, fecha con formato estricto y aporte sugerido finito y mayor que cero cuando exista; rechazar una fecha límite inválida. La fecha pasada debe ser una decisión funcional, no una consecuencia accidental del parseo.
+- En `src/pages/Goals.tsx`, añadir selector de categoría, fecha opcional y aporte mensual sugerido opcional; mostrar fecha, categoría, restante y aporte recomendado en cada meta.
+- Mantener `createGoal()` como frontera de dominio. `goalRepository.ts` debe seguir limitado a persistencia; no trasladar validaciones a la pantalla ni al repositorio.
+- En `src/pages/Transactions.tsx`, no se requiere cambio de contrato: los aportes y retiros siguen usando `goalId`. Puede mostrarse la categoría/nombre de la meta en el selector como mejora de identificación, pero no es imprescindible para la primera entrega.
+
+### Conexión con Diagnostic
+
+La conexión actual es inexistente y no debe hacerse importando `db` desde `Diagnostic.tsx`. La opción mínima y coherente es añadir en `goalService.ts` una función de lectura derivada, por ejemplo `getGoalDiagnosticSummary()`, que reutilice `getGoalsWithProgress()` y devuelva metas activas, metas vencidas, metas próximas a vencer, progreso agregado y aportes mensuales sugeridos. `Diagnostic.tsx` consumiría ese DTO junto con `getDashboardSummary()`.
+
+La primera integración visible puede ser una comprobación adicional: metas vencidas sin completar y metas cuyo aporte mensual sugerido supera el ahorro mensual disponible. La comparación debe respetar moneda; no se deben comparar importes de metas con el ahorro del Dashboard convertido sin una tasa y periodo explícitos. Una conexión futura puede desglosar el diagnóstico por `emergency`, `purchase` e `investment`, sin cambiar el cálculo del patrimonio ni tratar metas como cuentas.
+
+### Riesgos de fechas
+
+- `input type="date"` entrega `YYYY-MM-DD`, mientras `new Date("YYYY-MM-DD")` puede interpretarse en UTC y cambiar de día en Venezuela. La validación y los cálculos de plazo deben tratar la fecha límite como fecha civil, no como instante.
+- Las fechas de movimientos sí se guardan como ISO con hora (`new Date(`${form.date}T12:00:00`).toISOString()`), por lo que no debe mezclarse ese formato con `Goal.deadline`.
+- Debe definirse si se permite una fecha pasada al crear o editar. Recomendación: permitirla para importar datos y marcar la meta como vencida; bloquear solo nuevas fechas con formato inválido. También debe definirse si una meta completada mantiene el estado `active`.
+- Para el aporte mensual automático, usar meses de calendario y documentar el redondeo monetario; no calcular con milisegundos ni dividir por una duración aproximada de 30 días.
+
+### Pruebas recomendadas
+
+- Migración Dexie v3 -> v4: conserva metas y transacciones, añade `category: "purchase"` solo cuando falta y no inventa fecha ni aporte.
+- Migración de `localStorage`: importa una meta antigua una sola vez, conserva su objetivo y aplica defaults compatibles.
+- `createGoal()`: acepta las tres categorías y campos opcionales válidos; rechaza categoría inválida, aporte cero/negativo, fecha mal formada y cuenta incompatible.
+- Cálculo de sugerencia mensual: sin fecha no muestra sugerencia automática; con fecha futura calcula meses de calendario; con fecha actual o pasada aplica la regla definida sin división por cero.
+- Progreso y disponibilidad: categoría, deadline y aporte sugerido no alteran saldos físicos, compromisos ni patrimonio; aportes/retiros existentes siguen calculando el mismo progreso.
+- Diagnóstico: detecta vencimiento y progreso por categoría, respeta metas activas y no mezcla monedas. Añadir pruebas de regresión para metas sin campos nuevos.
+- UI: crear meta con y sin fecha, filtrar cuentas por moneda, mostrar estado vencido y conservar aportes/retiros.
+
+### Impacto, esfuerzo y estado
+
+- **Capas afectadas:** modelo/migración Dexie, `goalService`, `Goals.tsx` y, para la conexión de diagnóstico, un DTO de servicio y `Diagnostic.tsx`. `Transactions.tsx` y `transactionService.ts` solo requieren revisión de regresión salvo que se quiera enriquecer la etiqueta de meta.
+- **Esfuerzo estimado:** medio. El formulario y contrato son pequeños, pero la migración, semántica de fechas y pruebas financieras requieren cuidado.
+- **Riesgos principales:** interpretar fechas en UTC, presentar una sugerencia mensual como obligación, asignar categorías históricas sin trazabilidad, mezclar monedas en el diagnóstico y romper metas antiguas por hacer campos nuevos obligatorios sin migración.
+- **Estado:** análisis y recomendación documentados; no se modificó código de producción ni se declaró la funcionalidad completada.
+
+### Verificaciones ejecutadas
+
+- `npm run lint`: correcto.
+- `npm test`: correcto; 2 archivos y 3 pruebas aprobadas.
+- `npm run build`: correcto; Vite mantiene la advertencia existente de chunk superior a 500 kB (aproximadamente 818 kB minificados).
+
+### Decisiones pendientes
+
+- Confirmar si `suggestedMonthlyContribution` es un importe manual persistido, una sugerencia siempre derivada o ambos mediante un override manual.
+- Confirmar si se permiten deadlines pasados y si una meta completada permanece activa.
+- Confirmar la semántica del default histórico `purchase`; si no es aceptable, la migración debe usar una categoría explícita `unknown`, lo que contradice el conjunto solicitado y requeriría ampliar el contrato.
+- Definir si el diagnóstico inicial solo alerta vencimientos o también calcula capacidad mensual por moneda.
+
 ## Solicitud registrada: navegación móvil, dashboard, calculadora y evolución financiera
 
 ### Objetivo
@@ -937,6 +1011,33 @@ Se mantiene la arquitectura `React -> Services -> Repositories -> IndexedDB/Dexi
 ### Verificaciones de UX en movimientos
 
 - `npm test` -> correcto; 2 archivos y 3 pruebas aprobadas.
+- `npm run lint` -> correcto.
+- `npm run build` -> correcto; permanece la advertencia conocida de bundle mayor a 500 kB.
+
+### Extensión de metas: plazo y categoría - 2026-09-08
+
+- `Goal` incluye `category` (`emergency`, `purchase`, `investment`) y `deadline` opcional en formato `YYYY-MM-DD`.
+- Dexie usa la versión 4 para añadir los campos sin eliminar datos; las metas antiguas reciben `purchase` como categoría provisional y no reciben una fecha inventada.
+- La pantalla de Metas permite clasificar Fondo de emergencia / Reserva, Compra / Consumo o Inversión / Retiro.
+- La fecha límite se valida como fecha civil y se calcula el aporte mensual sugerido desde el monto restante y los meses calendario faltantes; el valor es derivado y no se almacena como saldo.
+- Diagnóstico muestra la distribución de metas por enfoque como información de planificación. El score actual no incorpora todavía esos importes ni se presenta como Health Score completo.
+
+### Verificaciones de plazo y categoría
+
+- `npm test` -> correcto; 2 archivos y 4 pruebas aprobadas.
+- `npm run lint` -> correcto.
+- `npm run build` -> correcto; permanece la advertencia conocida de bundle mayor a 500 kB.
+
+### Eliminación de metas - 2026-09-08
+
+- La pantalla de Metas permite eliminar una meta con confirmación explícita.
+- La operación elimina en cascada todos los movimientos asociados mediante `goalId` y la meta dentro de una transacción Dexie.
+- No se eliminan movimientos de otras metas ni movimientos físicos de las cuentas.
+- Si el usuario cancela, no se modifica ningún dato.
+
+### Verificación de eliminación de metas
+
+- `npm test` -> correcto; 2 archivos y 4 pruebas aprobadas.
 - `npm run lint` -> correcto.
 - `npm run build` -> correcto; permanece la advertencia conocida de bundle mayor a 500 kB.
 

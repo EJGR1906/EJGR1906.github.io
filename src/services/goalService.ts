@@ -3,7 +3,7 @@ import { getAccountById, getActiveAccounts } from "../repositories/accountReposi
 import { getAllTransactions } from "../repositories/transactionRepository";
 import { getAccountBalance } from "./financialService";
 import { generateId } from "../utils/id";
-import type { Account, CurrencyCode, Goal } from "../database/db";
+import { db, type Account, type CurrencyCode, type Goal } from "../database/db";
 
 export interface GoalProgress {
     goal: Goal;
@@ -12,6 +12,8 @@ export interface GoalProgress {
     progressPercent: number;
     committedAmount: number;
     availableBalance: number;
+    monthsRemaining: number | null;
+    suggestedMonthlyContribution: number | null;
 }
 
 export interface AccountAvailability {
@@ -38,6 +40,7 @@ export async function migrateLegacyGoals(): Promise<void> {
                 targetAmount: Number(legacyGoal.target) || 0,
                 currency: "USD",
                 backingAccountId: "",
+                category: "purchase",
                 active: true,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
@@ -45,6 +48,30 @@ export async function migrateLegacyGoals(): Promise<void> {
         );
         localStorage.removeItem(legacyStorageKey);
     }
+}
+
+function getMonthsRemaining(deadline?: string, referenceDate = new Date()): number | null {
+    if (!deadline) return null;
+    const [year, month] = deadline.split("-").map(Number);
+    const [day] = deadline.split("-").slice(2).map(Number);
+    if (!year || !month || !day || month < 1 || month > 12) return null;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    if (day > daysInMonth) return null;
+    const currentMonth = referenceDate.getFullYear() * 12 + referenceDate.getMonth();
+    const deadlineMonth = year * 12 + (month - 1);
+    if (deadlineMonth < currentMonth) return null;
+    return Math.max(deadlineMonth - currentMonth, 0) || 1;
+}
+
+export function getSuggestedMonthlyContribution(
+    remainingAmount: number,
+    deadline?: string,
+    referenceDate = new Date(),
+): number | null {
+    const monthsRemaining = getMonthsRemaining(deadline, referenceDate);
+    if (monthsRemaining === null) return null;
+    if (remainingAmount <= 0) return 0;
+    return remainingAmount / Math.max(monthsRemaining, 1);
 }
 
 export async function getActiveGoalAccounts(): Promise<Account[]> {
@@ -93,6 +120,10 @@ export async function createGoal(input: Omit<Goal, "id" | "createdAt" | "updated
     if (!input.name.trim()) throw new Error("El nombre de la meta es obligatorio.");
     if (!Number.isFinite(input.targetAmount) || input.targetAmount <= 0) {
         throw new Error("El objetivo debe ser mayor que cero.");
+    }
+    if (!input.category) throw new Error("La categoría de la meta es obligatoria.");
+    if (input.deadline && !/^\d{4}-\d{2}-\d{2}$/.test(input.deadline)) {
+        throw new Error("La fecha límite no es válida.");
     }
 
     const account = await getAccountById(input.backingAccountId);
@@ -181,6 +212,7 @@ export async function getGoalsWithProgress(): Promise<GoalProgress[]> {
 
         const remainingAmount = Math.max(goal.targetAmount - savedAmount, 0);
         const progressPercent = goal.targetAmount > 0 ? Math.min((savedAmount / goal.targetAmount) * 100, 100) : 0;
+        const monthsRemaining = getMonthsRemaining(goal.deadline);
 
         const account = await getAccountById(goal.backingAccountId);
         const availability = account
@@ -194,6 +226,8 @@ export async function getGoalsWithProgress(): Promise<GoalProgress[]> {
             progressPercent,
             committedAmount: account ? availability.committedAmount : savedAmount,
             availableBalance: account ? availability.availableBalance : 0,
+            monthsRemaining,
+            suggestedMonthlyContribution: getSuggestedMonthlyContribution(remainingAmount, goal.deadline),
         };
     }));
 }
@@ -206,4 +240,15 @@ export async function updateGoalProgress(id: string, delta: number): Promise<voi
 
     const nextTarget = Math.max(0, goal.targetAmount + delta);
     await updateGoal(id, { targetAmount: nextTarget, updatedAt: new Date().toISOString() });
+}
+
+export async function deleteGoalWithTransactions(id: string): Promise<void> {
+    const goal = await getGoalById(id);
+    if (!goal) throw new Error("Meta no encontrada.");
+
+    await db.transaction("rw", db.goals, db.transactions, async () => {
+        const transactions = await db.transactions.where("goalId").equals(id).toArray();
+        await db.transactions.bulkDelete(transactions.map((transaction) => transaction.id));
+        await db.goals.delete(id);
+    });
 }
