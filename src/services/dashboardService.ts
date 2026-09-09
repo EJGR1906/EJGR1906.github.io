@@ -417,7 +417,7 @@ export async function getCashFlowSeries(
   }
 
   if (period === "month") {
-    periodStart = startOfMonth(now);
+    periodStart = addMonths(startOfMonth(now), -11);
   }
 
   if (period === "year") {
@@ -515,7 +515,7 @@ export async function getCashFlowSeries(
     chartStart = startOfWeek(now, { weekStartsOn: 1 });
     chartEnd = endOfWeek(now, { weekStartsOn: 1 });
   } else if (period === "month") {
-    chartStart = startOfMonth(now);
+    chartStart = addMonths(startOfMonth(now), -11);
     chartEnd = endOfMonth(now);
   } else if (period === "year") {
     chartStart = startOfYear(now);

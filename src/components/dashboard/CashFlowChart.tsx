@@ -32,7 +32,7 @@ function CashFlowChart({ data, currency }: CashFlowChartProps) {
                 </h2>
 
                 <p className="mt-1 text-sm text-primary-dark/60">
-                    Comparación mensual durante el período seleccionado.
+                    Comparación mensual de los últimos 12 meses.
                 </p>
             </div>
 

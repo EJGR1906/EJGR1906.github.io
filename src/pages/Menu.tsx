@@ -2,7 +2,6 @@ import {
     Activity,
     ArrowLeftRight,
     Calculator,
-    Home,
     ListTree,
     Settings,
     Target,
@@ -16,7 +15,14 @@ interface MenuProps {
     onNavigate?: (label: string) => void;
 }
 
-const menuSections = [
+interface MenuItem {
+    label: string;
+    icon: typeof Activity;
+    navLabel?: string;
+    displayLabel?: string;
+}
+
+const menuSections: Array<{ title: string; items: MenuItem[] }> = [
     {
         title: "Gestión financiera",
         items: [
