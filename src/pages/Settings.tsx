@@ -16,6 +16,7 @@ import {
 } from "../services/settingsService";
 import { exportDatabase, importDatabase, parseBackup, toCsv } from "../services/backupService";
 import { useAuth } from "../context/useAuth";
+import PwaInstallButton from "../components/layout/PwaInstallButton";
 
 interface SettingsProps {
     onNavigate: (label: string) => void;
@@ -153,6 +154,16 @@ function Settings({ onNavigate }: SettingsProps) {
                             <p className="mt-2 truncate text-sm text-primary-dark/60">{user.email}</p>
                             <button type="button" onClick={() => void signOut()} className="mt-4 rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-50">Cerrar sesión</button>
                         </section>}
+
+                        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <h2 className="font-bold text-primary-dark">Aplicación</h2>
+                                    <p className="mt-1 text-sm text-primary-dark/60">Instala Cronos en tu dispositivo para abrirla como una aplicación.</p>
+                                </div>
+                                <PwaInstallButton />
+                            </div>
+                        </section>
 
                         {/* Apariencia */}
                         <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
