@@ -14,7 +14,27 @@ import AppShell from "./components/layout/AppShell";
 import Recurring from "./pages/Recurring";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { useAuth } from "./context/useAuth";
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
 function App() {
+  const { configured, loading, user } = useAuth();
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+
+  if (loading) {
+    return <main className="flex min-h-screen items-center justify-center bg-background text-sm font-medium text-primary">Cargando tu espacio financiero...</main>;
+  }
+
+  if (configured && !user) {
+    return authMode === "login"
+      ? <Login onRegister={() => setAuthMode("register")} />
+      : <Register onLogin={() => setAuthMode("login")} />;
+  }
+
+  return <AuthenticatedApp />;
+}
+
+function AuthenticatedApp() {
   const [page, setPage] = useState("Inicio");
 
   const navigate = useCallback((nextPage: string) => {

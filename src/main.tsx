@@ -3,12 +3,16 @@ import { createRoot } from "react-dom/client";
 
 import "./index.css";
 import App from "./App.tsx";
+import { AuthProvider } from "./context/AuthContext";
+import { registerSW } from "virtual:pwa-register";
 
 import { seedDatabase } from "./database/seed";
 import { applyTheme, getTheme } from "./services/settingsService";
 import {
   refreshExchangeRates,
 } from "./services/exchangeRateService";
+
+registerSW({ immediate: true });
 async function bootstrap() {
   applyTheme(getTheme());
 
@@ -36,7 +40,9 @@ async function bootstrap() {
     document.getElementById("root")!
   ).render(
     <StrictMode>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </StrictMode>
   );
 }

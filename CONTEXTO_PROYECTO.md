@@ -6,7 +6,7 @@ Aplicación web privada de finanzas personales para Venezuela, pensada principal
 
 El proyecto es local-first y funciona actualmente con React, TypeScript, Vite, IndexedDB y Dexie. La arquitectura mantiene separadas la interfaz, los servicios y los repositorios para que en el futuro pueda añadirse sincronización, pero ese trabajo queda fuera del alcance actual.
 
-No es un SaaS, no tendrá usuarios múltiples, suscripciones ni planes comerciales.
+La aplicación ahora admite usuarios autenticados y sincronización cloud opcional con Supabase. No incluye suscripciones ni planes comerciales.
 
 ## Resumen ejecutivo
 
@@ -33,7 +33,7 @@ La aplicación debe ayudar a controlar:
 - Diagnóstico financiero sencillo basado en datos reales.
 - Calculadora de monedas.
 
-El backend/sincronización no se necesitan por ahora. No deben implementarse hasta que se soliciten explícitamente.
+Dexie continúa siendo el fallback local. Cuando Supabase está configurado y existe una sesión, los repositorios usan PostgreSQL con RLS; la primera sesión migra los datos locales a la cuenta cloud.
 
 ## Tecnologías
 
@@ -49,6 +49,8 @@ El backend/sincronización no se necesitan por ahora. No deben implementarse has
 - date-fns
 - Decimal.js
 - IndexedDB + Dexie
+- Supabase Auth + PostgreSQL + Row Level Security
+- vite-plugin-pwa
 - Vitest
 
 ## Arquitectura de datos
@@ -72,7 +74,9 @@ React
   -> IndexedDB / Dexie
 ```
 
-Más adelante podría existir una implementación alternativa con API y PostgreSQL, pero no se debe trabajar en ella todavía.
+La persistencia tiene dos modos: Dexie local sin sesión y repositorios Supabase cuando `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` están configuradas y el usuario inició sesión.
+
+Esquema cloud: `supabase/schema.sql`. Las tablas de negocio incluyen `user_id`, tienen RLS habilitado y sus políticas usan `auth.uid() = user_id`.
 
 ## Datos iniciales
 
@@ -177,7 +181,7 @@ La base también contiene transacciones de prueba para validar el dashboard.
 
 ### Estado verificado al 2026-09-08
 
-- La aplicación mantiene el flujo `React -> Services -> Repositories -> IndexedDB/Dexie`; no se introdujeron backend, sincronización ni autenticación.
+- La aplicación mantiene el flujo `React -> Services -> Repositories`; los repositorios seleccionan Supabase con sesión y Dexie sin sesión.
 - La navegación se resuelve mediante estado local en `App.tsx` y eventos `finanzas:navigate`; no existe router ni URL persistente.
 - La moneda base se guarda en `localStorage` y ya se usa en Dashboard, presupuestos y diagnóstico para conversiones. Presupuestos y metas todavía muestran etiquetas y valores introducidos como USD, por lo que su modelo de moneda no está completamente alineado con la preferencia global.
 - Los balances agrupados usan el saldo original de cada cuenta activa y el detalle muestra cuentas por moneda. Las cuentas sin tasa de conversión permanecen visibles, aunque no suman al patrimonio consolidado convertido.
@@ -186,6 +190,22 @@ La base también contiene transacciones de prueba para validar el dashboard.
 - La barra inferior móvil usa tres columnas para seis opciones de navegación.
 
 ### Resumen actualizado del trabajo realizado en esta iteración
+
+### Backend, autenticación y PWA
+
+- Se añadieron `@supabase/supabase-js` y `vite-plugin-pwa`.
+- Se creó `src/database/supabaseClient.ts` con variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+- Se creó `supabase/schema.sql` con tablas de cuentas, categorías, metas, movimientos, tasas, recurrentes y preferencias, además de RLS.
+- Se añadió `AuthProvider`, login, registro, cierre de sesión y protección de la aplicación cuando Supabase está configurado.
+- Los repositorios existentes conservan su API y delegan a Supabase cuando hay sesión; Dexie sigue funcionando como fallback.
+- Se añadió `migrationService.ts` para migrar IndexedDB a la cuenta cloud una vez por usuario.
+- Se configuró el manifest y service worker PWA con actualización automática.
+
+**Verificación backend/PWA:**
+
+- `npm run test` -> 5 archivos, 13 pruebas correctas.
+- `npm run lint` -> correcto.
+- `npm run build` -> correcto; genera `dist/manifest.webmanifest` y `dist/sw.js`.
 
 **Qué ya quedó integrado:**
 

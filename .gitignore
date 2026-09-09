@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 tmp_probe.txt
+.env.example

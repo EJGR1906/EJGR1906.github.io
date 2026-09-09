@@ -1,6 +1,9 @@
-﻿import { db, type Account, type CurrencyCode } from "../database/db";
+﻿import { type Account, type CurrencyCode } from "../database/db";
 import { createAccount, deleteAccount as deleteAccountRecord, getAccountById, updateAccount } from "../repositories/accountRepository";
 import { getTransactionsByAccount } from "../repositories/transactionRepository";
+import { getAllGoals } from "../repositories/goalRepository";
+import { getRecurringTransactions } from "../repositories/recurringRepository";
+import { getAllAccounts } from "../repositories/accountRepository";
 import { generateId } from "../utils/id";
 
 export interface AccountInput {
@@ -71,10 +74,7 @@ export async function addAccount(input: AccountInput): Promise<Account> {
         creditLimit: input.nature === "liability" ? input.creditLimit : undefined,
     };
 
-    await db.transaction("rw", db.accounts, async () => {
-        await createAccount(baseAccount);
-        await createAccount(usdAccount);
-    });
+    await Promise.all([createAccount(baseAccount), createAccount(usdAccount)]);
 
     return baseAccount;
 }
@@ -102,8 +102,8 @@ export async function removeAccount(id: string): Promise<void> {
 
     const [transactions, goals, recurringTransactions] = await Promise.all([
         getTransactionsByAccount(id),
-        db.goals.filter((goal) => goal.backingAccountId === id).toArray(),
-        db.recurringTransactions.filter((item) => item.accountId === id || item.fromAccountId === id || item.toAccountId === id).toArray(),
+        getAllGoals().then((goals) => goals.filter((goal) => goal.backingAccountId === id)),
+        getRecurringTransactions().then((items) => items.filter((item) => item.accountId === id || item.fromAccountId === id || item.toAccountId === id)),
     ]);
 
     if (transactions.length > 0) {
@@ -116,9 +116,7 @@ export async function removeAccount(id: string): Promise<void> {
         throw new Error("No se puede eliminar una cuenta usada por movimientos recurrentes. Edita o elimina primero esas plantillas.");
     }
 
-    await db.transaction("rw", db.accounts, async () => {
-        await deleteAccountRecord(id);
-    });
+    await deleteAccountRecord(id);
 }
 
 export async function setLinkedUsdAccount(
@@ -131,7 +129,7 @@ export async function setLinkedUsdAccount(
         throw new Error("Solo una cuenta VES puede tener una cuenta USD vinculada.");
     }
 
-    const accounts = await db.accounts.toArray();
+    const accounts = await getAllAccounts();
     const groupId = vesAccount.institutionId ?? crypto.randomUUID();
     const linkedUsd = accounts.find(
         (account) => account.institutionId === groupId && account.currency === "USD"
@@ -143,10 +141,7 @@ export async function setLinkedUsdAccount(
     }
 
     if (linkedUsd) {
-        await db.transaction("rw", db.accounts, async () => {
-            await updateAccount(vesAccount.id, { institutionId: groupId });
-            await updateAccount(linkedUsd.id, { active: true });
-        });
+        await Promise.all([updateAccount(vesAccount.id, { institutionId: groupId }), updateAccount(linkedUsd.id, { active: true })]);
         return { ...linkedUsd, active: true, institutionId: groupId };
     }
 
@@ -162,10 +157,7 @@ export async function setLinkedUsdAccount(
         creditLimit: vesAccount.nature === "liability" ? vesAccount.creditLimit : undefined,
     };
 
-    await db.transaction("rw", db.accounts, async () => {
-        await updateAccount(vesAccount.id, { institutionId: groupId });
-        await createAccount(usdAccount);
-    });
+    await Promise.all([updateAccount(vesAccount.id, { institutionId: groupId }), createAccount(usdAccount)]);
 
     return usdAccount;
 }
