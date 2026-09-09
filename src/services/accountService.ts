@@ -132,6 +132,8 @@ export async function setLinkedUsdAccount(
         initialBalance,
         active: true,
         institutionId: groupId,
+        nature: vesAccount.nature ?? "asset",
+        creditLimit: vesAccount.nature === "liability" ? vesAccount.creditLimit : undefined,
     };
 
     await db.transaction("rw", db.accounts, async () => {

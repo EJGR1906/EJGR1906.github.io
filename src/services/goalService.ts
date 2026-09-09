@@ -4,6 +4,7 @@ import { getAllTransactions } from "../repositories/transactionRepository";
 import { getAccountBalance } from "./financialService";
 import { generateId } from "../utils/id";
 import { db, type Account, type CurrencyCode, type Goal } from "../database/db";
+import { calculateAvailableBalance, calculateCommittedAmount } from "./financialDomain";
 
 export interface GoalProgress {
     goal: Goal;
@@ -87,23 +88,7 @@ function assertPositiveAmount(amount: number): void {
 
 async function getCommittedAmount(accountId: string, currency: CurrencyCode, excludedTransactionId?: string): Promise<number> {
     const transactions = await getAllTransactions();
-
-    return transactions.reduce((total, transaction) => {
-        if (transaction.id === excludedTransactionId) return total;
-        if (transaction.accountId !== accountId || transaction.currency !== currency) {
-            return total;
-        }
-
-        if (transaction.type === "goal_contribution") {
-            return total + (transaction.amount ?? 0);
-        }
-
-        if (transaction.type === "goal_withdrawal") {
-            return total - (transaction.amount ?? 0);
-        }
-
-        return total;
-    }, 0);
+    return calculateCommittedAmount(accountId, currency, transactions, excludedTransactionId);
 }
 
 export async function getAccountAvailability(account: Account, excludedTransactionId?: string): Promise<AccountAvailability> {
@@ -113,7 +98,7 @@ export async function getAccountAvailability(account: Account, excludedTransacti
     return {
         physicalBalance,
         committedAmount,
-        availableBalance: Math.max(physicalBalance - committedAmount, 0),
+        availableBalance: calculateAvailableBalance(physicalBalance, committedAmount),
     };
 }
 

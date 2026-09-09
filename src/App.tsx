@@ -11,6 +11,7 @@ import Accounts from "./pages/Accounts";
 import Categories from "./pages/Categories";
 import MenuPage from "./pages/Menu";
 import AppShell from "./components/layout/AppShell";
+import Recurring from "./pages/Recurring";
 
 
 function App() {
@@ -41,6 +42,9 @@ function App() {
   }
   if (page === "Calculadora") {
     return <CurrencyCalculatorPage onNavigate={setPage} />;
+  }
+  if (page === "Recurrentes") {
+    return <Recurring onNavigate={setPage} />;
   }
   if (page === "Configuración") {
     return <Settings onNavigate={setPage} />;

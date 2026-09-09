@@ -107,12 +107,37 @@ export interface ExchangeRate {
   timestamp: string;
 }
 
+export type RecurringFrequency = "daily" | "weekly" | "monthly";
+
+export interface RecurringTransaction {
+  id: string;
+  type: "income" | "expense" | "transfer";
+  accountId?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
+  categoryId?: string;
+  amount?: number;
+  currency?: CurrencyCode;
+  fromAmount?: number;
+  fromCurrency?: CurrencyCode;
+  toAmount?: number;
+  toCurrency?: CurrencyCode;
+  exchangeRate?: number;
+  description?: string;
+  frequency: RecurringFrequency;
+  nextDate: string;
+  endDate?: string;
+  active: boolean;
+  lastGeneratedDate?: string;
+}
+
 export const db = new Dexie("FinanzasDB") as Dexie & {
   accounts: EntityTable<Account, "id">;
   categories: EntityTable<Category, "id">;
   goals: EntityTable<Goal, "id">;
   transactions: EntityTable<Transaction, "id">;
   exchangeRates: EntityTable<ExchangeRate, "id">;
+  recurringTransactions: EntityTable<RecurringTransaction, "id">;
 };
 
 db.version(1).stores({
@@ -203,3 +228,12 @@ db.version(5)
       account.nature ??= "asset";
     });
   });
+
+db.version(6).stores({
+  accounts: "id, currency, type, active, institutionId, nature",
+  categories: "id, type",
+  goals: "id, backingAccountId, active, currency, category, deadline, updatedAt",
+  transactions: "id, type, currency, accountId, categoryId, goalId, date, createdAt",
+  exchangeRates: "id, source, baseCurrency, quoteCurrency, timestamp, [baseCurrency+quoteCurrency]",
+  recurringTransactions: "id, type, active, nextDate",
+});

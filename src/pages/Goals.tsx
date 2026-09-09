@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Target, Trash2 } from "lucide-react";
 import AppShell from "../components/layout/AppShell";
 import { type Account, type Goal } from "../database/db";
@@ -142,7 +142,7 @@ function Goals() {
 
     return (
         <AppShell activeItem="Metas">
-            <div className="p-4 sm:p-6 lg:p-8">
+            <div className="p-3 sm:p-6 lg:p-8">
                 <div className="mx-auto max-w-6xl">
                     <header className="mb-6">
                         <p className="text-sm font-medium text-primary">Ahorro con intención</p>
@@ -153,7 +153,7 @@ function Goals() {
                     </header>
 
                     <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-                        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                        <section className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-primary/5 sm:p-6">
                             <div className="mb-5 flex items-center gap-2">
                                 <Plus size={18} className="text-primary" />
                                 <h2 className="font-bold text-primary-dark">Nueva meta</h2>
@@ -256,7 +256,7 @@ function Goals() {
                             </form>
                         </section>
 
-                        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                        <section className="min-w-0 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-primary/5 sm:p-6">
                             <div className="flex items-center gap-2">
                                 <Target size={19} className="text-primary" />
                                 <h2 className="font-bold text-primary-dark">Tus metas</h2>
@@ -272,10 +272,10 @@ function Goals() {
                                         const account = accounts.find((item) => item.id === goal.backingAccountId);
 
                                         return (
-                                            <div key={goal.id} className="rounded-2xl bg-background p-4">
-                                                <div className="flex items-center justify-between gap-4">
-                                                    <div>
-                                                        <p className="font-bold text-primary-dark">{goal.name}</p>
+                                            <div key={goal.id} className="rounded-2xl bg-background p-3 sm:p-4">
+                                                <div className="flex flex-wrap items-start justify-between gap-2">
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="truncate font-bold text-primary-dark">{goal.name}</p>
                                                         <p className="text-xs text-primary-dark/55">
                                                             {goal.savedAmount.toLocaleString("es-VE", {
                                                                 minimumFractionDigits: 2,
@@ -289,7 +289,7 @@ function Goals() {
                                                             {goal.category === "emergency" ? "Fondo de emergencia / Reserva" : goal.category === "investment" ? "Inversión / Retiro" : "Compra / Consumo"}
                                                         </p>
                                                     </div>
-                                                    <div className="flex items-center gap-3">
+                                                    <div className="flex shrink-0 items-center gap-3">
                                                         <span className="text-xs font-semibold text-primary">
                                                             {goal.progress.toFixed(0)}%
                                                         </span>
@@ -300,7 +300,7 @@ function Goals() {
                                                             title="Eliminar meta y movimientos"
                                                         >
                                                             <Trash2 size={15} />
-                                                            Eliminar
+                                                            <span className="hidden sm:inline">Eliminar</span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -313,10 +313,10 @@ function Goals() {
                                                 </div>
 
                                                 <div className="mt-3 flex items-center justify-between text-xs text-primary-dark/55">
-                                                    <span>
+                                                    <span className="truncate">
                                                         {account ? `Cuenta: ${account.name}` : "Sin cuenta de respaldo"}
                                                     </span>
-                                                    <span>{goal.currency}</span>
+                                                    <span className="shrink-0">{goal.currency}</span>
                                                 </div>
 
                                                 {goal.deadline && (
@@ -326,7 +326,7 @@ function Goals() {
                                                     </p>
                                                 )}
 
-                                                <div className="mt-4 flex items-center gap-2">
+                                                <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
                                                     <input
                                                         type="number"
                                                         min="0.01"
@@ -341,20 +341,22 @@ function Goals() {
                                                         className="field flex-1"
                                                         placeholder="Monto"
                                                     />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => void addContribution(goal, "goal_contribution")}
-                                                        className="rounded-xl bg-primary px-3 py-2 text-xs font-bold text-white hover:bg-primary-dark"
-                                                    >
-                                                        Aportar
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => void addContribution(goal, "goal_withdrawal")}
-                                                        className="rounded-xl bg-primary-dark/10 px-3 py-2 text-xs font-bold text-primary-dark hover:bg-primary-dark/15"
-                                                    >
-                                                        Retirar
-                                                    </button>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => void addContribution(goal, "goal_contribution")}
+                                                            className="flex-1 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-white hover:bg-primary-dark sm:flex-initial"
+                                                        >
+                                                            Aportar
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => void addContribution(goal, "goal_withdrawal")}
+                                                            className="flex-1 rounded-xl bg-primary-dark/10 px-3 py-2 text-xs font-bold text-primary-dark hover:bg-primary-dark/15 sm:flex-initial"
+                                                        >
+                                                            Retirar
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         );

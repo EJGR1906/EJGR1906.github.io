@@ -4,11 +4,11 @@ import {
     WalletCards,
     Target,
     Activity,
-    Menu,
     Settings,
     Calculator,
     Tags,
     Wallet,
+    LayoutGrid,
 } from "lucide-react";
 
 interface AppShellProps {
@@ -46,8 +46,8 @@ const navigation = [
 
 const mobileNavigation = [
     { label: "Inicio", icon: Home },
-    { label: "Diagnóstico", icon: Activity },
-    { label: "Menú", icon: Menu },
+    { label: "Presupuestos", icon: WalletCards },
+    { label: "Menú", icon: LayoutGrid },
 ];
 
 function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps) {

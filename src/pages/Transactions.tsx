@@ -200,7 +200,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
 
     return (
         <AppShell activeItem="Movimientos" onNavigate={onNavigate}>
-            <div className="p-4 sm:p-6 lg:p-8">
+            <div className="p-3 sm:p-6 lg:p-8">
                 <div className="mx-auto max-w-6xl">
                     <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                         <div>
@@ -212,10 +212,10 @@ function Transactions({ onNavigate }: TransactionsProps) {
                     </header>
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-                        <section className="min-w-0 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                        <section className="min-w-0 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-primary/5 sm:p-6">
                             <div className="mb-5 flex items-center gap-2"><Plus size={19} className="text-primary" /><h2 className="font-bold text-primary-dark">{editingTransaction ? "Editar movimiento" : "Nuevo movimiento"}</h2></div>
                             <div className="mb-5 flex gap-1 rounded-2xl bg-primary-dark/5 p-1">
-                                {(["expense", "income", "transfer"] as TransactionType[]).map((item) => <button key={item} type="button" onClick={() => changeType(item)} className={`flex-1 rounded-xl px-2 py-2.5 text-xs font-semibold transition sm:text-sm ${type === item || (item === "transfer" && (type === "goal_contribution" || type === "goal_withdrawal")) ? "bg-white text-primary shadow-sm" : "text-primary-dark/55 hover:text-primary-dark"}`}>{item === "expense" ? "Gasto" : item === "income" ? "Ingreso" : "Transferencia"}</button>)}
+                                {(["expense", "income", "transfer"] as TransactionType[]).map((item) => <button key={item} type="button" onClick={() => changeType(item)} className={`flex-1 rounded-xl px-2 py-2.5 text-[11px] font-semibold transition sm:text-sm ${type === item || (item === "transfer" && (type === "goal_contribution" || type === "goal_withdrawal")) ? "bg-white text-primary shadow-sm" : "text-primary-dark/55 hover:text-primary-dark"}`}>{item === "expense" ? "Gasto" : item === "income" ? "Ingreso" : "Transferencia"}</button>)}
                             </div>
                             {(type === "transfer" || type === "goal_contribution" || type === "goal_withdrawal") && <div className="mb-5 space-y-2 rounded-2xl bg-background p-3 text-sm text-primary-dark">
                                 <label className="flex items-center gap-2 font-medium"><input type="radio" name="transferKind" checked={type === "transfer"} onChange={() => changeType("transfer")} /> Transferencia entre cuentas</label>
@@ -245,9 +245,19 @@ function Transactions({ onNavigate }: TransactionsProps) {
                             </form>
                         </section>
 
-                        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
-                            <div className="flex items-start justify-between gap-4"><div><p className="text-sm font-medium text-primary">Historial</p><h2 className="mt-1 text-lg font-bold text-primary-dark">Todos tus movimientos</h2></div><span className="rounded-full bg-sky/35 px-3 py-1 text-xs font-semibold text-primary">{transactions.length} registros</span></div>
-                            {transactions.length === 0 ? <div className="mt-8 rounded-2xl bg-background px-5 py-10 text-center text-sm text-primary-dark/55">Todavía no hay movimientos registrados.</div> : <div className="mt-5 divide-y divide-primary-dark/5">{transactions.map((transaction) => { const income = transaction.type === "income"; const transfer = transaction.type === "transfer"; const goalMovement = transaction.type === "goal_contribution" || transaction.type === "goal_withdrawal"; const negativeMovement = goalMovement || transaction.type === "expense"; return <div key={transaction.id} className="flex items-center gap-3 py-4 first:pt-0"><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${income ? "text-success" : transfer ? "text-primary" : negativeMovement ? "movement-negative" : "text-primary"}`}>{income ? <ArrowDownLeft size={18} /> : transfer ? <ArrowLeftRight size={18} /> : <ArrowUpRight size={18} />}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-primary-dark">{transaction.description || (income ? "Ingreso" : transfer ? "Transferencia" : transaction.type === "goal_contribution" ? "Aporte a meta" : transaction.type === "goal_withdrawal" ? "Retiro de meta" : "Gasto")}</p><p className="mt-0.5 text-xs text-primary-dark/50">{new Date(transaction.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" })}</p></div><div className="text-right"><p className={`text-sm font-bold ${income ? "text-success" : goalMovement || transaction.type === "expense" ? "movement-negative" : "text-primary-dark"}`}>{income ? "+" : transfer ? "↔" : transaction.type === "goal_withdrawal" ? "+" : "-"} {formatAmount(transaction)}</p><div className="mt-1 flex justify-end gap-2">{!goalMovement && <button type="button" onClick={() => startEdit(transaction)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-primary"><Pencil size={13} /> Editar</button>}<button type="button" onClick={() => void removeTransaction(transaction.id)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-red-600"><Trash2 size={13} /> Eliminar</button></div></div></div>; })}</div>}
+                        <section className="min-w-0 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                            <div className="flex items-start justify-between gap-4"><div><p className="text-sm font-medium text-primary">Historial</p><h2 className="mt-1 text-lg font-bold text-primary-dark">Todos tus movimientos</h2></div><span className="shrink-0 rounded-full bg-sky/35 px-3 py-1 text-xs font-semibold text-primary">{transactions.length} registros</span></div>
+                            {transactions.length === 0 ? <div className="mt-8 rounded-2xl bg-background px-5 py-10 text-center text-sm text-primary-dark/55">Todavía no hay movimientos registrados.</div> : <div className="mt-5 divide-y divide-primary-dark/5">{transactions.map((transaction) => { const income = transaction.type === "income"; const transfer = transaction.type === "transfer"; const goalMovement = transaction.type === "goal_contribution" || transaction.type === "goal_withdrawal"; const negativeMovement = goalMovement || transaction.type === "expense"; return <div key={transaction.id} className="flex items-start gap-3 py-4 first:pt-0">
+                                <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10 ${income ? "text-success" : transfer ? "text-primary" : negativeMovement ? "movement-negative" : "text-primary"}`}>{income ? <ArrowDownLeft size={17} /> : transfer ? <ArrowLeftRight size={17} /> : <ArrowUpRight size={17} />}</div>
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                                        <p className="truncate text-sm font-semibold text-primary-dark">{transaction.description || (income ? "Ingreso" : transfer ? "Transferencia" : transaction.type === "goal_contribution" ? "Aporte a meta" : transaction.type === "goal_withdrawal" ? "Retiro de meta" : "Gasto")}</p>
+                                        <p className={`shrink-0 text-sm font-bold ${income ? "text-success" : goalMovement || transaction.type === "expense" ? "movement-negative" : "text-primary-dark"}`}>{income ? "+" : transfer ? "↔" : transaction.type === "goal_withdrawal" ? "+" : "-"} {formatAmount(transaction)}</p>
+                                    </div>
+                                    <p className="mt-0.5 text-xs text-primary-dark/50">{new Date(transaction.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                                    <div className="mt-1.5 flex gap-3">{!goalMovement && <button type="button" onClick={() => startEdit(transaction)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-primary"><Pencil size={13} /> Editar</button>}<button type="button" onClick={() => void removeTransaction(transaction.id)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-red-600"><Trash2 size={13} /> Eliminar</button></div>
+                                </div>
+                            </div>; })}</div>}
                         </section>
                     </div>
                 </div>

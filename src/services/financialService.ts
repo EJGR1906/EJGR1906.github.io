@@ -15,69 +15,13 @@ import type {
   Account,
   CurrencyCode,
 } from "../database/db";
+import { calculateAccountBalance } from "./financialDomain";
 
 export async function getAccountBalance(
   account: Account,
   excludedTransactionId?: string,
 ): Promise<number> {
-
-  const transactions =
-    await getAllTransactions();
-
-  let balance =
-    new Decimal(account.initialBalance);
-
-  for (const transaction of transactions) {
-    if (transaction.id === excludedTransactionId) {
-      continue;
-    }
-
-    if (
-      transaction.type === "income" &&
-      transaction.accountId === account.id &&
-      transaction.currency === account.currency
-    ) {
-      balance = account.nature === "liability"
-        ? balance.minus(transaction.amount ?? 0)
-        : balance.plus(transaction.amount ?? 0);
-    }
-
-    if (
-      transaction.type === "expense" &&
-      transaction.accountId === account.id &&
-      transaction.currency === account.currency
-    ) {
-      balance = account.nature === "liability"
-        ? balance.plus(transaction.amount ?? 0)
-        : balance.minus(transaction.amount ?? 0);
-    }
-
-    if (
-      transaction.type === "transfer" &&
-      transaction.fromAccountId === account.id
-    ) {
-      if (account.nature === "liability") {
-        balance = balance.plus(transaction.fromAmount ?? 0);
-      } else {
-        balance = balance.minus(transaction.fromAmount ?? 0);
-      }
-    }
-
-    if (
-      transaction.type === "transfer" &&
-      transaction.toAccountId === account.id
-    ) {
-      if (account.nature === "liability") {
-        balance = balance.minus(transaction.toAmount ?? 0);
-      } else {
-        balance = balance.plus(transaction.toAmount ?? 0);
-      }
-    }
-  }
-
-  return balance
-    .toDecimalPlaces(8)
-    .toNumber();
+  return calculateAccountBalance(account, await getAllTransactions(), excludedTransactionId);
 }
 
 export interface ConsolidatedBalance {

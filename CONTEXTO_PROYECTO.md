@@ -1096,3 +1096,173 @@ Se mantiene la arquitectura `React -> Services -> Repositories -> IndexedDB/Dexi
 - `npm run test` -> correcto; 1 archivo y 1 prueba aprobada.
 - `npm run build` -> correcto; Vite transforma 2749 módulos y genera un bundle JavaScript de aproximadamente 814 kB, con la advertencia existente de superar 500 kB.
 - No se realizaron cambios de código, migraciones ni pruebas visuales; todas las funcionalidades de esta solicitud permanecen pendientes.
+
+## Auditoría profunda de las 13 tareas solicitadas - 2026-09-08
+
+### Alcance y evidencia
+
+Se revisaron `CONTEXTO_PROYECTO.md`, `README.md`, `package.json`, configuración de TypeScript/Vite/ESLint, todo `src/` relevante, migraciones Dexie, servicios, repositorios, páginas, componentes y pruebas. También se ejecutaron `npm test`, `npm run lint` y `npm run build`. No se modificó código de producción.
+
+Resultado de las verificaciones ejecutadas en esta auditoría:
+
+- `npm test`: correcto, 2 archivos y 4 pruebas aprobadas.
+- `npm run lint`: correcto.
+- `npm run build`: correcto; Vite genera `dist/assets/index-DwDyIktU.js` de 826.06 kB minificados y mantiene la advertencia de chunks mayores a 500 kB.
+- No se ejecutó una prueba visual en navegador ni una prueba de integración contra IndexedDB; por tanto, responsive, persistencia real y flujos externos no quedan verificados solo por estos comandos.
+
+### Matriz de las 13 tareas
+
+#### 1. Pruebas financieras
+
+**Estado real: parcial e insuficiente para declarar cobertura financiera.** Solo existen pruebas unitarias de generación de IDs, selección/formato de calculadora y aporte mensual sugerido en `src/utils/id.test.ts` y `src/components/calculator/CurrencyCalculator.test.ts`. No hay pruebas de `financialService`, `transactionService`, `goalService`, migraciones, tasas, pasivos, transferencias ni repositorios.
+
+**Riesgo:** muy alto. Un build correcto no protege saldos, disponibilidad ni patrimonio. El contexto contiene varias afirmaciones de “validado” basadas en 1-4 pruebas, que deben corregirse a “sin cobertura de dominio”.
+
+**Mínimo recomendado:** añadir primero pruebas de saldo de activo/pasivo, gasto contra disponibilidad de metas, transferencias entre monedas, selección BCV/Binance/MANUAL, edición con exclusión del movimiento original y migraciones v4/v5. Usar una base Dexie aislada o una frontera de repositorio testeable antes de afirmar regresión.
+
+#### 2. Metas y disponibilidad
+
+**Estado real: parcialmente implementado.** `Goal`, migración v4, `goalService`, aportes/retiros y validación de saldo disponible existen; `Transactions.tsx` ya ofrece las operaciones. El progreso no se suma al saldo físico, que es la decisión correcta.
+
+**Bugs y límites concretos:** `migrateLegacyGoals()` crea metas antiguas con `backingAccountId: ""`, por lo que se conservan sin pérdida directa pero quedan sin cuenta utilizable (`src/services/goalService.ts`, `migrateLegacyGoals`). `createGoal()` valida el formato de `deadline` con regex, pero acepta fechas civiles imposibles como `2026-02-31`. `getCommittedAmount()` agrega compromisos por cuenta, mientras el retiro valida el progreso de una meta; esto requiere pruebas para evitar inconsistencias entre varias metas.
+
+**Mínimo recomendado:** validar calendario civil, definir migración de metas sin cuenta, probar contribución/retiro/disponibilidad y bloquear desactivación o cambio de naturaleza de una cuenta con compromisos activos. No añadir campos nuevos hasta cerrar esas invariantes.
+
+#### 3. Relación VES/USD
+
+**Estado real: implementado en selección y calculadora, con cobertura insuficiente.** `exchangeRateRepository.getLatestExchangeRate()` prioriza BCV para USD/VES y Binance P2P para USDT/VES; `CurrencyCalculator` mantiene MANUAL separado, lo recrea al abrir y lo elimina al refrescar.
+
+**Riesgos concretos:** el ciclo MANUAL depende de llamadas externas al montar la calculadora y no tiene una prueba de repositorio/servicio. `normalizeRate()` y las conversiones inversas no están cubiertas por tests. La tasa MANUAL no debe entrar en reportes, y esto debe mantenerse como contrato probado, no solo como convención del componente.
+
+**Mínimo recomendado:** pruebas de prioridad por fuente, inversas, conversión indirecta vía VES, fallo de fuente con última tasa local y ciclo abrir/editar/guardar/refrescar MANUAL.
+
+#### 4. Ciclo MANUAL
+
+**Estado real: funcional en la UI, no verificado integralmente.** La apertura de `CurrencyCalculator` refresca fuentes, borra `rate_manual_usd_ves` y la recrea desde BCV; guardar permite modificarla. La configuración general no edita la tasa MANUAL.
+
+**Riesgo:** medio-alto. Si BCV falla y no existe tasa local, la calculadora puede quedar sin MANUAL; además, abrir la pantalla fuerza una actualización externa y descarta deliberadamente el valor manual anterior, decisión que debe permanecer explícita.
+
+**Mínimo recomendado:** prueba automatizada del ciclo y mensaje visible cuando no pueda reconstruirse MANUAL. Mantener MANUAL fuera de balances y reportes.
+
+#### 5. Responsive y navegación
+
+**Estado real: parcial.** `AppShell` ya limita el footer móvil a Inicio, Diagnóstico y Menú; `Menu.tsx` reúne las nueve páginas actuales; la navegación usa estado local y eventos, sin router. El header móvil usa `sticky`, el contenido reserva `pb-24` y el sidebar desktop es fijo.
+
+**Bugs o faltantes concretos:** Menú no contempla Recurrentes porque esa pantalla no existe. No hay prueba visual ni de teclado. La prop `onNavigate` no se pasa a `Budgets`, `Goals` ni `Diagnostic`, por lo que esos destinos no pueden propagar navegación desde sus acciones. `BalanceDetails` usa `activeItem="Balances"`, valor que no existe en la navegación principal, y sus tipos sí fueron traducidos correctamente.
+
+**Mínimo recomendado:** prueba manual automatizada o checklist de viewport/teclado, corregir propagación de navegación donde sea necesaria y validar sticky en páginas largas. No introducir router aún.
+
+#### 6. Exportación/importación
+
+**Estado real: no implementado.** No existe servicio, esquema de respaldo, controles en `Settings.tsx`, exportación JSON/CSV, validación Zod ni transacción de importación.
+
+**Riesgo:** alto por pérdida o corrupción de datos.
+
+**Mínimo recomendado:** definir un formato JSON versionado para las cinco tablas actuales (`accounts`, `categories`, `goals`, `transactions`, `exchangeRates`), exportarlo sin credenciales, validar estructura/referencias antes de escribir y usar transacción Dexie con modo explícito de reemplazo o combinación. CSV debe ser por entidad y no debe preceder al respaldo JSON validado.
+
+#### 7. Movimientos recurrentes
+
+**Estado real: no implementado.** No hay entidad, tabla, repositorio, servicio, página ni generación de instancias normales.
+
+**Riesgo:** alto por duplicar movimientos o generar fechas incorrectas en una app local-first.
+
+**Mínimo recomendado:** cerrar primero frecuencia, zona horaria y disparador (`al abrir`, `Recurrentes` o acción manual); después crear plantilla separada, clave idempotente por plantilla/fecha, pausa y `lastGeneratedAt`. Cada ejecución debe crear una transacción normal, nunca editar el histórico.
+
+#### 8. Clasificación financiera
+
+**Estado real: no implementado como clasificación de gasto.** `Category` solo tiene nombre, tipo e icono; no hay `essential`/`discretionary`. `Account.type` distingue forma de cuenta y `Account.nature` distingue activo/pasivo, pero no existe clasificación de liquidez/inversión ni tratamiento de transferencias a inversión.
+
+**Riesgo:** alto porque alteraría gastos esenciales, ahorro, patrimonio y health score.
+
+**Mínimo recomendado:** especificar primero el efecto contable de cada clasificación y migrar categorías con un valor explícito. Probar que una transferencia patrimonial no se contabiliza como gasto y que categorías antiguas no cambian silenciosamente de significado.
+
+#### 9. Deudas
+
+**Estado real: rudimentario, no módulo de deudas.** `Account.nature = "liability"` y `creditLimit` permiten representar una deuda simple; `transactionService` valida crédito y pagos mediante ingresos/transferencias. No existen saldo pendiente independiente, APR, pago mínimo, corte, vencimiento, entidad de deuda ni planner.
+
+**Bug concreto:** `setLinkedUsdAccount()` crea una subcuenta USD nueva sin copiar `nature` ni `creditLimit`; al crearla desde la edición de una cuenta VES pasivo, la subcuenta queda como activo implícito (`src/services/accountService.ts`, `setLinkedUsdAccount`).
+
+**Mínimo recomendado:** corregir la herencia de naturaleza/límite solo como parte de una decisión explícita sobre cuentas vinculadas; añadir pruebas de cargos, pagos, límite y cambio de clasificación. No construir APR/planner hasta definir el modelo de deuda.
+
+#### 10. Patrimonio neto
+
+**Estado real: parcial y limitado a cuentas.** `getAccountPortfolioSummary()` calcula activos, pasivos y patrimonio neto en USD para cuentas activas con tasa; `Accounts.tsx` lo muestra. No existen activos no líquidos, pasivos independientes, inversiones no representadas por cuentas ni valoración histórica.
+
+**Riesgos concretos:** las cuentas sin conversión se excluyen silenciosamente del total y solo se conserva su nombre en `unconvertedAccounts`; la UI no informa esa exclusión. La representación de pasivos usa el saldo derivado y `Math.abs(balance)`, que requiere pruebas para saldos negativos/sobrepagos y para la semántica de un saldo inicial de deuda.
+
+**Mínimo recomendado:** mostrar cuentas excluidas y su motivo, probar signos y pagos de pasivos, y documentar que el patrimonio actual es “por cuentas convertibles”, no patrimonio neto integral. Los activos no líquidos requieren una entidad y migración separadas.
+
+#### 11. Health score
+
+**Estado real: no es un Health Score financiero completo.** `Diagnostic.tsx` convierte `summary.savingsRate` directamente en un valor 0-100 y añade tarjetas de patrimonio líquido, mayor gasto y cantidad de metas. No calcula cuatro componentes de 0-25, fondo de emergencia, DTI, adherencia presupuestaria ni coberturas.
+
+**Bug concreto:** el diagnóstico muestra ingresos, gastos y patrimonio con `$` aunque `getBaseCurrency()` puede ser VES o USDT; esos importes ya están convertidos a la moneda base, pero la etiqueta es fija (`src/pages/Diagnostic.tsx`). `Budgets.tsx` también fija el modelo en USD y siempre llama `getDashboardSummary("USD", "month")`; esto contradice las afirmaciones anteriores del contexto de alineación con la moneda base.
+
+**Mínimo recomendado:** renombrar la señal actual como diagnóstico de ahorro o mantenerla como indicador provisional; no presentarla como 1-100 integral. Antes de puntuar, definir normalización y datos faltantes por componente, moneda y periodo.
+
+#### 12. Bundle y rendimiento
+
+**Estado real: build funcional con deuda de rendimiento.** La build transforma 2751 módulos y produce un único JS de 826.06 kB minificados. `recharts` y todas las páginas se cargan desde el punto de entrada; no existe `import()` por página.
+
+**Riesgo:** medio, con impacto en carga móvil y en el objetivo de menos de tres segundos.
+
+**Mínimo recomendado:** medir primero carga inicial real y separar por páginas con lazy loading, empezando por Calculadora, Diagnóstico y componentes Recharts. Repetir build y comprobar que la carga de datos no se rompe. No aumentar `chunkSizeWarningLimit` como solución.
+
+#### 13. Seguridad operativa, consistencia y UX transversal
+
+**Estado real: parcial.** Hay confirmación nativa para eliminar movimientos y metas, validaciones básicas de montos/cuentas/monedas y textos accesibles en varios botones. No hay diálogo reutilizable, estados de error consistentes ni cobertura de teclado/lectores.
+
+**Bug concreto:** `Transactions.tsx` ejecuta `create*`/`editTransaction` dentro de `handleSubmit` sin `try/catch`; un rechazo de disponibilidad, cuenta o meta puede dejar un error no presentado al usuario. Además, el historial de `RecentTransactions.tsx` trata todo lo que no es ingreso como gasto y usa `transaction.amount`, por lo que transferencias y movimientos de meta pueden mostrarse con signo/tipo/monto incorrectos.
+
+**Mínimo recomendado:** capturar y mostrar errores del servicio en Movimientos, clasificar transferencias/metas en el historial y añadir estados de carga/error. Mantener la confirmación nativa como primera entrega si se requiere bajo esfuerzo, pero cubrirla con pruebas de comportamiento.
+
+### Priorización por riesgo
+
+1. **Crítico:** pruebas financieras de dominio; disponibilidad de metas; signos y límites de pasivos; exportación/importación antes de permitir restauraciones; relación VES/USD en subcuentas vinculadas.
+2. **Alto:** corrección de etiquetas/moneda base en diagnóstico y presupuestos; manejo de errores de Movimientos; clasificación financiera; recurrencias idempotentes.
+3. **Medio:** ciclo MANUAL probado, patrimonio con cuentas no convertidas visible, navegación/responsive y accesibilidad.
+4. **Medio-bajo:** code splitting y reducción del bundle, después de medir la carga y estabilizar el dominio.
+
+### Conjunto mínimo de cambios implementable ahora sin inventar requisitos
+
+Este conjunto no se implementó en esta auditoría; es la propuesta mínima para la siguiente iteración:
+
+1. Añadir pruebas de dominio para saldos, transferencias, tasas, MANUAL, metas/disponibilidad, pasivos, migraciones y edición existente.
+2. Corregir errores visibles y de datos ya determinados: captura de errores en `Transactions`, representación de transferencias/metas en `RecentTransactions`, validación civil de deadlines, herencia de `nature`/`creditLimit` en subcuentas USD y etiqueta de moneda base en `Diagnostic`.
+3. Hacer visible en Cuentas cuando el patrimonio excluye cuentas sin tasa y cubrir los signos de pasivos con pruebas, sin añadir todavía activos no líquidos ni APR.
+4. Diseñar y probar el respaldo JSON versionado completo antes de activar importación; incluir CSV por entidad solo después de fijar su formato.
+5. Dejar recurrentes, clasificación avanzada, deudas completas y Health Score como etapas posteriores con requisitos cerrados; no inventar frecuencia, escalas ni datos de seguros.
+6. Medir el bundle y aplicar lazy loading por pantalla si la medición confirma el impacto; conservar la navegación por estado local.
+
+### Inconsistencias corregidas en la lectura del contexto
+
+- La edición de movimientos sí existe para ingresos, gastos y transferencias, pero no para aportes/retiros de metas; no debe describirse como edición completa.
+- Las metas sí están en Dexie y tienen disponibilidad básica, pero la migración legacy puede dejarlas sin cuenta y no hay pruebas de dominio.
+- La moneda base se usa en Dashboard y diagnóstico para conversiones, pero presupuestos están explícitamente fijados en USD y `Diagnostic.tsx` etiqueta importes con `$`; no está completamente alineada.
+- El footer móvil de tres opciones y `Menu.tsx` ya existen; el header es `sticky`, no se ha probado visualmente como persistente en todas las páginas, y Menú aún no puede incluir Recurrentes.
+- Patrimonio neto y pasivos existen solo como extensión de cuentas; no equivalen al módulo completo de activos, deudas y planner solicitado.
+- El diagnóstico actual no es Health Score 1-100: es una señal basada principalmente en tasa de ahorro, aunque visualmente muestra `/100`.
+- Exportación/importación y recurrentes no existen en código; el contexto los describe correctamente como pendientes en algunas secciones, pero no deben aparecer en listas de funcionalidades completadas.
+- El build y lint están correctos, pero el bundle de 826.06 kB minificados confirma la deuda de rendimiento; no hay evidencia de que el objetivo de carga inferior a tres segundos se cumpla.
+
+### Decisiones abiertas antes de ampliar el modelo
+
+- Política de migración para metas legacy sin cuenta de respaldo.
+- Semántica de saldo inicial y signos de pasivos, incluyendo sobrepagos.
+- Moneda de presupuestos: USD fijo o moneda base; la interfaz y el almacenamiento deben decir lo mismo.
+- Formato/versionado de respaldo y política exacta de combinación de IDs.
+- Frecuencia, zona horaria y disparador de recurrencias.
+- Campos y normalización de deuda, activos no líquidos, seguros y cada componente del health score.
+
+### Estado posterior de esta auditoría
+
+El proyecto queda clasificado como prototipo funcional avanzado, no como sistema financiero verificado. Esta revisión añadió cambios de producción acotados y verificables:
+
+- Se extrajeron cálculos puros de saldos, compromisos y disponibilidad a `src/services/financialDomain.ts`, con cobertura para activos, pasivos, transferencias, metas y edición.
+- La creación de una subcuenta USD vinculada hereda `nature` y `creditLimit` de la cuenta VES.
+- Se añadió respaldo JSON versionado, validación de referencias, importación transaccional por reemplazo y exportación CSV de movimientos desde Configuración.
+- Se añadió `RecurringTransaction`, migración Dexie v6, repositorio, servicio de generación idempotente por fecha y página `Recurrentes` accesible desde Menú.
+- Se añadieron pruebas de respaldo, fuentes BCV/Binance y dominio financiero. La suite queda en 5 archivos y 13 pruebas aprobadas.
+- Vite separa React, Recharts y Lucide en chunks. La build deja el chunk principal en aproximadamente 339 kB y elimina la advertencia anterior de chunk único mayor de 500 kB.
+
+Siguen pendientes y no deben declararse completados: clasificación `essential`/`discretionary`, módulo de deudas con APR/pago mínimo/planner, activos no líquidos, Health Score 1-100 con cuatro componentes, pruebas visuales responsive reales, captura de errores de Movimientos, corrección completa de etiquetas de moneda base y decisiones de zona horaria/frecuencia para recurrencias. El indicador actual de Diagnóstico sigue basado principalmente en tasa de ahorro y no debe interpretarse como Health Score integral.
