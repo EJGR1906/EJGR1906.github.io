@@ -35,7 +35,7 @@ function App() {
     return <Goals />;
   }
   if (page === "Diagnóstico") {
-    return <Diagnostic />;
+    return <Diagnostic onNavigate={setPage} />;
   }
   if (page === "Menú") {
     return <MenuPage onNavigate={setPage} />;

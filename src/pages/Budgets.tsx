@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, WalletCards } from "lucide-react";
+import { Plus, Trash2, WalletCards } from "lucide-react";
 import AppShell from "../components/layout/AppShell";
 import { db, type Category } from "../database/db";
 import { getDashboardSummary } from "../services/dashboardService";
@@ -47,6 +47,15 @@ function Budgets() {
         setAmount("");
     };
 
+    const deleteBudget = (budget: Budget) => {
+        const category = categories.find((item) => item.id === budget.categoryId);
+        const categoryName = category?.name || "esta categoría";
+        if (!window.confirm(`¿Eliminar el presupuesto de ${categoryName}?`)) return;
+        const next = budgets.filter((item) => item.categoryId !== budget.categoryId);
+        setBudgets(next);
+        localStorage.setItem(storageKey, JSON.stringify(next));
+    };
+
     return (
         <AppShell activeItem="Presupuestos">
             <div className="p-4 sm:p-6 lg:p-8">
@@ -67,7 +76,7 @@ function Budgets() {
                         </section>
                         <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
                             <div className="flex items-center gap-2"><WalletCards size={19} className="text-primary" /><h2 className="font-bold text-primary-dark">Este mes · USD</h2></div>
-                            {budgets.length === 0 ? <div className="mt-6 rounded-2xl bg-background p-8 text-center text-sm text-primary-dark/55">Aún no tienes límites definidos. Comienza con tu categoría de mayor gasto.</div> : <div className="mt-5 space-y-5">{budgets.map((budget) => { const category = categories.find((item) => item.id === budget.categoryId); const currentSpent = spent[budget.categoryId] || 0; const percentage = budget.amount > 0 ? Math.min((currentSpent / budget.amount) * 100, 100) : 0; return <div key={budget.categoryId} className="rounded-2xl bg-background p-4"><div className="flex items-center justify-between gap-4"><p className="font-bold text-primary-dark">{category?.name || "Categoría"}</p><p className="text-sm font-semibold text-primary-dark">{currentSpent.toLocaleString("es-VE", { maximumFractionDigits: 2 })} / {budget.amount.toLocaleString("es-VE", { maximumFractionDigits: 2 })} {budget.currency}</p></div><div className="mt-3 h-2.5 overflow-hidden rounded-full bg-primary-dark/5"><div className={`h-full rounded-full ${percentage >= 100 ? "bg-red-400" : "bg-primary"}`} style={{ width: `${percentage}%` }} /></div><p className="mt-2 text-xs text-primary-dark/55">{percentage.toFixed(0)}% utilizado</p></div>; })}</div>}
+                            {budgets.length === 0 ? <div className="mt-6 rounded-2xl bg-background p-8 text-center text-sm text-primary-dark/55">Aún no tienes límites definidos. Comienza con tu categoría de mayor gasto.</div> : <div className="mt-5 space-y-5">{budgets.map((budget) => { const category = categories.find((item) => item.id === budget.categoryId); const currentSpent = spent[budget.categoryId] || 0; const percentage = budget.amount > 0 ? Math.min((currentSpent / budget.amount) * 100, 100) : 0; return <div key={budget.categoryId} className="rounded-2xl bg-background p-4"><div className="flex items-start justify-between gap-4"><div><p className="font-bold text-primary-dark">{category?.name || "Categoría"}</p><p className="text-sm font-semibold text-primary-dark">{currentSpent.toLocaleString("es-VE", { maximumFractionDigits: 2 })} / {budget.amount.toLocaleString("es-VE", { maximumFractionDigits: 2 })} {budget.currency}</p></div><button type="button" onClick={() => deleteBudget(budget)} className="rounded-lg p-2 text-primary-dark/55 hover:bg-red-50 hover:text-red-600" aria-label={`Eliminar presupuesto de ${category?.name || "esta categoría"}`} title="Eliminar presupuesto"><Trash2 size={17} /></button></div><div className="mt-3 h-2.5 overflow-hidden rounded-full bg-primary-dark/5"><div className={`h-full rounded-full ${percentage >= 100 ? "bg-red-400" : "bg-primary"}`} style={{ width: `${percentage}%` }} /></div><p className="mt-2 text-xs text-primary-dark/55">{percentage.toFixed(0)}% utilizado</p></div>; })}</div>}
                         </section>
                     </div>
                 </div>

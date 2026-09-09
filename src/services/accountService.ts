@@ -1,5 +1,6 @@
 ﻿import { db, type Account, type CurrencyCode } from "../database/db";
-import { createAccount, getAccountById, updateAccount } from "../repositories/accountRepository";
+import { createAccount, deleteAccount as deleteAccountRecord, getAccountById, updateAccount } from "../repositories/accountRepository";
+import { getTransactionsByAccount } from "../repositories/transactionRepository";
 import { generateId } from "../utils/id";
 
 export interface AccountInput {
@@ -93,6 +94,31 @@ export async function editAccount(id: string, input: Pick<AccountInput, "name" |
 
 export async function setAccountActive(id: string, active: boolean): Promise<void> {
     await updateAccount(id, { active });
+}
+
+export async function removeAccount(id: string): Promise<void> {
+    const account = await getAccountById(id);
+    if (!account) throw new Error("La cuenta no existe.");
+
+    const [transactions, goals, recurringTransactions] = await Promise.all([
+        getTransactionsByAccount(id),
+        db.goals.filter((goal) => goal.backingAccountId === id).toArray(),
+        db.recurringTransactions.filter((item) => item.accountId === id || item.fromAccountId === id || item.toAccountId === id).toArray(),
+    ]);
+
+    if (transactions.length > 0) {
+        throw new Error("No se puede eliminar una cuenta con movimientos. Desactívala para conservar su historial.");
+    }
+    if (goals.length > 0) {
+        throw new Error("No se puede eliminar una cuenta vinculada a metas. Edita o elimina primero esas metas.");
+    }
+    if (recurringTransactions.length > 0) {
+        throw new Error("No se puede eliminar una cuenta usada por movimientos recurrentes. Edita o elimina primero esas plantillas.");
+    }
+
+    await db.transaction("rw", db.accounts, async () => {
+        await deleteAccountRecord(id);
+    });
 }
 
 export async function setLinkedUsdAccount(
