@@ -15,11 +15,26 @@ import {
     type ExpenseCategoryPoint,
 } from "../services/dashboardService";
 import ExpenseChart from "../components/dashboard/ExpenseChart";
+import type { CurrencyCode } from "../database/db";
 
 import { getBaseCurrency } from "../services/settingsService";
 
 interface DashboardProps {
     onNavigate?: (label: string) => void;
+}
+
+function createEmptySummary(currency: CurrencyCode): DashboardSummary {
+    return {
+        baseCurrency: currency,
+        totalBalance: 0,
+        totalIncome: 0,
+        totalExpenses: 0,
+        savings: 0,
+        savingsRate: 0,
+        accounts: [],
+        expensesByCategory: [],
+        recentTransactions: [],
+    };
 }
 
 function Dashboard({ onNavigate }: DashboardProps) {
@@ -53,20 +68,15 @@ function Dashboard({ onNavigate }: DashboardProps) {
             setExpensesByCategory(expenseData);
         };
 
-        void loadDashboard();
+        void loadDashboard().catch((error: unknown) => {
+            console.error("No se pudo cargar el resumen financiero", error);
+            setSummary(createEmptySummary(baseCurrency));
+            setCashFlow([]);
+            setExpensesByCategory([]);
+        });
     }, [baseCurrency, period]);
 
-    if (!summary) {
-        return (
-            <main className="min-h-screen bg-background p-6">
-                <div className="mx-auto max-w-6xl">
-                    <p className="text-primary-dark">
-                        No se pudo cargar la información financiera.
-                    </p>
-                </div>
-            </main>
-        );
-    }
+    if (!summary) return <main className="min-h-screen bg-background" aria-busy="true" />;
 
     return (
 
