@@ -231,19 +231,18 @@ export async function calculateComprehensiveDiagnostic(
   const essentialExpenses = expenseNum > 0 ? expenseNum : 1;
   const monthsEmergencyCoverage = totalLiquidBalance.toNumber() / essentialExpenses;
 
-  let emergencyScore = 0;
-  if (monthsEmergencyCoverage >= 6) emergencyScore = 15;
-  else if (monthsEmergencyCoverage >= 3) emergencyScore = 10;
-  else if (monthsEmergencyCoverage >= 1) emergencyScore = 5;
-  else emergencyScore = 0;
+  const emergencyScore = monthsEmergencyCoverage >= 6
+    ? 15
+    : monthsEmergencyCoverage >= 3
+      ? 10
+      : monthsEmergencyCoverage >= 1
+        ? 5
+        : 0;
 
   const monthlySavings = Math.max(0, incomeNum - expenseNum);
   const savingsRatePercent = incomeNum > 0 ? (monthlySavings / incomeNum) * 100 : 0;
 
-  let savingsRateScore = 0;
-  if (savingsRatePercent >= 20) savingsRateScore = 10;
-  else if (savingsRatePercent >= 10) savingsRateScore = 6;
-  else savingsRateScore = 2;
+  const savingsRateScore = savingsRatePercent >= 20 ? 10 : savingsRatePercent >= 10 ? 6 : 2;
 
   const pilar1Score = emergencyScore + savingsRateScore;
 
@@ -282,25 +281,15 @@ export async function calculateComprehensiveDiagnostic(
   // -------------------------------------------------------------
   const dtiPercent = incomeNum > 0 ? (debtPaymentNum / incomeNum) * 100 : (debtPaymentNum > 0 ? 100 : 0);
 
-  let dtiScore = 0;
-  if (dtiPercent < 20) dtiScore = 15;
-  else if (dtiPercent <= 35) dtiScore = 10;
-  else if (dtiPercent <= 50) dtiScore = 4;
-  else dtiScore = 0;
+  const dtiScore = dtiPercent < 20 ? 15 : dtiPercent <= 35 ? 10 : dtiPercent <= 50 ? 4 : 0;
 
-  let detectedDebtStatus = "Sin deudas registradas";
-  let debtProfileScore = 10;
-
-  if (hasCreditCardDebt || (hasLiabilityAccount && debtPaymentNum > 0)) {
-    detectedDebtStatus = "Cuentas de pasivo / TDC activas";
-    debtProfileScore = 0;
-  } else if (hasLiabilityAccount || debtPaymentNum > 0) {
-    detectedDebtStatus = "Deudas a tasa fija / controladas";
-    debtProfileScore = 7;
-  } else {
-    detectedDebtStatus = "Libre de pasivos tóxicos";
-    debtProfileScore = 10;
-  }
+  const debtProfile = hasCreditCardDebt || (hasLiabilityAccount && debtPaymentNum > 0)
+    ? { status: "Cuentas de pasivo / TDC activas", score: 0 }
+    : hasLiabilityAccount || debtPaymentNum > 0
+      ? { status: "Deudas a tasa fija / controladas", score: 7 }
+      : { status: "Libre de pasivos tóxicos", score: 10 };
+  const detectedDebtStatus = debtProfile.status;
+  const debtProfileScore = debtProfile.score;
 
   const pilar2Score = dtiScore + debtProfileScore;
 
@@ -341,28 +330,19 @@ export async function calculateComprehensiveDiagnostic(
   const targetNetWorth = (userAge * (annualGrossIncome > 0 ? annualGrossIncome : 12000)) / 10;
   const netWorthRatio = targetNetWorth > 0 ? actualNetWorth / targetNetWorth : 1;
 
-  let netWorthScore = 0;
-  if (netWorthRatio >= 1) netWorthScore = 15;
-  else if (netWorthRatio >= 0.5) netWorthScore = 10;
-  else netWorthScore = 3;
+  const netWorthScore = netWorthRatio >= 1 ? 15 : netWorthRatio >= 0.5 ? 10 : 3;
 
   const numCurrencies = activeCurrencies.size;
   const numTypes = activeTypes.size;
   const hasInvestmentGoal = goalsWithProgress.some((g) => g.goal.category === "investment");
 
-  let assetDivScore = 0;
-  let assetDivStatus = "";
-
-  if (numCurrencies >= 2 || (numTypes >= 2 && hasInvestmentGoal)) {
-    assetDivScore = 10;
-    assetDivStatus = `Portafolio Diversificado (${Array.from(activeCurrencies).join(", ")})`;
-  } else if (numCurrencies === 2 || numTypes >= 2) {
-    assetDivScore = 5;
-    assetDivStatus = `Concentración Media (${Array.from(activeCurrencies).join(", ") || "1 divisa"})`;
-  } else {
-    assetDivScore = 0;
-    assetDivStatus = "Efectivo / Banco único";
-  }
+  const assetDiversification = numCurrencies >= 2 || (numTypes >= 2 && hasInvestmentGoal)
+    ? { score: 10, status: `Portafolio Diversificado (${Array.from(activeCurrencies).join(", ")})` }
+    : numCurrencies === 2 || numTypes >= 2
+      ? { score: 5, status: `Concentración Media (${Array.from(activeCurrencies).join(", ") || "1 divisa"})` }
+      : { score: 0, status: "Efectivo / Banco único" };
+  const assetDivScore = assetDiversification.score;
+  const assetDivStatus = assetDiversification.status;
 
   const pilar3Score = netWorthScore + assetDivScore;
 
@@ -399,25 +379,16 @@ export async function calculateComprehensiveDiagnostic(
   // -------------------------------------------------------------
   // PILAR 4: CONTROL PRESUPUESTARIO Y PROTECCIÓN (Máx 25 Pts)
   // -------------------------------------------------------------
-  let budgetControlScore = 0;
-  if (recentTransactionCount >= 5) budgetControlScore = 15;
-  else if (recentTransactionCount >= 1) budgetControlScore = 8;
-  else budgetControlScore = 0;
+  const budgetControlScore = recentTransactionCount >= 5 ? 15 : recentTransactionCount >= 1 ? 8 : 0;
 
   // Automatic insurance score based on registered insurance/health expenses
-  let insuranceScore = 0;
-  let insuranceStatusText = "";
-
-  if (hasHealthInsuranceDetected && hasLifeInsuranceDetected) {
-    insuranceScore = 10;
-    insuranceStatusText = `Salud + Vida registrados (${baseCurrency} ${insuranceExpensesNum.toLocaleString("es-VE", { minimumFractionDigits: 2 })})`;
-  } else if (insuranceExpensesNum > 0 || hasHealthInsuranceDetected || hasLifeInsuranceDetected) {
-    insuranceScore = insuranceExpensesNum > 20 ? 10 : 5;
-    insuranceStatusText = `Gastos de seguro/salud registrados (${baseCurrency} ${insuranceExpensesNum.toLocaleString("es-VE", { minimumFractionDigits: 2 })})`;
-  } else {
-    insuranceScore = 0;
-    insuranceStatusText = "Sin gastos de seguro registrados";
-  }
+  const insurance = hasHealthInsuranceDetected && hasLifeInsuranceDetected
+    ? { score: 10, status: `Salud + Vida registrados (${baseCurrency} ${insuranceExpensesNum.toLocaleString("es-VE", { minimumFractionDigits: 2 })})` }
+    : insuranceExpensesNum > 0 || hasHealthInsuranceDetected || hasLifeInsuranceDetected
+      ? { score: insuranceExpensesNum > 20 ? 10 : 5, status: `Gastos de seguro/salud registrados (${baseCurrency} ${insuranceExpensesNum.toLocaleString("es-VE", { minimumFractionDigits: 2 })})` }
+      : { score: 0, status: "Sin gastos de seguro registrados" };
+  const insuranceScore = insurance.score;
+  const insuranceStatusText = insurance.status;
 
   const pilar4Score = budgetControlScore + insuranceScore;
 

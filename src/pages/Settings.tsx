@@ -31,7 +31,7 @@ function Settings({ onNavigate }: SettingsProps) {
 
     const loadRates = async () => setRates(await getAllExchangeRates());
     useEffect(() => {
-        void loadRates();
+        void getAllExchangeRates().then(setRates);
     }, []);
 
     const handleBirthDateChange = (date: string) => {
@@ -189,7 +189,7 @@ function Settings({ onNavigate }: SettingsProps) {
                             </div>
                             <p className="mt-2 text-sm text-primary-dark/60">Exporta tus tablas para conservar una copia o restaurarlas en este dispositivo.</p>
                             <div className="mt-4 flex flex-wrap gap-2">
-                                <button type="button" onClick={() => void handleExport()} className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white">Exportar JSON</button>
+                                <button type="button" onClick={() => void handleExport()} className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-sky">Exportar JSON</button>
                                 <button type="button" onClick={() => void handleCsvExport()} className="rounded-xl border border-primary/15 px-4 py-2.5 text-sm font-semibold text-primary-dark">Exportar movimientos CSV</button>
                                 <label className="cursor-pointer rounded-xl border border-primary/15 px-4 py-2.5 text-sm font-semibold text-primary-dark">Importar JSON<input type="file" accept="application/json,.json" onChange={(event) => void handleImport(event)} className="sr-only" /></label>
                             </div>

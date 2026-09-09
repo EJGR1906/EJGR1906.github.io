@@ -33,15 +33,21 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
 
   const birthDateConfigured = Boolean(getBirthDate());
 
-  const loadData = async () => {
-    setLoading(true);
-    const result = await calculateComprehensiveDiagnostic(getBaseCurrency());
-    setData(result);
-    setLoading(false);
-  };
-
   useEffect(() => {
+    let cancelled = false;
+
+    const loadData = async () => {
+      const result = await calculateComprehensiveDiagnostic(getBaseCurrency());
+      if (cancelled) return;
+      setData(result);
+      setLoading(false);
+    };
+
     void loadData();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (loading || !data) {
@@ -115,11 +121,10 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
               <div className="space-y-3">
                 {/* Requisito 1: 15 Movimientos */}
                 <div
-                  className={`flex items-center justify-between rounded-2xl p-3.5 text-xs font-semibold sm:text-sm ${
-                    c1 === 1
-                      ? "bg-success/10 text-success"
-                      : "bg-background text-primary-dark/70"
-                  }`}
+                  className={`flex items-center justify-between rounded-2xl p-3.5 text-xs font-semibold sm:text-sm ${c1 === 1
+                    ? "bg-success/10 text-success"
+                    : "bg-background text-primary-dark/70"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <CheckCircle2
@@ -135,11 +140,10 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
 
                 {/* Requisito 2: 1 Cuenta Activa */}
                 <div
-                  className={`flex items-center justify-between rounded-2xl p-3.5 text-xs font-semibold sm:text-sm ${
-                    c2 === 1
-                      ? "bg-success/10 text-success"
-                      : "bg-background text-primary-dark/70"
-                  }`}
+                  className={`flex items-center justify-between rounded-2xl p-3.5 text-xs font-semibold sm:text-sm ${c2 === 1
+                    ? "bg-success/10 text-success"
+                    : "bg-background text-primary-dark/70"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <CheckCircle2
@@ -155,11 +159,10 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
 
                 {/* Requisito 3: Patrimonio Líquido > 0 */}
                 <div
-                  className={`flex items-center justify-between rounded-2xl p-3.5 text-xs font-semibold sm:text-sm ${
-                    c3 === 1
-                      ? "bg-success/10 text-success"
-                      : "bg-background text-primary-dark/70"
-                  }`}
+                  className={`flex items-center justify-between rounded-2xl p-3.5 text-xs font-semibold sm:text-sm ${c3 === 1
+                    ? "bg-success/10 text-success"
+                    : "bg-background text-primary-dark/70"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <CheckCircle2
@@ -169,7 +172,7 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
                     <span>Patrimonio líquido mayor a 0</span>
                   </div>
                   <span className="font-bold">
-                    {data.baseCurrency} {unlockStatus.totalLiquidBalance.toLocaleString("es-VE", { minimumFractionDigits: 2 })} ({c3 === 1 ? "> $0" : "$0"})
+                    {data.baseCurrency} {unlockStatus.totalLiquidBalance.toLocaleString("es-VE", { minimumFractionDigits: 2 })}
                   </span>
                 </div>
               </div>
@@ -179,7 +182,7 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
                 <button
                   type="button"
                   onClick={() => onNavigate?.("Movimientos")}
-                  className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-primary-dark sm:text-sm"
+                  className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-xs font-bold text-sky shadow-sm transition hover:bg-primary-dark sm:text-sm"
                 >
                   <Plus size={16} />
                   Registrar Movimiento
@@ -300,11 +303,10 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
                         key={key}
                         type="button"
                         onClick={() => setExpandedPillar(expandedPillar === key ? null : key)}
-                        className={`flex flex-col justify-between rounded-2xl p-3 text-left transition ${
-                          expandedPillar === key
-                            ? "bg-white/20 ring-1 ring-white/30"
-                            : "bg-white/10 hover:bg-white/15"
-                        }`}
+                        className={`flex flex-col justify-between rounded-2xl p-3 text-left transition ${expandedPillar === key
+                          ? "bg-white/20 ring-1 ring-white/30"
+                          : "bg-white/10 hover:bg-white/15"
+                          }`}
                       >
                         <div className="flex items-center justify-between text-xs text-white/70">
                           <Icon size={15} className="text-sky" />

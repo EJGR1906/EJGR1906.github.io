@@ -87,7 +87,7 @@ function Categories({ onNavigate }: CategoriesProps) {
                                         <option value="income">Ingreso</option>
                                     </select>
                                 </label>
-                                <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white hover:bg-primary-dark">
+                                <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-sky hover:bg-primary-dark">
                                     <Check size={17} /> Guardar categoría
                                 </button>
                                 {editing && <button type="button" onClick={reset} className="w-full text-sm font-semibold text-primary-dark/60">Cancelar</button>}
