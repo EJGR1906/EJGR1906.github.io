@@ -157,6 +157,16 @@ textarea:focus-visible {
 }
 
 @layer components {
+  .goal-movement,
+  .movement-negative {
+    color: #b91c1c;
+  }
+
+  [data-theme="dark"] .goal-movement,
+  [data-theme="dark"] .movement-negative {
+    color: #fca5a5;
+  }
+
   .field {
     width: 100%;
     border-radius: 0.75rem;

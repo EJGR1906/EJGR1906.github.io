@@ -916,6 +916,29 @@ Se mantiene la arquitectura `React -> Services -> Repositories -> IndexedDB/Dexi
 - El gasto mensual usado para comparar presupuestos se calcula en USD.
 - Los accesos fijos de escritorio permanecen anclados al viewport: la animacion de `.page-transition` ya no aplica `transform`, que creaba un contexto de posicionamiento y hacia que Configuracion se desplazara con el contenido.
 - `Configuracion` permanece disponible en la barra fija superior de escritorio y en el sidebar; `Categorias` continua limitada a Movimientos.
+- La carga, migracion legacy y progreso de metas se centralizan en `goalService`; `Goals.tsx` ya no lee directamente las tablas de metas ni recalcula aportes.
+- Movimientos permite registrar `Aporte a meta` y `Retiro de meta` usando los servicios existentes, mostrando cuenta, meta y el compromiso del dinero; estos registros no se editan como ingresos o gastos.
+- La disponibilidad y las validaciones de meta siguen usando saldo fisico menos compromisos, sin sumar metas como cuentas ni reducir el patrimonio.
+
+### Verificaciones de esta continuacion
+
+- `npm test` -> correcto; 2 archivos y 3 pruebas aprobadas.
+- `npm run lint` -> correcto.
+- `npm run build` -> correcto; permanece la advertencia conocida de bundle mayor a 500 kB.
+
+### Ajustes de UX en movimientos - 2026-09-08
+
+- Los aportes y retiros de metas usan un tratamiento visual neutro azul y no se presentan como ingresos reales.
+- En `Aporte a meta`, la cuenta se etiqueta como `Cuenta origen`; en `Retiro de meta`, como `Cuenta destino`.
+- La fecha inicial de Movimientos usa el calendario local mediante `todayLocal()`, evitando que la conversión UTC sugiera el día siguiente.
+- En modo claro y oscuro, gastos, aportes y retiros usan letras e iconos en rojo neutro, sin fondos de color; no dependen de `text-primary`, que en el tema oscuro representa el color verde lima.
+- Un aporte muestra salida de fondos comprometidos y un retiro muestra devolucion al saldo disponible con signo positivo; el color rojo identifica el tipo de movimiento, no el efecto contable.
+
+### Verificaciones de UX en movimientos
+
+- `npm test` -> correcto; 2 archivos y 3 pruebas aprobadas.
+- `npm run lint` -> correcto.
+- `npm run build` -> correcto; permanece la advertencia conocida de bundle mayor a 500 kB.
 
 ### Riesgos y decisiones abiertas
 

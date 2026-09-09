@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Check, Pencil, Plus, Trash2 } from "lucide-react";
 import AppShell from "../components/layout/AppShell";
-import { db, type Account, type Category, type CurrencyCode, type Transaction, type TransactionType } from "../database/db";
+import { db, type Account, type Category, type CurrencyCode, type Goal, type Transaction, type TransactionType } from "../database/db";
 import { deleteTransaction, getAllTransactions } from "../repositories/transactionRepository";
-import { createExpense, createIncome, createTransfer, editTransaction } from "../services/transactionService";
+import { createExpense, createGoalContribution, createGoalWithdrawal, createIncome, createTransfer, editTransaction } from "../services/transactionService";
+import { getGoalsWithProgress } from "../services/goalService";
+import { todayLocal } from "../utils/date";
 
-const today = new Date().toISOString().slice(0, 10);
+const today = todayLocal();
 
 interface TransactionsProps {
     onNavigate?: (label: string) => void;
@@ -15,6 +17,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
     const [type, setType] = useState<TransactionType>("expense");
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [goals, setGoals] = useState<Goal[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [saved, setSaved] = useState(false);
@@ -28,23 +31,27 @@ function Transactions({ onNavigate }: TransactionsProps) {
         toAmount: "",
         description: "",
         date: today,
+        goalId: "",
     });
 
     const loadData = useCallback(async () => {
-        const [accountData, categoryData, transactionData] = await Promise.all([
+        const [accountData, categoryData, transactionData, goalData] = await Promise.all([
             db.accounts.filter((account) => account.active).toArray(),
             db.categories.toArray(),
             getAllTransactions(),
+            getGoalsWithProgress(),
         ]);
         setAccounts(accountData);
         setCategories(categoryData);
         setTransactions(transactionData);
+        setGoals(goalData.filter((item) => item.goal.active).map((item) => item.goal));
         setForm((current) => ({
             ...current,
             accountId: current.accountId || accountData[0]?.id || "",
             fromAccountId: current.fromAccountId || accountData[0]?.id || "",
             toAccountId: current.toAccountId || accountData[1]?.id || accountData[0]?.id || "",
             categoryId: current.categoryId || categoryData.find((category) => category.type === type)?.id || "",
+            goalId: current.goalId || goalData.find((item) => item.goal.active)?.goal.id || "",
         }));
     }, [type]);
 
@@ -61,6 +68,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
     const selectedAccount = accounts.find((account) => account.id === form.accountId);
     const fromAccount = accounts.find((account) => account.id === form.fromAccountId);
     const toAccount = accounts.find((account) => account.id === form.toAccountId);
+    const compatibleGoals = goals.filter((goal) => goal.currency === selectedAccount?.currency && goal.backingAccountId === form.accountId);
 
     const setField = (field: keyof typeof form, value: string) => {
         setForm((current) => ({ ...current, [field]: value }));
@@ -72,6 +80,9 @@ function Transactions({ onNavigate }: TransactionsProps) {
         setForm((current) => ({
             ...current,
             categoryId: categories.find((category) => category.type === (nextType === "income" ? "income" : "expense"))?.id || "",
+            goalId: (nextType === "goal_contribution" || nextType === "goal_withdrawal")
+                ? goals.find((goal) => goal.active)?.id || ""
+                : current.goalId,
         }));
     };
 
@@ -82,7 +93,20 @@ function Transactions({ onNavigate }: TransactionsProps) {
         if (!form.date || amount <= 0) return;
         const date = new Date(`${form.date}T12:00:00`).toISOString();
 
-        if (type === "transfer") {
+        if (type === "goal_contribution" || type === "goal_withdrawal") {
+            const goal = goals.find((item) => item.id === form.goalId);
+            if (!form.accountId || !goal || goal.backingAccountId !== form.accountId) return;
+            const input = {
+                goalId: goal.id,
+                accountId: form.accountId,
+                amount,
+                currency: selectedAccount?.currency || form.currency,
+                description: form.description,
+                date,
+            };
+            if (type === "goal_contribution") await createGoalContribution(input);
+            else await createGoalWithdrawal(input);
+        } else if (type === "transfer") {
             if (!form.fromAccountId || !form.toAccountId || form.fromAccountId === form.toAccountId || destinationAmount <= 0) return;
             const input = {
                 fromAccountId: form.fromAccountId,
@@ -159,6 +183,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
             toAmount: String(transaction.toAmount ?? ""),
             description: transaction.description || "",
             date: transaction.date.slice(0, 10),
+            goalId: transaction.goalId || current.goalId,
         }));
     };
 
@@ -190,7 +215,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
                         <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
                             <div className="mb-5 flex items-center gap-2"><Plus size={19} className="text-primary" /><h2 className="font-bold text-primary-dark">{editingTransaction ? "Editar movimiento" : "Nuevo movimiento"}</h2></div>
                             <div className="mb-5 grid grid-cols-3 gap-1 rounded-2xl bg-primary-dark/5 p-1">
-                                {(["expense", "income", "transfer"] as TransactionType[]).map((item) => <button key={item} type="button" onClick={() => changeType(item)} className={`rounded-xl px-2 py-2.5 text-xs font-semibold transition sm:text-sm ${type === item ? "bg-white text-primary shadow-sm" : "text-primary-dark/55 hover:text-primary-dark"}`}>{item === "expense" ? "Gasto" : item === "income" ? "Ingreso" : "Transferencia"}</button>)}
+                                {(["expense", "income", "transfer", "goal_contribution", "goal_withdrawal"] as TransactionType[]).map((item) => <button key={item} type="button" onClick={() => changeType(item)} className={`rounded-xl px-2 py-2.5 text-xs font-semibold transition sm:text-sm ${type === item ? "bg-white text-primary shadow-sm" : "text-primary-dark/55 hover:text-primary-dark"}`}>{item === "expense" ? "Gasto" : item === "income" ? "Ingreso" : item === "transfer" ? "Transferencia" : item === "goal_contribution" ? "Aporte a meta" : "Retiro de meta"}</button>)}
                             </div>
                             <form className="space-y-4" onSubmit={handleSubmit}>
                                 {type === "transfer" ? <>
@@ -198,6 +223,11 @@ function Transactions({ onNavigate }: TransactionsProps) {
                                     <label className="block text-sm font-medium text-primary-dark">Cuenta destino<select value={form.toAccountId} onChange={(event) => setField("toAccountId", event.target.value)} className="field mt-1">{accounts.map((account) => <option key={account.id} value={account.id}>{account.name} · {account.currency}</option>)}</select></label>
                                     <div className="grid grid-cols-2 gap-3"><label className="block text-sm font-medium text-primary-dark">Sale<input required min="0.01" step="0.01" type="number" value={form.amount} onChange={(event) => setField("amount", event.target.value)} className="field mt-1" placeholder="0,00" /></label><label className="block text-sm font-medium text-primary-dark">Llega<input required min="0.01" step="0.01" type="number" value={form.toAmount} onChange={(event) => setField("toAmount", event.target.value)} className="field mt-1" placeholder="0,00" /></label></div>
                                     <p className="rounded-xl bg-background px-3 py-2 text-xs text-primary-dark/60">{fromAccount?.currency || "USD"} → {toAccount?.currency || "USD"}. La tasa se calcula automáticamente.</p>
+                                </> : type === "goal_contribution" || type === "goal_withdrawal" ? <>
+                                    <label className="block text-sm font-medium text-primary-dark">{type === "goal_contribution" ? "Cuenta origen" : "Cuenta destino"}<select value={form.accountId} onChange={(event) => setField("accountId", event.target.value)} className="field mt-1">{accounts.map((account) => <option key={account.id} value={account.id}>{account.name} · {account.currency}</option>)}</select></label>
+                                    <label className="block text-sm font-medium text-primary-dark">Meta<select value={form.goalId} onChange={(event) => setField("goalId", event.target.value)} className="field mt-1">{compatibleGoals.map((goal) => <option key={goal.id} value={goal.id}>{goal.name} · {goal.currency}</option>)}</select></label>
+                                    <label className="block text-sm font-medium text-primary-dark">Monto<input required min="0.01" step="0.01" type="number" value={form.amount} onChange={(event) => setField("amount", event.target.value)} className="field mt-1" placeholder="0,00" /></label>
+                                    <p className="rounded-xl bg-background px-3 py-2 text-xs text-primary-dark/60">El dinero permanece en la cuenta, pero queda comprometido en la meta.</p>
                                 </> : <>
                                     <label className="block text-sm font-medium text-primary-dark">Cuenta<select value={form.accountId} onChange={(event) => setField("accountId", event.target.value)} className="field mt-1">{accounts.map((account) => <option key={account.id} value={account.id}>{account.name} · {account.currency}</option>)}</select></label>
                                     <div className="grid grid-cols-2 gap-3"><label className="block text-sm font-medium text-primary-dark">Monto<input required min="0.01" step="0.01" type="number" value={form.amount} onChange={(event) => setField("amount", event.target.value)} className="field mt-1" placeholder="0,00" /></label><div><span className="block text-sm font-medium text-primary-dark">Moneda</span><div className="field mt-1 flex items-center bg-primary-dark/5 text-primary-dark">{selectedAccount?.currency || form.currency}</div></div></div>
@@ -212,7 +242,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
 
                         <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
                             <div className="flex items-start justify-between gap-4"><div><p className="text-sm font-medium text-primary">Historial</p><h2 className="mt-1 text-lg font-bold text-primary-dark">Todos tus movimientos</h2></div><span className="rounded-full bg-sky/35 px-3 py-1 text-xs font-semibold text-primary">{transactions.length} registros</span></div>
-                            {transactions.length === 0 ? <div className="mt-8 rounded-2xl bg-background px-5 py-10 text-center text-sm text-primary-dark/55">Todavía no hay movimientos registrados.</div> : <div className="mt-5 divide-y divide-primary-dark/5">{transactions.map((transaction) => { const income = transaction.type === "income"; const transfer = transaction.type === "transfer"; return <div key={transaction.id} className="flex items-center gap-3 py-4 first:pt-0"><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${income ? "bg-success/10 text-success" : transfer ? "bg-sky/40 text-primary" : "bg-primary/5 text-primary"}`}>{income ? <ArrowDownLeft size={18} /> : transfer ? <ArrowLeftRight size={18} /> : <ArrowUpRight size={18} />}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-primary-dark">{transaction.description || (income ? "Ingreso" : transfer ? "Transferencia" : "Gasto")}</p><p className="mt-0.5 text-xs text-primary-dark/50">{new Date(transaction.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" })}</p></div><div className="text-right"><p className={`text-sm font-bold ${income ? "text-success" : "text-primary-dark"}`}>{income ? "+" : transfer ? "↔" : "-"} {formatAmount(transaction)}</p><div className="mt-1 flex justify-end gap-2"><button type="button" onClick={() => startEdit(transaction)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-primary"><Pencil size={13} /> Editar</button><button type="button" onClick={() => void removeTransaction(transaction.id)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-red-600"><Trash2 size={13} /> Eliminar</button></div></div></div>; })}</div>}
+                            {transactions.length === 0 ? <div className="mt-8 rounded-2xl bg-background px-5 py-10 text-center text-sm text-primary-dark/55">Todavía no hay movimientos registrados.</div> : <div className="mt-5 divide-y divide-primary-dark/5">{transactions.map((transaction) => { const income = transaction.type === "income"; const transfer = transaction.type === "transfer"; const goalMovement = transaction.type === "goal_contribution" || transaction.type === "goal_withdrawal"; const negativeMovement = goalMovement || transaction.type === "expense"; return <div key={transaction.id} className="flex items-center gap-3 py-4 first:pt-0"><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${income ? "text-success" : transfer ? "text-primary" : negativeMovement ? "movement-negative" : "text-primary"}`}>{income ? <ArrowDownLeft size={18} /> : transfer ? <ArrowLeftRight size={18} /> : <ArrowUpRight size={18} />}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-primary-dark">{transaction.description || (income ? "Ingreso" : transfer ? "Transferencia" : transaction.type === "goal_contribution" ? "Aporte a meta" : transaction.type === "goal_withdrawal" ? "Retiro de meta" : "Gasto")}</p><p className="mt-0.5 text-xs text-primary-dark/50">{new Date(transaction.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" })}</p></div><div className="text-right"><p className={`text-sm font-bold ${income ? "text-success" : goalMovement || transaction.type === "expense" ? "movement-negative" : "text-primary-dark"}`}>{income ? "+" : transfer ? "↔" : transaction.type === "goal_withdrawal" ? "+" : "-"} {formatAmount(transaction)}</p><div className="mt-1 flex justify-end gap-2">{!goalMovement && <button type="button" onClick={() => startEdit(transaction)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-primary"><Pencil size={13} /> Editar</button>}<button type="button" onClick={() => void removeTransaction(transaction.id)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-red-600"><Trash2 size={13} /> Eliminar</button></div></div></div>; })}</div>}
                         </section>
                     </div>
                 </div>

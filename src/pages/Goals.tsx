@@ -1,41 +1,22 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Target } from "lucide-react";
 import AppShell from "../components/layout/AppShell";
-import { db, type Account, type Goal } from "../database/db";
+import { type Account, type Goal } from "../database/db";
 import {
     createGoal as createGoalEntity,
+    getActiveGoalAccounts,
+    getGoalsWithProgress,
+    migrateLegacyGoals,
 } from "../services/goalService";
 import {
     createGoalContribution,
     createGoalWithdrawal,
 } from "../services/transactionService";
 
-const storageKey = "finanzas.goals";
-
 type GoalWithProgress = Goal & {
     savedAmount: number;
     progress: number;
 };
-
-async function getGoalSavedAmount(goalId: string): Promise<number> {
-    const entries = await db.transactions
-        .filter(
-            (transaction) =>
-                transaction.goalId === goalId &&
-                (transaction.type === "goal_contribution" || transaction.type === "goal_withdrawal")
-        )
-        .toArray();
-
-    return entries.reduce((total, transaction) => {
-        const amount = transaction.amount ?? 0;
-
-        if (transaction.type === "goal_contribution") {
-            return total + amount;
-        }
-
-        return total - amount;
-    }, 0);
-}
 
 function Goals() {
     const [goals, setGoals] = useState<GoalWithProgress[]>([]);
@@ -50,48 +31,17 @@ function Goals() {
     const [contributionAmount, setContributionAmount] = useState<Record<string, string>>({});
 
     const loadGoals = useCallback(async () => {
-        const existingGoalsCount = await db.goals.count();
-        const legacyGoals = JSON.parse(localStorage.getItem(storageKey) || "[]") as Array<{
-            id: string;
-            name: string;
-            target: number;
-            current: number;
-        }>;
-
-        if (existingGoalsCount === 0 && legacyGoals.length > 0) {
-            await db.goals.bulkPut(
-                legacyGoals.map((goal) => ({
-                    id: goal.id,
-                    name: goal.name,
-                    targetAmount: Number(goal.target) || 0,
-                    currency: "USD",
-                    backingAccountId: "",
-                    active: true,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                }))
-            );
-            localStorage.removeItem(storageKey);
-        }
-
-        const allGoals = await db.goals.orderBy("updatedAt").reverse().toArray();
-        const activeAccounts = await db.accounts.filter((account) => account.active).toArray();
-
-        const hydratedGoals = await Promise.all(
-            allGoals.map(async (goal) => {
-                const savedAmount = await getGoalSavedAmount(goal.id);
-                const progress = goal.targetAmount > 0 ? Math.min((savedAmount / goal.targetAmount) * 100, 100) : 0;
-
-                return {
-                    ...goal,
-                    savedAmount,
-                    progress,
-                };
-            })
-        );
-
+        await migrateLegacyGoals();
+        const [goalProgress, activeAccounts] = await Promise.all([
+            getGoalsWithProgress(),
+            getActiveGoalAccounts(),
+        ]);
         setAccounts(activeAccounts);
-        setGoals(hydratedGoals);
+        setGoals(goalProgress.map((item) => ({
+            ...item.goal,
+            savedAmount: item.savedAmount,
+            progress: item.progressPercent,
+        })));
     }, []);
 
     useEffect(() => {

@@ -1,5 +1,5 @@
 ﻿import { getAllGoals, getGoalById, createGoal as persistGoal, updateGoal } from "../repositories/goalRepository";
-import { getAccountById } from "../repositories/accountRepository";
+import { getAccountById, getActiveAccounts } from "../repositories/accountRepository";
 import { getAllTransactions } from "../repositories/transactionRepository";
 import { getAccountBalance } from "./financialService";
 import { generateId } from "../utils/id";
@@ -18,6 +18,37 @@ export interface AccountAvailability {
     physicalBalance: number;
     committedAmount: number;
     availableBalance: number;
+}
+
+const legacyStorageKey = "finanzas.goals";
+
+export async function migrateLegacyGoals(): Promise<void> {
+    const existingGoalsCount = await getAllGoals().then((goals) => goals.length);
+    const legacyGoals = JSON.parse(localStorage.getItem(legacyStorageKey) || "[]") as Array<{
+        id: string;
+        name: string;
+        target: number;
+    }>;
+
+    if (existingGoalsCount === 0 && legacyGoals.length > 0) {
+        await Promise.all(
+            legacyGoals.map((legacyGoal) => persistGoal({
+                id: legacyGoal.id,
+                name: legacyGoal.name,
+                targetAmount: Number(legacyGoal.target) || 0,
+                currency: "USD",
+                backingAccountId: "",
+                active: true,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            }))
+        );
+        localStorage.removeItem(legacyStorageKey);
+    }
+}
+
+export async function getActiveGoalAccounts(): Promise<Account[]> {
+    return getActiveAccounts();
 }
 
 function assertPositiveAmount(amount: number): void {
