@@ -71,12 +71,12 @@ function ExpenseChart({ data, currency }: ExpenseChartProps) {
                                             key={entry.categoryId}
                                             fill={
                                                 [
-                                                    "#0E7490",
-                                                    "#22C55E",
-                                                    "#BAE6FD",
-                                                    "#082F49",
-                                                    "#67E8F9",
-                                                    "#94A3B8",
+                                                    "var(--color-primary)",
+                                                    "var(--color-success)",
+                                                    "var(--color-sky)",
+                                                    "var(--color-primary-dark)",
+                                                    "var(--color-chart-cyan)",
+                                                    "var(--color-chart-slate)",
                                                 ][index % 6]
                                             }
                                         />
@@ -104,12 +104,12 @@ function ExpenseChart({ data, currency }: ExpenseChartProps) {
                                         className="h-2.5 w-2.5 shrink-0 rounded-full"
                                         style={{
                                             backgroundColor: [
-                                                "#0E7490",
-                                                "#22C55E",
-                                                "#BAE6FD",
-                                                "#082F49",
-                                                "#67E8F9",
-                                                "#94A3B8",
+                                                "var(--color-primary)",
+                                                "var(--color-success)",
+                                                "var(--color-sky)",
+                                                "var(--color-primary-dark)",
+                                                "var(--color-chart-cyan)",
+                                                "var(--color-chart-slate)",
                                             ][index % 6],
                                         }}
                                     />

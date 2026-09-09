@@ -276,9 +276,9 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
                 <div
                   className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold shadow-sm"
                   style={{
-                    backgroundColor: `${data.healthColor}25`,
-                    color: data.healthColor === "#0E7490" ? "#38BDF8" : data.healthColor,
-                    border: `1px solid ${data.healthColor}50`,
+                    backgroundColor: `color-mix(in srgb, ${data.healthColor} 15%, var(--color-transparent))`,
+                    color: data.healthColor === "var(--color-primary)" ? "var(--color-info)" : data.healthColor,
+                    border: `1px solid color-mix(in srgb, ${data.healthColor} 31%, var(--color-transparent))`,
                   }}
                 >
                   <Sparkles size={14} />
@@ -322,7 +322,7 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
                             className="h-full rounded-full transition-all duration-300"
                             style={{
                               width: `${pct}%`,
-                              backgroundColor: pct >= 80 ? "#22C55E" : pct >= 50 ? "#38BDF8" : "#EF4444",
+                              backgroundColor: pct >= 80 ? "var(--color-success)" : pct >= 50 ? "var(--color-info)" : "var(--color-danger)",
                             }}
                           />
                         </div>
@@ -429,7 +429,7 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
                         <p
                           className="text-[10px] font-semibold"
                           style={{
-                            color: pct >= 80 ? "#22C55E" : pct >= 50 ? "#0E7490" : "#EF4444",
+                            color: pct >= 80 ? "var(--color-success)" : pct >= 50 ? "var(--color-primary)" : "var(--color-danger)",
                           }}
                         >
                           {pct >= 80 ? "Sólido" : pct >= 50 ? "Aceptable" : "Requiere atención"}

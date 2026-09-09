@@ -428,20 +428,20 @@ export async function calculateComprehensiveDiagnostic(
   const totalScore = pilar1Score + pilar2Score + pilar3Score + pilar4Score;
 
   let healthLevel: "Excelente" | "Bueno" | "Regular" | "Crítico" = "Regular";
-  let healthColor = "#EAB308";
+  let healthColor = "var(--color-warning)";
   let summaryText = "Tu salud financiera se obtiene 100% de tus cuentas y movimientos reales.";
 
   if (totalScore >= 85) {
     healthLevel = "Excelente";
-    healthColor = "#22C55E";
+    healthColor = "var(--color-success)";
     summaryText = "¡Excelente salud financiera! Tus gastos, cuentas y movimientos reflejan alta solvencia y liquidez.";
   } else if (totalScore >= 70) {
     healthLevel = "Bueno";
-    healthColor = "#0E7490";
+    healthColor = "var(--color-primary)";
     summaryText = "Buen nivel de control y liquidez detectado automáticamente en tus transacciones.";
   } else if (totalScore < 50) {
     healthLevel = "Crítico";
-    healthColor = "#EF4444";
+    healthColor = "var(--color-danger)";
     summaryText = "Tus registros de movimientos muestran oportunidades de mejora en liquidez y fondo de reserva.";
   }
 
