@@ -10,6 +10,7 @@ import { AuthContext, type AuthContextValue } from "./authContextValue";
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(isSupabaseConfigured);
+  const [profileComplete, setProfileComplete] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -21,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!mounted) return;
       setSession(nextSession);
       setActiveUser(nextSession?.user.id ?? null);
+      setProfileComplete(false);
       if (nextSession?.user.id) {
         try {
           await migrateLocalDataToCloud(nextSession.user.id);
@@ -33,6 +35,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               birthDate: metadata.birthDate ?? "",
               phone: metadata.phone ?? "",
             });
+            setProfileComplete(Boolean(metadata.birthDate));
+          } else {
+            setProfileComplete(Boolean(existingSettings.birthDate));
           }
           await syncUserSettingsFromCloud();
         } catch (error) {
@@ -51,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mounted = false;
       listener.subscription.unsubscribe();
       setActiveUser(null);
+      setProfileComplete(false);
     };
   }, []);
 
@@ -59,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     loading,
     configured: isSupabaseConfigured,
+    profileComplete,
     async signIn(email, password) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
@@ -85,6 +92,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
     },
+    async completeProfile(birthDate, phone) {
+      const normalizedPhone = phone?.trim() || "";
+      const { error } = await supabase.auth.updateUser({
+        data: { birthDate, phone: normalizedPhone },
+      });
+      if (error) throw error;
+      await saveUserSettings({
+        baseCurrency: "USD",
+        theme: "light",
+        birthDate,
+        phone: normalizedPhone,
+      });
+      setProfileComplete(true);
+    },
     async signOut() {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
@@ -93,12 +114,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: window.location.origin,
         },
       });
       if (error) throw error;
     },
-  }), [loading, session]);
+  }), [loading, profileComplete, session]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

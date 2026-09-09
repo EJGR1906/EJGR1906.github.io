@@ -19,8 +19,9 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import UpdatePassword from "./pages/Auth/UpdatePassword";
+import CompleteProfile from "./pages/Auth/CompleteProfile";
 function App() {
-  const { configured, loading, user } = useAuth();
+  const { configured, loading, profileComplete, user } = useAuth();
   const [authMode, setAuthMode] = useState<"login" | "register" | "reset">("login");
   const [recoveringPassword, setRecoveringPassword] = useState(() => window.location.hash.includes("type=recovery"));
 
@@ -30,6 +31,10 @@ function App() {
 
   if (configured && recoveringPassword && user) {
     return <UpdatePassword onDone={() => { window.history.replaceState({}, document.title, window.location.pathname); setRecoveringPassword(false); }} />;
+  }
+
+  if (configured && user && !profileComplete) {
+    return <CompleteProfile />;
   }
 
   if (configured && !user) {

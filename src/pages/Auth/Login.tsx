@@ -8,7 +8,7 @@ interface LoginProps {
 }
 
 function Login({ onRegister, onForgotPassword }: LoginProps) {
-    const { signIn } = useAuth();
+    const { signIn, signInWithGoogle } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -28,6 +28,15 @@ function Login({ onRegister, onForgotPassword }: LoginProps) {
         }
     }
 
+    async function handleGoogleSignIn() {
+        setError("");
+        try {
+            await signInWithGoogle();
+        } catch (cause) {
+            setError(cause instanceof Error ? cause.message : "No se pudo iniciar sesión con Google.");
+        }
+    }
+
     return (
         <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
             <form onSubmit={handleSubmit} className="w-full max-w-md rounded-3xl bg-white p-6 shadow-lg ring-1 ring-primary/10 sm:p-8">
@@ -41,6 +50,7 @@ function Login({ onRegister, onForgotPassword }: LoginProps) {
                 <label className="mt-4 block text-sm font-medium text-primary-dark">Contraseña<input className="field mt-1" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={6} /></label>
                 {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
                 <button className="mt-6 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 font-semibold text-white disabled:opacity-50" type="submit" disabled={submitting}>{submitting ? "Entrando..." : "Entrar"}</button>
+                <button className="mt-4 flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50" type="button" onClick={() => void handleGoogleSignIn()}>Continuar con Google</button>
                 <button className="mt-4 w-full text-sm font-semibold text-primary hover:text-primary-dark" type="button" onClick={onForgotPassword}>¿Olvidaste tu contraseña?</button>
                 <button className="mt-4 w-full text-sm font-semibold text-primary hover:text-primary-dark" type="button" onClick={onRegister}>Crear una cuenta</button>
             </form>

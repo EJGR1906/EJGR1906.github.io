@@ -6,10 +6,12 @@ export interface AuthContextValue {
     session: Session | null;
     loading: boolean;
     configured: boolean;
+    profileComplete: boolean;
     signIn: (email: string, password: string) => Promise<void>;
     signUp: (email: string, password: string, metadata: { birthDate: string; phone?: string }) => Promise<{ needsConfirmation: boolean }>;
     resetPassword: (email: string) => Promise<void>;
     updatePassword: (password: string) => Promise<void>;
+    completeProfile: (birthDate: string, phone?: string) => Promise<void>;
     signOut: () => Promise<void>;
     signInWithGoogle: () => Promise<void>;
 }
