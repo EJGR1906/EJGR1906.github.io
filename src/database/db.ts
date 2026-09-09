@@ -17,6 +17,10 @@ export interface Account {
   initialBalance: number;
 
   active: boolean;
+
+  nature?: "asset" | "liability";
+
+  creditLimit?: number;
 }
 
 export interface Category {
@@ -181,5 +185,21 @@ db.version(4)
     const goals = transaction.table("goals");
     await goals.toCollection().modify((goal) => {
       goal.category ??= "purchase";
+    });
+  });
+
+db.version(5)
+  .stores({
+    accounts: "id, currency, type, active, institutionId, nature",
+    categories: "id, type",
+    goals: "id, backingAccountId, active, currency, category, deadline, updatedAt",
+    transactions:
+      "id, type, currency, accountId, categoryId, goalId, date, createdAt",
+    exchangeRates:
+      "id, source, baseCurrency, quoteCurrency, timestamp, [baseCurrency+quoteCurrency]",
+  })
+  .upgrade(async (transaction) => {
+    await transaction.table("accounts").toCollection().modify((account) => {
+      account.nature ??= "asset";
     });
   });

@@ -37,9 +37,9 @@ export async function getAccountBalance(
       transaction.accountId === account.id &&
       transaction.currency === account.currency
     ) {
-      balance = balance.plus(
-        transaction.amount ?? 0
-      );
+      balance = account.nature === "liability"
+        ? balance.minus(transaction.amount ?? 0)
+        : balance.plus(transaction.amount ?? 0);
     }
 
     if (
@@ -47,27 +47,31 @@ export async function getAccountBalance(
       transaction.accountId === account.id &&
       transaction.currency === account.currency
     ) {
-      balance = balance.minus(
-        transaction.amount ?? 0
-      );
+      balance = account.nature === "liability"
+        ? balance.plus(transaction.amount ?? 0)
+        : balance.minus(transaction.amount ?? 0);
     }
 
     if (
       transaction.type === "transfer" &&
       transaction.fromAccountId === account.id
     ) {
-      balance = balance.minus(
-        transaction.fromAmount ?? 0
-      );
+      if (account.nature === "liability") {
+        balance = balance.plus(transaction.fromAmount ?? 0);
+      } else {
+        balance = balance.minus(transaction.fromAmount ?? 0);
+      }
     }
 
     if (
       transaction.type === "transfer" &&
       transaction.toAccountId === account.id
     ) {
-      balance = balance.plus(
-        transaction.toAmount ?? 0
-      );
+      if (account.nature === "liability") {
+        balance = balance.minus(transaction.toAmount ?? 0);
+      } else {
+        balance = balance.plus(transaction.toAmount ?? 0);
+      }
     }
   }
 
@@ -136,5 +140,40 @@ export async function getConsolidatedBalance(
       .toNumber(),
 
     accounts: accountBalances,
+  };
+}
+
+export interface AccountPortfolioSummary {
+  baseCurrency: CurrencyCode;
+  totalAssets: number;
+  totalLiabilities: number;
+  netWorth: number;
+  unconvertedAccounts: string[];
+}
+
+export async function getAccountPortfolioSummary(baseCurrency: CurrencyCode): Promise<AccountPortfolioSummary> {
+  const accounts = await getActiveAccounts();
+  let totalAssets = new Decimal(0);
+  let totalLiabilities = new Decimal(0);
+  const unconvertedAccounts: string[] = [];
+
+  for (const account of accounts) {
+    const balance = await getAccountBalance(account);
+    const conversion = await convertCurrency(Math.abs(balance), account.currency, baseCurrency);
+    if (!conversion) {
+      unconvertedAccounts.push(account.name);
+      continue;
+    }
+
+    if (account.nature === "liability") totalLiabilities = totalLiabilities.plus(conversion.amount);
+    else totalAssets = totalAssets.plus(conversion.amount);
+  }
+
+  return {
+    baseCurrency,
+    totalAssets: totalAssets.toDecimalPlaces(8).toNumber(),
+    totalLiabilities: totalLiabilities.toDecimalPlaces(8).toNumber(),
+    netWorth: totalAssets.minus(totalLiabilities).toDecimalPlaces(8).toNumber(),
+    unconvertedAccounts,
   };
 }

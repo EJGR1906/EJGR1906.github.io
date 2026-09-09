@@ -75,7 +75,8 @@ export function getSuggestedMonthlyContribution(
 }
 
 export async function getActiveGoalAccounts(): Promise<Account[]> {
-    return getActiveAccounts();
+    const accounts = await getActiveAccounts();
+    return accounts.filter((account) => account.nature !== "liability");
 }
 
 function assertPositiveAmount(amount: number): void {

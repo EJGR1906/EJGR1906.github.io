@@ -1035,6 +1035,33 @@ Se mantiene la arquitectura `React -> Services -> Repositories -> IndexedDB/Dexi
 - No se eliminan movimientos de otras metas ni movimientos físicos de las cuentas.
 - Si el usuario cancela, no se modifica ningún dato.
 
+### Evolución de Cuentas: activos, pasivos y patrimonio - 2026-09-08
+
+- Las cuentas ahora admiten naturaleza `asset` o `liability`; los registros existentes se normalizan como activos mediante Dexie v5 sin alterar movimientos.
+- Los pasivos permiten un `creditLimit` opcional y muestran deuda y crédito disponible por cuenta.
+- Los gastos en pasivos aumentan la deuda; los pagos mediante transferencias hacia el pasivo la reducen. Los activos conservan el cálculo anterior.
+- Cuentas muestra saldo/deuda real, moneda, estado, clasificación e iconos dinámicos por naturaleza/tipo.
+- Cuentas muestra Total de activos, Total de deudas y Patrimonio neto consolidado en USD, excluyendo del total las cuentas sin tasa de conversión.
+- Las metas solo pueden utilizar cuentas activas clasificadas como activos.
+
+### Pendiente de dominio de pasivos
+
+- Bloquear o auditar cambios de activo a pasivo cuando existan movimientos históricos.
+- Añadir pruebas específicas de gasto con tarjeta, pagos, límite de crédito, cuentas vinculadas y patrimonio neto.
+- Añadir acciones rápidas de transferencia/aporte desde cada tarjeta de cuenta cuando se defina su flujo de destino.
+
+### Corrección de edición de pasivos - 2026-09-08
+
+- La pantalla de Cuentas conserva el saldo/deuda original al iniciar la edición y omite `adjustAccountBalance` si el valor no cambió; guardar otros campos ya no duplica la deuda.
+- Cuando el saldo de un pasivo sí cambia, el ajuste usa `expense` para aumentar la deuda e `income` para reducirla.
+- La misma protección se aplica al saldo USD de una cuenta vinculada.
+
+### Verificación de edición de pasivos
+
+- `npm test` -> correcto; 2 archivos y 4 pruebas aprobadas.
+- `npm run lint` -> correcto.
+- `npm run build` -> correcto; permanece la advertencia conocida de bundle mayor a 500 kB.
+
 ### Verificación de eliminación de metas
 
 - `npm test` -> correcto; 2 archivos y 4 pruebas aprobadas.

@@ -9,12 +9,20 @@ export interface AccountInput {
     initialBalance: number;
     linkedUsdAccount?: boolean;
     secondaryUsdBalance?: number;
+    nature?: Account["nature"];
+    creditLimit?: number;
 }
 
 function validateAccount(input: AccountInput): void {
     if (!input.name.trim()) throw new Error("El nombre de la cuenta es obligatorio.");
     if (!Number.isFinite(input.initialBalance) || input.initialBalance < 0) {
         throw new Error("El saldo inicial debe ser un número mayor o igual a cero.");
+    }
+    if (input.creditLimit !== undefined && (!Number.isFinite(input.creditLimit) || input.creditLimit < 0)) {
+        throw new Error("El límite de crédito debe ser mayor o igual a cero.");
+    }
+    if (input.nature === "asset" && input.creditLimit !== undefined) {
+        throw new Error("Solo los pasivos pueden tener límite de crédito.");
     }
 
     if (input.linkedUsdAccount && input.currency !== "VES") {
@@ -41,6 +49,8 @@ export async function addAccount(input: AccountInput): Promise<Account> {
         initialBalance: input.initialBalance,
         active: true,
         institutionId: accountGroupId,
+        nature: input.nature ?? "asset",
+        creditLimit: input.nature === "liability" ? input.creditLimit : undefined,
     };
 
     if (!input.linkedUsdAccount) {
@@ -56,6 +66,8 @@ export async function addAccount(input: AccountInput): Promise<Account> {
         initialBalance: input.secondaryUsdBalance ?? 0,
         active: true,
         institutionId: accountGroupId,
+        nature: input.nature ?? "asset",
+        creditLimit: input.nature === "liability" ? input.creditLimit : undefined,
     };
 
     await db.transaction("rw", db.accounts, async () => {
@@ -66,9 +78,17 @@ export async function addAccount(input: AccountInput): Promise<Account> {
     return baseAccount;
 }
 
-export async function editAccount(id: string, input: Pick<AccountInput, "name" | "type">): Promise<void> {
+export async function editAccount(id: string, input: Pick<AccountInput, "name" | "type" | "nature" | "creditLimit">): Promise<void> {
     if (!input.name.trim()) throw new Error("El nombre de la cuenta es obligatorio.");
-    await updateAccount(id, { name: input.name.trim(), type: input.type });
+    if (input.creditLimit !== undefined && (!Number.isFinite(input.creditLimit) || input.creditLimit < 0)) {
+        throw new Error("El límite de crédito debe ser mayor o igual a cero.");
+    }
+    await updateAccount(id, {
+        name: input.name.trim(),
+        type: input.type,
+        nature: input.nature ?? "asset",
+        creditLimit: input.nature === "liability" ? input.creditLimit : undefined,
+    });
 }
 
 export async function setAccountActive(id: string, active: boolean): Promise<void> {

@@ -72,6 +72,14 @@ async function validateAccountTransaction(
   if (account.currency !== currency) throw new Error("La moneda no coincide con la cuenta.");
 
   if (requireAvailableBalance) {
+    if (account.nature === "liability") {
+      const currentDebt = await getAccountBalance(account, excludedTransactionId);
+      const creditAvailable = Math.max((account.creditLimit ?? Number.POSITIVE_INFINITY) - currentDebt, 0);
+      if (amount > creditAvailable) {
+        throw new Error("La operación supera el crédito disponible de la cuenta.");
+      }
+      return;
+    }
     const availability = await getAccountAvailability(account, excludedTransactionId);
     if (amount > availability.availableBalance) {
       throw new Error("El gasto supera el saldo disponible de la cuenta.");
@@ -137,7 +145,13 @@ export async function createTransfer(input: CreateTransferInput) {
     throw new Error("Las monedas no coinciden con las cuentas seleccionadas.");
   }
   const availability = await getAccountAvailability(fromAccount);
-  if (input.fromAmount > availability.availableBalance) {
+  if (fromAccount.nature === "liability") {
+    const currentDebt = await getAccountBalance(fromAccount);
+    const creditAvailable = Math.max((fromAccount.creditLimit ?? Number.POSITIVE_INFINITY) - currentDebt, 0);
+    if (input.fromAmount > creditAvailable) {
+      throw new Error("La transferencia supera el crédito disponible de la cuenta origen.");
+    }
+  } else if (input.fromAmount > availability.availableBalance) {
     throw new Error("La transferencia supera el saldo disponible de la cuenta origen.");
   }
 
@@ -209,8 +223,12 @@ export async function adjustAccountBalance(
   const difference = targetBalance - currentBalance;
   if (Math.abs(difference) < 0.00000001) return;
 
+  const adjustmentType = account.nature === "liability"
+    ? difference > 0 ? "expense" : "income"
+    : difference > 0 ? "income" : "expense";
+
   await createBaseTransaction({
-    type: difference > 0 ? "income" : "expense",
+    type: adjustmentType,
     amount: Math.abs(difference),
     currency: account.currency,
     accountId,
@@ -266,7 +284,13 @@ export async function editTransaction(id: string, input: UpdateTransactionInput)
     throw new Error("Las monedas no coinciden con las cuentas seleccionadas.");
   }
   const availability = await getAccountAvailability(fromAccount, id);
-  if (input.fromAmount > availability.availableBalance) {
+  if (fromAccount.nature === "liability") {
+    const currentDebt = await getAccountBalance(fromAccount, id);
+    const creditAvailable = Math.max((fromAccount.creditLimit ?? Number.POSITIVE_INFINITY) - currentDebt, 0);
+    if (input.fromAmount > creditAvailable) {
+      throw new Error("La transferencia supera el crédito disponible de la cuenta origen.");
+    }
+  } else if (input.fromAmount > availability.availableBalance) {
     throw new Error("La transferencia supera el saldo disponible de la cuenta origen.");
   }
 
