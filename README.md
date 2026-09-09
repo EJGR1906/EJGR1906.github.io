@@ -1,5 +1,37 @@
 # React + TypeScript + Vite
 
+## Backend, Auth y PWA
+
+La aplicación mantiene Dexie como fallback local y usa Supabase cuando existe una sesión autenticada. La primera sesión de cada usuario migra sus datos locales a las tablas cloud una sola vez por usuario. Las políticas RLS del esquema garantizan que cada usuario solo consulte sus propios registros.
+
+### Configuración local
+
+1. Crea un proyecto en Supabase.
+2. Ejecuta [`supabase/schema.sql`](supabase/schema.sql) en el SQL Editor.
+3. Copia `.env.example` a `.env.local` y completa:
+
+```env
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-clave-anon
+```
+
+4. Ejecuta `npm run dev`.
+
+Sin esas variables la app continúa funcionando en modo local. Con ellas, muestra registro/inicio de sesión y usa Supabase para cuentas, categorías, metas, movimientos, tasas, recurrentes y preferencias.
+
+### Vercel
+
+En **Project Settings > Environment Variables**, añade `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para `Production`, `Preview` y `Development`. Después despliega con:
+
+```bash
+npm run build
+git add .
+git commit -m "Integrar backend, auth y PWA"
+git push origin main
+```
+
+El build usa `npm run build` y publica `dist`. Las ramas que no sean `main` generan Preview automáticamente. La aplicación incluye manifest y service worker mediante `vite-plugin-pwa`.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

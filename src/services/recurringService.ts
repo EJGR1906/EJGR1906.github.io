@@ -1,6 +1,6 @@
 import { createRecurringTransaction, deleteRecurringTransaction, getRecurringTransactions, updateRecurringTransaction } from "../repositories/recurringRepository";
 import { createTransaction } from "../repositories/transactionRepository";
-import { db, type RecurringTransaction, type Transaction } from "../database/db";
+import { type RecurringTransaction, type Transaction } from "../database/db";
 import { generateId } from "../utils/id";
 import { nowISO } from "../utils/date";
 
@@ -56,19 +56,17 @@ export async function generatePendingRecurring(referenceDate = new Date()): Prom
 
     for (const item of items) {
         if (!item.active || item.nextDate > today) continue;
-        await db.transaction("rw", db.recurringTransactions, db.transactions, async () => {
-            let date = item.nextDate;
-            let lastGeneratedDate = item.lastGeneratedDate;
-            while (date <= today && (!item.endDate || date <= item.endDate)) {
-                if (date !== lastGeneratedDate) {
-                    await createTransaction(toTransaction(item, date));
-                    generated += 1;
-                    lastGeneratedDate = date;
-                }
-                date = advanceDate(date, item.frequency);
+        let date = item.nextDate;
+        let lastGeneratedDate = item.lastGeneratedDate;
+        while (date <= today && (!item.endDate || date <= item.endDate)) {
+            if (date !== lastGeneratedDate) {
+                await createTransaction(toTransaction(item, date));
+                generated += 1;
+                lastGeneratedDate = date;
             }
-            await updateRecurringTransaction(item.id, { nextDate: date, lastGeneratedDate });
-        });
+            date = advanceDate(date, item.frequency);
+        }
+        await updateRecurringTransaction(item.id, { nextDate: date, lastGeneratedDate });
     }
     return generated;
 }

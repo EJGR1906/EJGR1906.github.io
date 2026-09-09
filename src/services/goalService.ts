@@ -1,9 +1,10 @@
 ﻿import { getAllGoals, getGoalById, createGoal as persistGoal, updateGoal } from "../repositories/goalRepository";
 import { getAccountById, getActiveAccounts } from "../repositories/accountRepository";
-import { getAllTransactions } from "../repositories/transactionRepository";
+import { deleteTransaction, getAllTransactions } from "../repositories/transactionRepository";
+import { deleteGoal } from "../repositories/goalRepository";
 import { getAccountBalance } from "./financialService";
 import { generateId } from "../utils/id";
-import { db, type Account, type CurrencyCode, type Goal } from "../database/db";
+import { type Account, type CurrencyCode, type Goal } from "../database/db";
 import { calculateAvailableBalance, calculateCommittedAmount } from "./financialDomain";
 
 export interface GoalProgress {
@@ -232,9 +233,7 @@ export async function deleteGoalWithTransactions(id: string): Promise<void> {
     const goal = await getGoalById(id);
     if (!goal) throw new Error("Meta no encontrada.");
 
-    await db.transaction("rw", db.goals, db.transactions, async () => {
-        const transactions = await db.transactions.where("goalId").equals(id).toArray();
-        await db.transactions.bulkDelete(transactions.map((transaction) => transaction.id));
-        await db.goals.delete(id);
-    });
+    const transactions = (await getAllTransactions()).filter((transaction) => transaction.goalId === id);
+    await Promise.all(transactions.map((transaction) => deleteTransaction(transaction.id)));
+    await deleteGoal(id);
 }

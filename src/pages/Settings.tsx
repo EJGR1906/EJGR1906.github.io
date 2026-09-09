@@ -15,12 +15,15 @@ import {
     type AppTheme,
 } from "../services/settingsService";
 import { exportDatabase, importDatabase, parseBackup, toCsv } from "../services/backupService";
+import { useAuth } from "../context/useAuth";
+import PwaInstallButton from "../components/layout/PwaInstallButton";
 
 interface SettingsProps {
     onNavigate: (label: string) => void;
 }
 
 function Settings({ onNavigate }: SettingsProps) {
+    const { configured, user, signOut } = useAuth();
     const [baseCurrency, setBaseCurrencyState] = useState<CurrencyCode>(getBaseCurrency());
     const [rates, setRates] = useState<ExchangeRate[]>([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -140,6 +143,25 @@ function Settings({ onNavigate }: SettingsProps) {
                             <div className="mt-5 flex flex-wrap gap-4">
                                 <button type="button" onClick={() => onNavigate("Cuentas")} className="text-sm font-semibold text-primary hover:text-primary-dark">Administrar cuentas</button>
                                 <button type="button" onClick={() => onNavigate("Categorías")} className="text-sm font-semibold text-primary hover:text-primary-dark">Administrar categorías</button>
+                            </div>
+                        </section>
+
+                        {configured && user && <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                            <div className="flex items-center gap-2">
+                                <User size={19} className="text-primary" />
+                                <h2 className="font-bold text-primary-dark">Cuenta sincronizada</h2>
+                            </div>
+                            <p className="mt-2 truncate text-sm text-primary-dark/60">{user.email}</p>
+                            <button type="button" onClick={() => void signOut()} className="mt-4 rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-50">Cerrar sesión</button>
+                        </section>}
+
+                        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <h2 className="font-bold text-primary-dark">Aplicación</h2>
+                                    <p className="mt-1 text-sm text-primary-dark/60">Instala Cronos en tu dispositivo para abrirla como una aplicación.</p>
+                                </div>
+                                <PwaInstallButton />
                             </div>
                         </section>
 

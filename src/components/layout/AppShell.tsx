@@ -9,7 +9,9 @@ import {
     Tags,
     Wallet,
     LayoutGrid,
+    LogOut,
 } from "lucide-react";
+import { useAuth } from "../../context/useAuth";
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -51,6 +53,8 @@ const mobileNavigation = [
 ];
 
 function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps) {
+    const { configured, user, signOut } = useAuth();
+
     const navigate = (label: string) => {
         onNavigate?.(label);
         window.dispatchEvent(new CustomEvent("finanzas:navigate", { detail: label }));
@@ -100,6 +104,12 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                         <Settings size={20} />
                         Configuración
                     </button>
+                    {configured && user && (
+                        <button onClick={() => void signOut()} className="mt-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-700 hover:bg-red-50">
+                            <LogOut size={20} />
+                            Cerrar sesión
+                        </button>
+                    )}
                 </div>
             </aside>
 
@@ -154,6 +164,11 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                 <p className="text-sm font-semibold text-primary-dark/65">
                     {activeItem}
                 </p>
+                {configured && user && (
+                    <button type="button" onClick={() => void signOut()} className="flex h-9 w-9 items-center justify-center rounded-xl text-red-700 hover:bg-red-50" title="Cerrar sesión" aria-label="Cerrar sesión">
+                        <LogOut size={18} />
+                    </button>
+                )}
             </header>
 
             {/* Main content */}
