@@ -17,18 +17,25 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import { useAuth } from "./context/useAuth";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import UpdatePassword from "./pages/Auth/UpdatePassword";
 function App() {
   const { configured, loading, user } = useAuth();
-  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [authMode, setAuthMode] = useState<"login" | "register" | "reset">("login");
+  const [recoveringPassword, setRecoveringPassword] = useState(() => window.location.hash.includes("type=recovery"));
 
   if (loading) {
     return <main className="flex min-h-screen items-center justify-center bg-background text-sm font-medium text-primary">Cargando tu espacio financiero...</main>;
   }
 
+  if (configured && recoveringPassword && user) {
+    return <UpdatePassword onDone={() => { window.history.replaceState({}, document.title, window.location.pathname); setRecoveringPassword(false); }} />;
+  }
+
   if (configured && !user) {
-    return authMode === "login"
-      ? <Login onRegister={() => setAuthMode("register")} />
-      : <Register onLogin={() => setAuthMode("login")} />;
+    if (authMode === "register") return <Register onLogin={() => setAuthMode("login")} />;
+    if (authMode === "reset") return <ResetPassword onLogin={() => setAuthMode("login")} />;
+    return <Login onRegister={() => setAuthMode("register")} onForgotPassword={() => setAuthMode("reset")} />;
   }
 
   return <AuthenticatedApp />;

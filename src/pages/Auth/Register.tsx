@@ -6,6 +6,15 @@ interface RegisterProps {
     onLogin: () => void;
 }
 
+function parseBirthDate(value: string): string | null {
+    const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value.trim());
+    if (!match) return null;
+    const [, day, month, year] = match;
+    const date = new Date(Number(year), Number(month) - 1, Number(day));
+    if (date.getFullYear() !== Number(year) || date.getMonth() !== Number(month) - 1 || date.getDate() !== Number(day)) return null;
+    return `${year}-${month}-${day}`;
+}
+
 function Register({ onLogin }: RegisterProps) {
     const { signUp } = useAuth();
     const [email, setEmail] = useState("");
@@ -25,11 +34,12 @@ function Register({ onLogin }: RegisterProps) {
             setError("Las contraseñas no coinciden.");
             return;
         }
-        if (!birthDate) {
-            setError("La fecha de cumpleaños es obligatoria.");
+        const parsedBirthDate = parseBirthDate(birthDate);
+        if (!parsedBirthDate) {
+            setError("Introduce una fecha válida con el formato dd/mm/yyyy.");
             return;
         }
-        if (new Date(`${birthDate}T00:00:00`) > new Date()) {
+        if (new Date(`${parsedBirthDate}T00:00:00`) > new Date()) {
             setError("La fecha de cumpleaños no puede estar en el futuro.");
             return;
         }
@@ -40,10 +50,11 @@ function Register({ onLogin }: RegisterProps) {
         }
         setSubmitting(true);
         try {
-            const result = await signUp(email.trim(), password, { birthDate, phone: normalizedPhone || undefined });
+            const result = await signUp(email.trim(), password, { birthDate: parsedBirthDate, phone: normalizedPhone || undefined });
             setMessage(result.needsConfirmation ? "Revisa tu correo para confirmar la cuenta." : "Cuenta creada correctamente.");
         } catch (cause) {
-            setError(cause instanceof Error ? cause.message : "No se pudo crear la cuenta.");
+            const message = cause instanceof Error ? cause.message : "";
+            setError(message.toLowerCase().includes("rate limit") ? "Supabase limitó temporalmente los correos. Espera unos minutos antes de volver a registrarte." : message || "No se pudo crear la cuenta.");
         } finally {
             setSubmitting(false);
         }
@@ -61,7 +72,7 @@ function Register({ onLogin }: RegisterProps) {
                 <label className="block text-sm font-medium text-primary-dark">Correo electrónico<input className="field mt-1" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
                 <label className="mt-4 block text-sm font-medium text-primary-dark">Contraseña<input className="field mt-1" type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={6} /></label>
                 <label className="mt-4 block text-sm font-medium text-primary-dark">Repetir contraseña<input className="field mt-1" type="password" autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} required minLength={6} /></label>
-                <label className="mt-4 block text-sm font-medium text-primary-dark">Fecha de cumpleaños<input className="field mt-1" type="date" value={birthDate} onChange={(event) => setBirthDate(event.target.value)} required /></label>
+                <label className="mt-4 block text-sm font-medium text-primary-dark">Fecha de cumpleaños<input className="field mt-1" type="text" inputMode="numeric" placeholder="dd/mm/yyyy" maxLength={10} value={birthDate} onChange={(event) => setBirthDate(event.target.value.replace(/[^\d/]/g, ""))} required /></label>
                 <label className="mt-4 block text-sm font-medium text-primary-dark">Teléfono <span className="font-normal text-primary-dark/50">(opcional)</span><input className="field mt-1" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => { const value = event.target.value; setPhone(value.startsWith("+58") ? value : `+58 ${value.replace(/^\+?58\s*/, "")}`); }} placeholder="+58 414 5418304" /></label>
                 {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
                 {message && <p role="status" className="mt-4 rounded-xl bg-green-50 p-3 text-sm text-green-700">{message}</p>}

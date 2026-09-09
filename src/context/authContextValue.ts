@@ -8,6 +8,8 @@ export interface AuthContextValue {
     configured: boolean;
     signIn: (email: string, password: string) => Promise<void>;
     signUp: (email: string, password: string, metadata: { birthDate: string; phone?: string }) => Promise<{ needsConfirmation: boolean }>;
+    resetPassword: (email: string) => Promise<void>;
+    updatePassword: (password: string) => Promise<void>;
     signOut: () => Promise<void>;
 }
 
