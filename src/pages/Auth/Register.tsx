@@ -11,6 +11,8 @@ function Register({ onLogin }: RegisterProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmation, setConfirmation] = useState("");
+    const [birthDate, setBirthDate] = useState("");
+    const [phone, setPhone] = useState("+58 ");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
@@ -23,9 +25,22 @@ function Register({ onLogin }: RegisterProps) {
             setError("Las contraseñas no coinciden.");
             return;
         }
+        if (!birthDate) {
+            setError("La fecha de cumpleaños es obligatoria.");
+            return;
+        }
+        if (new Date(`${birthDate}T00:00:00`) > new Date()) {
+            setError("La fecha de cumpleaños no puede estar en el futuro.");
+            return;
+        }
+        const normalizedPhone = phone.trim() === "+58" ? "" : phone.trim();
+        if (normalizedPhone && !/^\+58\s?\d{10}$/.test(normalizedPhone.replace(/\s/g, ""))) {
+            setError("El teléfono debe comenzar con +58 y contener 10 dígitos.");
+            return;
+        }
         setSubmitting(true);
         try {
-            const result = await signUp(email.trim(), password);
+            const result = await signUp(email.trim(), password, { birthDate, phone: normalizedPhone || undefined });
             setMessage(result.needsConfirmation ? "Revisa tu correo para confirmar la cuenta." : "Cuenta creada correctamente.");
         } catch (cause) {
             setError(cause instanceof Error ? cause.message : "No se pudo crear la cuenta.");
@@ -46,6 +61,8 @@ function Register({ onLogin }: RegisterProps) {
                 <label className="block text-sm font-medium text-primary-dark">Correo electrónico<input className="field mt-1" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
                 <label className="mt-4 block text-sm font-medium text-primary-dark">Contraseña<input className="field mt-1" type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={6} /></label>
                 <label className="mt-4 block text-sm font-medium text-primary-dark">Repetir contraseña<input className="field mt-1" type="password" autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} required minLength={6} /></label>
+                <label className="mt-4 block text-sm font-medium text-primary-dark">Fecha de cumpleaños<input className="field mt-1" type="date" value={birthDate} onChange={(event) => setBirthDate(event.target.value)} required /></label>
+                <label className="mt-4 block text-sm font-medium text-primary-dark">Teléfono <span className="font-normal text-primary-dark/50">(opcional)</span><input className="field mt-1" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => { const value = event.target.value; setPhone(value.startsWith("+58") ? value : `+58 ${value.replace(/^\+?58\s*/, "")}`); }} placeholder="+58 414 5418304" /></label>
                 {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
                 {message && <p role="status" className="mt-4 rounded-xl bg-green-50 p-3 text-sm text-green-700">{message}</p>}
                 <button className="mt-6 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 font-semibold text-white disabled:opacity-50" type="submit" disabled={submitting}>{submitting ? "Creando..." : "Registrarme"}</button>

@@ -16,7 +16,7 @@ export function getBaseCurrency(): CurrencyCode {
 
 export function setBaseCurrency(currency: CurrencyCode): void {
     localStorage.setItem(BASE_CURRENCY_KEY, currency);
-    if (isCloudPersistenceEnabled()) void saveUserSettings({ baseCurrency: currency, theme: getTheme(), birthDate: getBirthDate() });
+    if (isCloudPersistenceEnabled()) void saveUserSettings({ baseCurrency: currency, theme: getTheme(), birthDate: getBirthDate(), phone: getPhone() });
 }
 
 export function getTheme(): AppTheme {
@@ -31,7 +31,7 @@ export function applyTheme(theme: AppTheme): void {
 export function setTheme(theme: AppTheme): void {
     localStorage.setItem(THEME_KEY, theme);
     applyTheme(theme);
-    if (isCloudPersistenceEnabled()) void saveUserSettings({ baseCurrency: getBaseCurrency(), theme, birthDate: getBirthDate() });
+    if (isCloudPersistenceEnabled()) void saveUserSettings({ baseCurrency: getBaseCurrency(), theme, birthDate: getBirthDate(), phone: getPhone() });
 }
 
 export function getBirthDate(): string {
@@ -40,7 +40,11 @@ export function getBirthDate(): string {
 
 export function setBirthDate(birthDate: string): void {
     localStorage.setItem(BIRTH_DATE_KEY, birthDate);
-    if (isCloudPersistenceEnabled()) void saveUserSettings({ baseCurrency: getBaseCurrency(), theme: getTheme(), birthDate });
+    if (isCloudPersistenceEnabled()) void saveUserSettings({ baseCurrency: getBaseCurrency(), theme: getTheme(), birthDate, phone: getPhone() });
+}
+
+export function getPhone(): string {
+    return localStorage.getItem("finanzas:phone") || "";
 }
 
 export async function syncUserSettingsFromCloud(): Promise<void> {
@@ -50,6 +54,7 @@ export async function syncUserSettingsFromCloud(): Promise<void> {
     localStorage.setItem(BASE_CURRENCY_KEY, settings.baseCurrency);
     localStorage.setItem(THEME_KEY, settings.theme);
     if (settings.birthDate) localStorage.setItem(BIRTH_DATE_KEY, settings.birthDate);
+    if (settings.phone) localStorage.setItem("finanzas:phone", settings.phone);
     applyTheme(settings.theme);
 }
 

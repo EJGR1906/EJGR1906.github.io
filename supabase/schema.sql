@@ -98,9 +98,12 @@ create table if not exists public.user_settings (
   base_currency text not null default 'USD' check (base_currency in ('VES', 'USD', 'USDT')),
   theme text not null default 'light' check (theme in ('light', 'dark')),
   birth_date date,
+  phone text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.user_settings add column if not exists phone text;
 
 create index if not exists accounts_user_id_idx on public.accounts(user_id);
 create index if not exists categories_user_id_idx on public.categories(user_id);

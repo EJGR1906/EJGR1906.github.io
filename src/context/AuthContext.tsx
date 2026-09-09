@@ -4,6 +4,7 @@ import { isSupabaseConfigured, supabase } from "../database/supabaseClient";
 import { setActiveUser } from "../database/persistence";
 import { migrateLocalDataToCloud } from "../services/migrationService";
 import { syncUserSettingsFromCloud } from "../services/settingsService";
+import { getUserSettings, saveUserSettings } from "../repositories/userSettingsRepository";
 import { AuthContext, type AuthContextValue } from "./authContextValue";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -23,6 +24,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (nextSession?.user.id) {
         try {
           await migrateLocalDataToCloud(nextSession.user.id);
+          const existingSettings = await getUserSettings();
+          if (!existingSettings) {
+            const metadata = nextSession.user.user_metadata as { birthDate?: string; phone?: string };
+            await saveUserSettings({
+              baseCurrency: "USD",
+              theme: "light",
+              birthDate: metadata.birthDate ?? "",
+              phone: metadata.phone ?? "",
+            });
+          }
           await syncUserSettingsFromCloud();
         } catch (error) {
           console.error("No se pudieron migrar los datos locales a Supabase", error);
@@ -52,8 +63,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
     },
-    async signUp(email, password) {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+    async signUp(email, password, metadata) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: metadata,
+        },
+      });
       if (error) throw error;
       return { needsConfirmation: !data.session };
     },

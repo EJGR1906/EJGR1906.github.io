@@ -61,7 +61,7 @@ function Dashboard({ onNavigate }: DashboardProps) {
             <main className="min-h-screen bg-background p-6">
                 <div className="mx-auto max-w-6xl">
                     <p className="text-primary-dark">
-                        No se pudo cargar la informaciÃ³n financiera.
+                        No se pudo cargar la información financiera.
                     </p>
                 </div>
             </main>
