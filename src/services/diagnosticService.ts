@@ -16,7 +16,6 @@ export interface PillarMetric {
   valueFormatted: string;
   description: string;
   recommendation: string;
-  sourceInfo: string;
 }
 
 export interface PillarScore {
@@ -260,7 +259,6 @@ export async function calculateComprehensiveDiagnostic(
         recommendation: monthsEmergencyCoverage >= 6
           ? "Excelente fondo de reserva. Mantén esta liquidez protegida en monedas estables (USD/USDT)."
           : "Tus cuentas actuales cubren menos de 6 meses de gastos. Incrementa tu ahorro líquido para contingencias.",
-        sourceInfo: "Obtenido automáticamente del saldo activo de tus Cuentas y Movimientos.",
       },
       {
         label: "Tasa de Ahorro e Inversión",
@@ -271,7 +269,6 @@ export async function calculateComprehensiveDiagnostic(
         recommendation: savingsRatePercent >= 20
           ? "Excelente capacidad de retención. Continúa destinando tu excedente a metas de ahorro e inversión."
           : "Busca reservar al menos el 10%-20% de tus ingresos netos mensuales al recibir ingresos.",
-        sourceInfo: "Calculado del balance mensual de Ingresos vs Gastos registrados.",
       },
     ],
   };
@@ -307,7 +304,6 @@ export async function calculateComprehensiveDiagnostic(
         recommendation: dtiPercent < 20
           ? "Excelente. Menos del 20% de tus ingresos está comprometido en pagos de deudas."
           : "Atención: reducir las cuotas de tus compromisos aliviará tu flujo de caja mensual.",
-        sourceInfo: "Detectado automáticamente de tus transacciones clasificadas como deuda o pasivos.",
       },
       {
         label: "Costo y Perfil del Pasivo",
@@ -318,7 +314,6 @@ export async function calculateComprehensiveDiagnostic(
         recommendation: debtProfileScore === 10
           ? "No registras deudas de alto riesgo. Tu capital no sufre mermas por cargos financieros."
           : "Acelera el pago de tus pasivos o tarjetas de crédito para liberar liquidez.",
-        sourceInfo: "Evaluado automáticamente según tus Cuentas activas.",
       },
     ],
   };
@@ -360,7 +355,6 @@ export async function calculateComprehensiveDiagnostic(
         recommendation: netWorthRatio >= 1
           ? "Tu acumulación neta supera la referencia estándar para tu edad e ingresos."
           : "Amplía tu patrimonio líquido y metas de inversión para acercarte al objetivo de tu edad.",
-        sourceInfo: `Saldos netos en Cuentas; Edad calculada (${userAge} años) desde tu Fecha de Nacimiento en Configuración.`,
       },
       {
         label: "Diversificación de Activos",
@@ -371,7 +365,6 @@ export async function calculateComprehensiveDiagnostic(
         recommendation: assetDivScore === 10
           ? "Excelente diversificación multimoneda y de instrumentos."
           : "Considera abrir cuentas en otras monedas (USD/USDT/VES) o definir metas de inversión.",
-        sourceInfo: "Detectado automáticamente de tus Cuentas y Metas registradas.",
       },
     ],
   };
@@ -406,7 +399,6 @@ export async function calculateComprehensiveDiagnostic(
         recommendation: recentTransactionCount >= 5
           ? "Excelente ritmo de registro de operaciones."
           : "Registra continuamente tus movimientos para mantener el control completo de tu presupuesto.",
-        sourceInfo: "Medido directamente de tu historial de Movimientos.",
       },
       {
         label: "Cobertura de Seguros",
@@ -417,7 +409,6 @@ export async function calculateComprehensiveDiagnostic(
         recommendation: insuranceScore >= 5
           ? "Se detectaron gastos de póliza/salud en tus movimientos del mes."
           : "Para sumar este puntaje, registra los pagos de tus pólizas de salud o seguros bajo una categoría como 'Servicios', 'Salud' o 'Seguro'.",
-        sourceInfo: "Extraído automáticamente de tus Movimientos de gasto registrados.",
       },
     ],
   };

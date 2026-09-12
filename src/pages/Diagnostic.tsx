@@ -469,7 +469,6 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
 
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-primary-dark/50 bg-primary-dark/5 px-2.5 py-1 rounded-lg">
                             <Database size={12} className="text-primary" />
-                            <span>{metric.sourceInfo}</span>
                           </div>
 
                           <div className="flex items-start gap-2 rounded-xl bg-sky/20 p-2.5 text-xs text-primary-dark/80">

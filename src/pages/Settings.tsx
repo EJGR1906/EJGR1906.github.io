@@ -101,9 +101,6 @@ function Settings({ onNavigate }: SettingsProps) {
                                 <User size={19} className="text-primary" />
                                 <h2 className="font-bold text-primary-dark">Perfil del Usuario</h2>
                             </div>
-                            <p className="mt-2 text-sm text-primary-dark/60">
-                                Tu fecha de nacimiento se usa para calcular automáticamente tu edad ({userAge} años) y afinar la meta patrimonial en el Diagnóstico Financiero.
-                            </p>
                             <label className="block text-sm font-medium text-primary-dark mt-4">
                                 Fecha de Nacimiento
                                 <input
@@ -126,7 +123,6 @@ function Settings({ onNavigate }: SettingsProps) {
                                 <SettingsIcon size={19} className="text-primary" />
                                 <h2 className="font-bold text-primary-dark">Moneda base</h2>
                             </div>
-                            <p className="mt-2 text-sm text-primary-dark/60">Se usa para el patrimonio y los gráficos convertidos.</p>
                             <select
                                 value={baseCurrency}
                                 onChange={(event) => {
