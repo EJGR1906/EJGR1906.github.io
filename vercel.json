@@ -2,13 +2,13 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/:path*",
+      "source": "/((?!assets/|favicon\\.svg|manifest\\.webmanifest|sw\\.js).*)*",
       "destination": "/index.html"
     }
   ],
   "headers": [
     {
-      "source": "/assets/(.*)",
+      "source": "/assets/:path*",
       "headers": [
         {
           "key": "Cache-Control",
@@ -17,7 +17,7 @@
       ]
     },
     {
-      "source": "/(index\\.html|sw\\.js|workbox-.*\\.js|manifest\\.webmanifest)",
+      "source": "/sw.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -26,7 +26,16 @@
       ]
     },
     {
-      "source": "/(.*)",
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/:path*",
       "headers": [
         {
           "key": "X-Content-Type-Options",
