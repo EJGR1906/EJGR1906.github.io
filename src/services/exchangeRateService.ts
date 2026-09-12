@@ -6,6 +6,8 @@ import type {
     ExchangeRate,
 } from "../database/db";
 
+import { clearConversionRateCache } from "./currencyService";
+
 
 const DOLAR_API_URL =
     "https://ve.dolarapi.com/v1/dolares/oficial";
@@ -173,6 +175,7 @@ export async function getBinanceUsdtRate(): Promise<ExchangeRate> {
  * Actualiza todas las tasas externas.
  */
 export async function refreshExchangeRates() {
+    clearConversionRateCache();
     const results = {
         usd: null as ExchangeRate | null,
         usdt: null as ExchangeRate | null,
@@ -225,4 +228,3 @@ export async function refreshExchangeRates() {
 
     return results;
 }
-

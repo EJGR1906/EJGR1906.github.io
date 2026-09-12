@@ -103,7 +103,11 @@ export async function importDatabase(data: BackupData, mode: "replace" | "merge"
 }
 
 function csvEscape(value: unknown): string {
-    const text = value === undefined || value === null ? "" : String(value);
+    let text = value === undefined || value === null ? "" : String(value);
+    // Prevent CSV / Formula Injection attacks while preserving valid numbers (e.g. -100 or +50)
+    if (typeof value === "string" && /^[=+\-@\t\r]/.test(text) && isNaN(Number(text))) {
+        text = `'${text}`;
+    }
     return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 

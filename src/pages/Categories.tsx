@@ -105,8 +105,8 @@ function Categories({ onNavigate }: CategoriesProps) {
                                             {grouped(type).map((category) => (
                                                 <div key={category.id} className="flex items-center gap-2 rounded-xl bg-background px-3 py-2.5">
                                                     <span className="min-w-0 flex-1 truncate text-sm font-medium text-primary-dark">{category.name}</span>
-                                                    <button type="button" onClick={() => startEdit(category)} title="Editar categoría" className="rounded-lg p-1.5 text-primary hover:bg-sky/30"><Pencil size={15} /></button>
-                                                    <button type="button" onClick={() => void remove(category)} title="Eliminar categoría" className="rounded-lg p-1.5 text-red-600 hover:bg-red-50"><Trash2 size={15} /></button>
+                                                    <button type="button" onClick={() => startEdit(category)} title="Editar categoría" aria-label={`Editar categoría ${category.name}`} className="rounded-lg p-1.5 text-primary hover:bg-sky/30"><Pencil size={15} /></button>
+                                                    <button type="button" onClick={() => void remove(category)} title="Eliminar categoría" aria-label={`Eliminar categoría ${category.name}`} className="rounded-lg p-1.5 text-red-600 hover:bg-red-50"><Trash2 size={15} /></button>
                                                 </div>
                                             ))}
                                             {grouped(type).length === 0 && <p className="text-sm text-primary-dark/50">No hay categorías.</p>}
