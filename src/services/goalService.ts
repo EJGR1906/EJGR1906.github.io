@@ -1,4 +1,4 @@
-﻿import { getAllGoals, getGoalById, createGoal as persistGoal, updateGoal } from "../repositories/goalRepository";
+import { getAllGoals, getGoalById, createGoal as persistGoal, updateGoal } from "../repositories/goalRepository";
 import { getAccountById, getActiveAccounts } from "../repositories/accountRepository";
 import { deleteTransaction, getAllTransactions } from "../repositories/transactionRepository";
 import { deleteGoal } from "../repositories/goalRepository";
@@ -6,6 +6,7 @@ import { getAccountBalance } from "./financialService";
 import { generateId } from "../utils/id";
 import { type Account, type CurrencyCode, type Goal } from "../database/db";
 import { calculateAvailableBalance, calculateCommittedAmount } from "./financialDomain";
+import Decimal from "decimal.js";
 
 export interface GoalProgress {
     goal: Goal;
@@ -151,7 +152,7 @@ export async function validateGoalContribution(
     if (current + amount > goal.targetAmount) throw new Error("El aporte supera el objetivo de la meta.");
 
     const availability = await getAccountAvailability(account);
-    if (amount > availability.availableBalance) throw new Error("El aporte supera el saldo disponible de la cuenta.");
+    if (new Decimal(amount).toDecimalPlaces(8).greaterThan(new Decimal(availability.availableBalance).toDecimalPlaces(8))) throw new Error("El aporte supera el saldo disponible de la cuenta.");
 
     return goal;
 }

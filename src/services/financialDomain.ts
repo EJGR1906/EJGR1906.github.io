@@ -45,15 +45,21 @@ export function calculateCommittedAmount(
     transactions: Transaction[],
     excludedTransactionId?: string,
 ): number {
-    return transactions.reduce((total, transaction) => {
-        if (transaction.id === excludedTransactionId) return total;
-        if (transaction.accountId !== accountId || transaction.currency !== currency) return total;
-        if (transaction.type === "goal_contribution") return total + (transaction.amount ?? 0);
-        if (transaction.type === "goal_withdrawal") return total - (transaction.amount ?? 0);
-        return total;
-    }, 0);
+    let total = new Decimal(0);
+    for (const transaction of transactions) {
+        if (transaction.id === excludedTransactionId) continue;
+        if (transaction.accountId !== accountId || transaction.currency !== currency) continue;
+        if (transaction.type === "goal_contribution") {
+            total = total.plus(transaction.amount ?? 0);
+        }
+        if (transaction.type === "goal_withdrawal") {
+            total = total.minus(transaction.amount ?? 0);
+        }
+    }
+    return total.toDecimalPlaces(8).toNumber();
 }
 
 export function calculateAvailableBalance(physicalBalance: number, committedAmount: number): number {
-    return Math.max(physicalBalance - committedAmount, 0);
+    const available = new Decimal(physicalBalance).minus(committedAmount);
+    return available.isPositive() ? available.toDecimalPlaces(8).toNumber() : 0;
 }

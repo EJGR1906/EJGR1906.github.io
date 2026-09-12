@@ -5,6 +5,7 @@ import {
 } from "../repositories/transactionRepository";
 import { getAccountById } from "../repositories/accountRepository";
 import { getAccountBalance } from "./financialService";
+import Decimal from "decimal.js";
 
 import {
   generateId,
@@ -81,7 +82,7 @@ async function validateAccountTransaction(
       return;
     }
     const availability = await getAccountAvailability(account, excludedTransactionId);
-    if (amount > availability.availableBalance) {
+    if (new Decimal(amount).toDecimalPlaces(8).greaterThan(new Decimal(availability.availableBalance).toDecimalPlaces(8))) {
       throw new Error("El gasto supera el saldo disponible de la cuenta.");
     }
   }
@@ -151,7 +152,7 @@ export async function createTransfer(input: CreateTransferInput) {
     if (input.fromAmount > creditAvailable) {
       throw new Error("La transferencia supera el crédito disponible de la cuenta origen.");
     }
-  } else if (input.fromAmount > availability.availableBalance) {
+  } else if (new Decimal(input.fromAmount).toDecimalPlaces(8).greaterThan(new Decimal(availability.availableBalance).toDecimalPlaces(8))) {
     throw new Error("La transferencia supera el saldo disponible de la cuenta origen.");
   }
 
@@ -290,7 +291,7 @@ export async function editTransaction(id: string, input: UpdateTransactionInput)
     if (input.fromAmount > creditAvailable) {
       throw new Error("La transferencia supera el crédito disponible de la cuenta origen.");
     }
-  } else if (input.fromAmount > availability.availableBalance) {
+  } else if (new Decimal(input.fromAmount).toDecimalPlaces(8).greaterThan(new Decimal(availability.availableBalance).toDecimalPlaces(8))) {
     throw new Error("La transferencia supera el saldo disponible de la cuenta origen.");
   }
 
