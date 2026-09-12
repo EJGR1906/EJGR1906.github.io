@@ -1,5 +1,25 @@
 # Finanzas App - Contexto del proyecto
 
+## Resumen de Estado: ¿Qué se ha hecho y qué falta?
+
+A continuación se presenta un resumen actualizado de la situación del proyecto basado en las últimas auditorías:
+
+### ¿Qué se ha hecho?
+- **Base y Arquitectura:** Aplicación *local-first* funcional construida con React, TypeScript, Vite y Dexie, con soporte opcional de Supabase para la sincronización en la nube.
+- **Gestión de Cuentas y Movimientos:** Alta, edición y eliminación de cuentas (activos y pasivos). Soporte para subcuentas USD vinculadas a cuentas VES. Ingresos, gastos, transferencias entre cuentas/monedas, y soporte para movimientos recurrentes.
+- **Tasas de Cambio y Calculadora:** Integración de tasas desde BCV (USD/VES) y Binance P2P (USDT/VES). Calculadora independiente con posibilidad de usar una tasa MANUAL editable.
+- **Metas y Presupuestos:** Metas de ahorro independientes del saldo físico (basadas en aportes/retiros), con fecha límite y categorías. Presupuestos mensuales y diagnósticos básicos persistidos localmente.
+- **Respaldo y Rendimiento:** Exportación/importación transaccional JSON y exportación CSV desde configuración. Configuración de PWA y separación de código (code-splitting) reduciendo el bundle a ~339 kB.
+- **UI/UX:** Dashboard completo (balances por moneda, gráficos Recharts, patrimonio neto), modo oscuro/claro persistido y navegación modular adaptada a móviles.
+
+### ¿Qué falta?
+- **Módulo de Deudas y Activos no Líquidos:** Los pasivos actuales son básicos. Falta implementar APR, pago mínimo, fechas de corte/vencimiento, y un registro de activos que no son cuentas bancarias (vehículos, propiedades).
+- **Clasificación Financiera y Health Score:** No existe una separación real entre gastos esenciales y discrecionales. El "Health Score" actual es un diagnóstico rudimentario basado en la tasa de ahorro; falta un indicador 1-100 real que evalúe deuda, liquidez y presupuesto.
+- **Cobertura de Pruebas (Testing):** Aunque se implementó Vitest y se extrajo la lógica a `financialDomain.ts` con pruebas base (13 pruebas aprobadas), todavía falta cobertura crítica integral de regresión, migraciones Dexie, UI y manejo de errores.
+- **Refinamiento de UX/UI y Consistencia:** Faltan estados de error claros y consistentes (ej. al rechazar transacciones por saldo en metas), comprobación exhaustiva de accesibilidad/responsive en dispositivos reales y alinear totalmente la moneda base (algunas pantallas todavía muestran símbolos de $ fijos).
+- **Decisiones de Dominio Abiertas:** Políticas claras para manejo de zonas horarias en recurrencias y migraciones de datos legacy (ej. metas sin cuenta).
+
+---
 ## Objetivo
 
 Aplicación web privada de finanzas personales para Venezuela, pensada principalmente para móvil y también para escritorio.
