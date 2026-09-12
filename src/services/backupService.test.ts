@@ -14,4 +14,11 @@ describe("backupService", () => {
     it("escapes CSV values", () => {
         expect(toCsv([{ id: "1", description: "Pago, mensual" }])).toBe("id,description\n1,\"Pago, mensual\"");
     });
+
+    it("sanitizes CSV formula injection characters while preserving numeric values", () => {
+        expect(toCsv([{ id: "1", description: "=CMD|' /C calc'!A0", amount: -100 }])).toBe("id,description,amount\n1,'=CMD|' /C calc'!A0,-100");
+        expect(toCsv([{ id: "2", description: "+1+1" }])).toBe("id,description\n2,'+1+1");
+        expect(toCsv([{ id: "3", description: "-100 USD" }])).toBe("id,description\n3,'-100 USD");
+        expect(toCsv([{ id: "4", description: "@SUM(1,2)" }])).toBe("id,description\n4,\"'@SUM(1,2)\"");
+    });
 });
