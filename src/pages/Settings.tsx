@@ -185,7 +185,7 @@ function Settings({ onNavigate }: SettingsProps) {
                                     <h2 className="font-bold text-primary-dark">Tasas de cambio</h2>
                                     <p className="mt-1 text-sm text-primary-dark/60">Último dato guardado por fuente.</p>
                                 </div>
-                                <button type="button" onClick={() => void handleRefresh()} disabled={refreshing} title="Actualizar tasas" className="flex h-10 w-10 items-center justify-center rounded-xl text-primary hover:bg-sky/30 disabled:opacity-50">
+                                <button type="button" onClick={() => void handleRefresh()} disabled={refreshing} title="Actualizar tasas" aria-label="Actualizar tasas" className="flex h-10 w-10 items-center justify-center rounded-xl text-primary hover:bg-sky/30 disabled:opacity-50">
                                     <RefreshCw size={18} className={refreshing ? "animate-spin" : ""} />
                                 </button>
                             </div>
