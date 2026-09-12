@@ -4,6 +4,7 @@ import Budgets from "./pages/Budgets";
 import Goals from "./pages/Goals";
 import Diagnostic from "./pages/Diagnostic";
 import { useCallback, useEffect, useState } from "react";
+import { readStoredAppPage, writeStoredAppPage } from "./navigation/appPage";
 import { CurrencyCalculator } from "./components/calculator/CurrencyCalculator";
 import BalanceDetails from "./pages/BalanceDetails";
 import Settings from "./pages/Settings";
@@ -33,24 +34,34 @@ function App() {
     return <UpdatePassword onDone={() => { window.history.replaceState({}, document.title, window.location.pathname); setRecoveringPassword(false); }} />;
   }
 
-  if (configured && user && !profileComplete) {
-    return <CompleteProfile />;
-  }
-
   if (configured && !user) {
     if (authMode === "register") return <Register onLogin={() => setAuthMode("login")} />;
     if (authMode === "reset") return <ResetPassword onLogin={() => setAuthMode("login")} />;
     return <Login onRegister={() => setAuthMode("register")} onForgotPassword={() => setAuthMode("reset")} />;
   }
 
-  return <AuthenticatedApp />;
+  const showProfileGate = Boolean(configured && user && !profileComplete);
+
+  return (
+    <>
+      {showProfileGate && (
+        <div className="fixed inset-0 z-50">
+          <CompleteProfile />
+        </div>
+      )}
+      <div className={showProfileGate ? "hidden" : undefined} aria-hidden={showProfileGate || undefined}>
+        <AuthenticatedApp key={user?.id ?? "local"} />
+      </div>
+    </>
+  );
 }
 
 function AuthenticatedApp() {
-  const [page, setPage] = useState("Inicio");
+  const [page, setPage] = useState(readStoredAppPage);
 
   const navigate = useCallback((nextPage: string) => {
     setPage(nextPage);
+    writeStoredAppPage(nextPage);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, []);
 

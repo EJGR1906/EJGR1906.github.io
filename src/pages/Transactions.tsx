@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Check, Pencil, Plus, Trash2 } from "lucide-react";
 import AppShell from "../components/layout/AppShell";
-import { db, type Account, type Category, type CurrencyCode, type Goal, type Transaction, type TransactionType } from "../database/db";
+import type { Account, Category, CurrencyCode, Goal, Transaction, TransactionType } from "../database/db";
+import { getActiveAccounts } from "../repositories/accountRepository";
+import { getAllCategories } from "../repositories/categoryRepository";
 import { deleteTransaction, getAllTransactions } from "../repositories/transactionRepository";
 import { createExpense, createGoalContribution, createGoalWithdrawal, createIncome, createTransfer, editTransaction } from "../services/transactionService";
 import { getGoalsWithProgress } from "../services/goalService";
@@ -36,8 +38,8 @@ function Transactions({ onNavigate }: TransactionsProps) {
 
     const loadData = useCallback(async () => {
         const [accountData, categoryData, transactionData, goalData] = await Promise.all([
-            db.accounts.filter((account) => account.active).toArray(),
-            db.categories.toArray(),
+            getActiveAccounts(),
+            getAllCategories(),
             getAllTransactions(),
             getGoalsWithProgress(),
         ]);
@@ -222,6 +224,12 @@ function Transactions({ onNavigate }: TransactionsProps) {
                                 <label className="flex items-center gap-2 font-medium"><input type="radio" name="transferKind" checked={type === "goal_contribution"} onChange={() => changeType("goal_contribution")} /> Aporte a meta</label>
                                 <label className="flex items-center gap-2 font-medium"><input type="radio" name="transferKind" checked={type === "goal_withdrawal"} onChange={() => changeType("goal_withdrawal")} /> Retiro de meta</label>
                             </div>}
+                            {accounts.length === 0 && (
+                                <p className="mb-4 rounded-xl bg-background px-3 py-3 text-sm text-primary-dark/70">
+                                    No hay cuentas activas. Crea una en Cuentas para registrar movimientos.{" "}
+                                    <button type="button" onClick={() => onNavigate?.("Cuentas")} className="font-semibold text-primary hover:text-primary-dark">Ir a Cuentas</button>
+                                </p>
+                            )}
                             <form className="min-w-0 space-y-4" onSubmit={handleSubmit}>
                                 {type === "transfer" ? <>
                                     <label className="block text-sm font-medium text-primary-dark">Cuenta origen<select value={form.fromAccountId} onChange={(event) => setField("fromAccountId", event.target.value)} className="field mt-1">{accounts.map((account) => <option key={account.id} value={account.id}>{account.name} · {account.currency}</option>)}</select></label>
@@ -240,7 +248,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
                                 </>}
                                 <label className="block min-w-0 text-sm font-medium text-primary-dark">Fecha<input required type="date" value={form.date} onChange={(event) => setField("date", event.target.value)} className="field mt-1" /></label>
                                 <label className="block text-sm font-medium text-primary-dark">Descripción <span className="font-normal text-primary-dark/40">(opcional)</span><input type="text" value={form.description} onChange={(event) => setField("description", event.target.value)} className="field mt-1" placeholder="Ej. Compra del supermercado" /></label>
-                                <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-sky shadow-sm transition hover:bg-primary-dark"><Check size={18} /> Guardar movimiento</button>
+                                <button type="submit" disabled={accounts.length === 0} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-sky shadow-sm transition hover:bg-primary-dark disabled:opacity-50"><Check size={18} /> Guardar movimiento</button>
                                 {editingTransaction && <button type="button" onClick={cancelEdit} className="w-full text-sm font-semibold text-primary-dark/60">Cancelar edición</button>}
                             </form>
                         </section>
