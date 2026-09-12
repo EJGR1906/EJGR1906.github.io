@@ -94,7 +94,7 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
             <div className="my-6 flex flex-col items-center justify-center">
               <div className="relative flex h-32 w-32 items-center justify-center rounded-full border-4 border-primary-dark/10 bg-primary-dark/5 shadow-inner">
                 {/* Hexagon shape badge container */}
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-white shadow-lg transition transform hover:scale-105">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-primary-fg shadow-lg transition transform hover:scale-105">
                   <span className="text-4xl font-extrabold">{levelNumber}</span>
                 </div>
               </div>
@@ -182,7 +182,7 @@ function Diagnostic({ onNavigate }: DiagnosticProps) {
                 <button
                   type="button"
                   onClick={() => onNavigate?.("Movimientos")}
-                  className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-xs font-bold text-sky shadow-sm transition hover:bg-primary-dark sm:text-sm"
+                  className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-xs font-bold text-primary-fg shadow-sm transition hover:opacity-95 sm:text-sm"
                 >
                   <Plus size={16} />
                   Registrar Movimiento

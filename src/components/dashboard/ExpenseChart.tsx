@@ -14,6 +14,17 @@ interface ExpenseChartProps {
     currency: CurrencyCode;
 }
 
+const PIE_COLORS = [
+    "#0E7490",
+    "#16A34A",
+    "#E11D48",
+    "#7C3AED",
+    "#D97706",
+    "#0284C7",
+    "#9333EA",
+    "#059669",
+];
+
 function ExpenseChart({ data, currency }: ExpenseChartProps) {
     const total = data.reduce(
         (sum, item) => sum + item.amount,
@@ -69,21 +80,19 @@ function ExpenseChart({ data, currency }: ExpenseChartProps) {
                                     {data.map((entry, index) => (
                                         <Cell
                                             key={entry.categoryId}
-                                            fill={
-                                                [
-                                                    "#0E7490",
-                                                    "#22C55E",
-                                                    "#BAE6FD",
-                                                    "#082F49",
-                                                    "#67E8F9",
-                                                    "#94A3B8",
-                                                ][index % 6]
-                                            }
+                                            fill={PIE_COLORS[index % PIE_COLORS.length]}
                                         />
                                     ))}
                                 </Pie>
 
                                 <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: "var(--color-surface, #FFFFFF)",
+                                        borderColor: "rgba(148, 163, 184, 0.2)",
+                                        borderRadius: "1rem",
+                                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                                        color: "var(--color-primary-dark, #082F49)",
+                                    }}
                                     formatter={(value) => [
                                         formatAmount(Number(value)),
                                         "Gastos",
@@ -103,14 +112,7 @@ function ExpenseChart({ data, currency }: ExpenseChartProps) {
                                     <span
                                         className="h-2.5 w-2.5 shrink-0 rounded-full"
                                         style={{
-                                            backgroundColor: [
-                                                "#0E7490",
-                                                "#22C55E",
-                                                "#BAE6FD",
-                                                "#082F49",
-                                                "#67E8F9",
-                                                "#94A3B8",
-                                            ][index % 6],
+                                            backgroundColor: PIE_COLORS[index % PIE_COLORS.length],
                                         }}
                                     />
 

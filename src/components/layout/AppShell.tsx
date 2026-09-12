@@ -105,7 +105,7 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                         Configuración
                     </button>
                     {configured && user && (
-                        <button onClick={() => void signOut()} className="mt-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-700 hover:bg-red-50">
+                        <button onClick={() => void signOut()} className="mt-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600 transition hover:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/15">
                             <LogOut size={20} />
                             Cerrar sesión
                         </button>
@@ -165,7 +165,7 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                     {activeItem}
                 </p>
                 {configured && user && (
-                    <button type="button" onClick={() => void signOut()} className="flex h-9 w-9 items-center justify-center rounded-xl text-red-700 hover:bg-red-50" title="Cerrar sesión" aria-label="Cerrar sesión">
+                    <button type="button" onClick={() => void signOut()} className="flex h-9 w-9 items-center justify-center rounded-xl text-red-600 transition hover:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/15" title="Cerrar sesión" aria-label="Cerrar sesión">
                         <LogOut size={18} />
                     </button>
                 )}
@@ -187,9 +187,9 @@ function AppShell({ children, activeItem = "Inicio", onNavigate }: AppShellProps
                             <button
                                 key={item.label}
                                 onClick={() => navigate(item.label)}
-                                className={`flex flex-col items-center gap-1 px-2 py-3 text-[11px] font-medium ${active
-                                    ? "text-primary"
-                                    : "text-primary-dark/45"
+                                className={`flex flex-col items-center gap-1 px-2 py-3 text-[11px] font-medium transition ${active
+                                    ? "text-primary font-semibold"
+                                    : "text-slate-500 hover:text-primary-dark dark:text-slate-400 dark:hover:text-slate-200"
                                     }`}
                             >
                                 <Icon size={20} />

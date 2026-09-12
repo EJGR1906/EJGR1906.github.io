@@ -5,11 +5,42 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#082F49" />
+  <meta name="description" content="Cronos Finanzas - Control personal de cuentas, movimientos y metas." />
   <title>Cronos</title>
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <style>
+      .initial-splash {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #F0FDFF;
+      }
+      @media (prefers-color-scheme: dark) {
+        .initial-splash {
+          background-color: #0f172a;
+        }
+      }
+      .initial-splash-loader {
+        width: 34px;
+        height: 34px;
+        border: 3px solid rgba(14, 116, 144, 0.2);
+        border-top-color: #0E7490;
+        border-radius: 50%;
+        animation: splash-spin 0.75s linear infinite;
+      }
+      @keyframes splash-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <div class="initial-splash">
+      <div class="initial-splash-loader" aria-label="Cargando..."></div>
+    </div>
+  </div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

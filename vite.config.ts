@@ -32,6 +32,9 @@ export default defineConfig({
   build: {
     modulePreload: {
       polyfill: true,
+      resolveDependencies: (_filename, deps) => {
+        return deps.filter((dep) => !dep.includes('charts'));
+      },
     },
     chunkSizeWarningLimit: 1000,
     rollupOptions: {

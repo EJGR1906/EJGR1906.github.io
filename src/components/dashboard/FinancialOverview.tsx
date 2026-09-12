@@ -24,7 +24,7 @@ function FinancialOverview({
     <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="rounded-2xl bg-white p-5 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success text-success-fg">
             <ArrowDownLeft size={19} />
           </div>
           <p className="text-sm text-primary-dark/60">Ingresos</p>
@@ -37,7 +37,7 @@ function FinancialOverview({
 
       <div className="rounded-2xl bg-white p-5 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-danger text-danger-fg">
             <ArrowUpRight size={19} />
           </div>
           <p className="text-sm text-primary-dark/60">Gastos</p>

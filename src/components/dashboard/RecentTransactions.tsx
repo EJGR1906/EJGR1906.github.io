@@ -92,11 +92,11 @@ function RecentTransactions({
                                                 (isIncome ? "Ingreso" : "Gasto")}
                                         </p>
                                         <div className="mt-0.5 flex items-center gap-2">
-                                            <span className="text-xs text-primary-dark/50">
+                                            <span className="text-xs text-slate-500 dark:text-slate-400">
                                                 {formatDate(transaction.date)}
                                             </span>
-                                            <span className="text-primary-dark/20">•</span>
-                                            <span className="text-xs text-primary-dark/50">
+                                            <span className="text-slate-400 dark:text-slate-500">•</span>
+                                            <span className="text-xs text-slate-500 dark:text-slate-400">
                                                 {transaction.currency}
                                             </span>
                                         </div>

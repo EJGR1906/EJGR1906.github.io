@@ -37,8 +37,8 @@ function UpdatePassword({ onDone }: UpdatePasswordProps) {
                 <div className="mb-8"><div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-dark text-sky"><KeyRound size={22} /></div><h1 className="text-2xl font-bold text-primary-dark">Nueva contraseña</h1><p className="mt-2 text-sm text-primary-dark/60">Elige una contraseña de al menos 6 caracteres.</p></div>
                 <label className="block text-sm font-medium text-primary-dark">Nueva contraseña<input className="field mt-1" type="password" autoComplete="new-password" minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} required /></label>
                 <label className="mt-4 block text-sm font-medium text-primary-dark">Repetir contraseña<input className="field mt-1" type="password" autoComplete="new-password" minLength={6} value={confirmation} onChange={(event) => setConfirmation(event.target.value)} required /></label>
-                {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-                <button className="mt-6 w-full rounded-xl bg-primary px-4 py-3 font-semibold text-white disabled:opacity-50" type="submit" disabled={submitting}>{submitting ? "Guardando..." : "Guardar contraseña"}</button>
+                {error && <p role="alert" className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm font-medium text-red-600 dark:text-red-400">{error}</p>}
+                <button className="mt-6 w-full rounded-xl bg-primary px-4 py-3 font-bold text-primary-fg shadow-sm transition hover:opacity-95 disabled:opacity-50" type="submit" disabled={submitting}>{submitting ? "Guardando..." : "Guardar contraseña"}</button>
             </form>
         </main>
     );

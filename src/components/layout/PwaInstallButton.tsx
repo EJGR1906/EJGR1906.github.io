@@ -41,7 +41,7 @@ function PwaInstallButton() {
         <button
             type="button"
             onClick={() => void install()}
-            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark"
+            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-fg shadow-sm transition hover:opacity-95"
         >
             <Download size={17} />
             Instalar aplicación

@@ -248,7 +248,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
                                 </>}
                                 <label className="block min-w-0 text-sm font-medium text-primary-dark">Fecha<input required type="date" value={form.date} onChange={(event) => setField("date", event.target.value)} className="field mt-1" /></label>
                                 <label className="block text-sm font-medium text-primary-dark">Descripción <span className="font-normal text-primary-dark/40">(opcional)</span><input type="text" value={form.description} onChange={(event) => setField("description", event.target.value)} className="field mt-1" placeholder="Ej. Compra del supermercado" /></label>
-                                <button type="submit" disabled={accounts.length === 0} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-sky shadow-sm transition hover:bg-primary-dark disabled:opacity-50"><Check size={18} /> Guardar movimiento</button>
+                                <button type="submit" disabled={accounts.length === 0} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-fg shadow-sm transition hover:opacity-95 disabled:opacity-50"><Check size={18} /> Guardar movimiento</button>
                                 {editingTransaction && <button type="button" onClick={cancelEdit} className="w-full text-sm font-semibold text-primary-dark/60">Cancelar edición</button>}
                             </form>
                         </section>
@@ -263,7 +263,7 @@ function Transactions({ onNavigate }: TransactionsProps) {
                                         <p className={`shrink-0 text-sm font-bold ${income ? "text-success" : goalMovement || transaction.type === "expense" ? "movement-negative" : "text-primary-dark"}`}>{income ? "+" : transfer ? "↔" : transaction.type === "goal_withdrawal" ? "+" : "-"} {formatAmount(transaction)}</p>
                                     </div>
                                     <p className="mt-0.5 text-xs text-primary-dark/50">{new Date(transaction.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" })}</p>
-                                    <div className="mt-1.5 flex gap-3">{!goalMovement && <button type="button" onClick={() => startEdit(transaction)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-primary"><Pencil size={13} /> Editar</button>}<button type="button" onClick={() => void removeTransaction(transaction.id)} className="inline-flex items-center gap-1 text-xs text-primary-dark/40 hover:text-red-600"><Trash2 size={13} /> Eliminar</button></div>
+                                    <div className="mt-1.5 flex gap-3">{!goalMovement && <button type="button" onClick={() => startEdit(transaction)} className="inline-flex items-center gap-1 text-xs text-slate-500 transition hover:text-primary dark:text-slate-400 dark:hover:text-slate-200"><Pencil size={13} /> Editar</button>}<button type="button" onClick={() => void removeTransaction(transaction.id)} className="inline-flex items-center gap-1 text-xs text-slate-500 transition hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"><Trash2 size={13} /> Eliminar</button></div>
                                 </div>
                             </div>; })}</div>}
                         </section>

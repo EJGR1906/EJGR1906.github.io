@@ -50,23 +50,31 @@ function CashFlowChart({ data, currency }: CashFlowChartProps) {
                         <CartesianGrid
                             strokeDasharray="3 3"
                             vertical={false}
+                            stroke="rgba(148, 163, 184, 0.2)"
                         />
 
                         <XAxis
                             dataKey="date"
                             tickLine={false}
                             axisLine={false}
-                            tick={{ fontSize: 12 }}
+                            tick={{ fontSize: 12, fill: "#64748B" }}
                         />
 
                         <YAxis
                             tickLine={false}
                             axisLine={false}
-                            tick={{ fontSize: 12 }}
+                            tick={{ fontSize: 12, fill: "#64748B" }}
                             tickFormatter={(value) => `${currencySymbol}${value}`}
                         />
 
                         <Tooltip
+                            contentStyle={{
+                                backgroundColor: "var(--color-surface, #FFFFFF)",
+                                borderColor: "rgba(148, 163, 184, 0.2)",
+                                borderRadius: "1rem",
+                                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                                color: "var(--color-primary-dark, #082F49)",
+                            }}
                             formatter={(value, name) => [
                                 `${currencySymbol}${Number(value).toLocaleString("es-VE", {
                                     minimumFractionDigits: 2,
@@ -80,20 +88,20 @@ function CashFlowChart({ data, currency }: CashFlowChartProps) {
                             type="monotone"
                             dataKey="income"
                             name="income"
-                            stroke="#22C55E"
-                            fill="#22C55E"
+                            stroke="#16A34A"
+                            fill="#16A34A"
                             fillOpacity={0.12}
-                            strokeWidth={2}
+                            strokeWidth={2.5}
                         />
 
                         <Area
                             type="monotone"
                             dataKey="expense"
                             name="expense"
-                            stroke="#F28B82"
-                            fill="#F28B82"
-                            fillOpacity={0.10}
-                            strokeWidth={2}
+                            stroke="#EF4444"
+                            fill="#EF4444"
+                            fillOpacity={0.12}
+                            strokeWidth={2.5}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
@@ -102,15 +110,14 @@ function CashFlowChart({ data, currency }: CashFlowChartProps) {
             <div className="mt-4 flex items-center justify-center gap-6 text-xs">
                 <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-success" />
-                    <span className="text-primary-dark/60">
+                    <span className="font-medium text-primary-dark/70">
                         Ingresos
                     </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: "#F28B82" }} />
-                    <span className="text-primary-dark/60">
+                    <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
+                    <span className="font-medium text-primary-dark/70">
                         Gastos
                     </span>
                 </div>

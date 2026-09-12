@@ -249,7 +249,7 @@ function Goals() {
 
                                 <button
                                     type="submit"
-                                    className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-sky hover:bg-primary-dark"
+                                    className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-fg shadow-sm transition hover:opacity-95"
                                 >
                                     Guardar meta
                                 </button>
@@ -296,7 +296,7 @@ function Goals() {
                                                         <button
                                                             type="button"
                                                             onClick={() => void removeGoal(goal)}
-                                                            className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-800"
+                                                            className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 transition hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                                                             title="Eliminar meta y movimientos"
                                                         >
                                                             <Trash2 size={15} />
@@ -345,7 +345,7 @@ function Goals() {
                                                         <button
                                                             type="button"
                                                             onClick={() => void addContribution(goal, "goal_contribution")}
-                                                            className="flex-1 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-white hover:bg-primary-dark sm:flex-initial"
+                                                            className="flex-1 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-primary-fg shadow-sm transition hover:opacity-95 sm:flex-initial"
                                                         >
                                                             Aportar
                                                         </button>

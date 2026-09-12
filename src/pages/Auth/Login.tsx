@@ -48,9 +48,9 @@ function Login({ onRegister, onForgotPassword }: LoginProps) {
                 </div>
                 <label className="block text-sm font-medium text-primary-dark">Correo electrónico<input className="field mt-1" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
                 <label className="mt-4 block text-sm font-medium text-primary-dark">Contraseña<input className="field mt-1" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={6} /></label>
-                {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-                <button className="mt-6 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 font-semibold text-white disabled:opacity-50" type="submit" disabled={submitting}>{submitting ? "Entrando..." : "Entrar"}</button>
-                <button className="mt-4 flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50" type="button" onClick={() => void handleGoogleSignIn()}>Continuar con Google</button>
+                {error && <p role="alert" className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm font-medium text-red-600 dark:text-red-400">{error}</p>}
+                <button className="mt-6 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 font-bold text-primary-fg shadow-sm transition hover:opacity-95 disabled:opacity-50" type="submit" disabled={submitting}>{submitting ? "Entrando..." : "Entrar"}</button>
+                <button className="mt-4 flex w-full items-center justify-center rounded-xl border border-primary-dark/15 bg-white px-4 py-3 text-sm font-semibold text-primary-dark transition hover:bg-primary-dark/5 dark:border-white/15 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700" type="button" onClick={() => void handleGoogleSignIn()}>Continuar con Google</button>
                 <button className="mt-4 w-full text-sm font-semibold text-primary hover:text-primary-dark" type="button" onClick={onForgotPassword}>¿Olvidaste tu contraseña?</button>
                 <button className="mt-4 w-full text-sm font-semibold text-primary hover:text-primary-dark" type="button" onClick={onRegister}>Crear una cuenta</button>
             </form>

@@ -148,7 +148,7 @@ function Settings({ onNavigate }: SettingsProps) {
                                 <h2 className="font-bold text-primary-dark">Cuenta sincronizada</h2>
                             </div>
                             <p className="mt-2 truncate text-sm text-primary-dark/60">{user.email}</p>
-                            <button type="button" onClick={() => void signOut()} className="mt-4 rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-50">Cerrar sesión</button>
+                            <button type="button" onClick={() => void signOut()} className="mt-4 rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-500/10 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-500/15">Cerrar sesión</button>
                         </section>}
 
                         <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
@@ -207,7 +207,7 @@ function Settings({ onNavigate }: SettingsProps) {
                             </div>
                             <p className="mt-2 text-sm text-primary-dark/60">Exporta tus tablas para conservar una copia o restaurarlas en este dispositivo.</p>
                             <div className="mt-4 flex flex-wrap gap-2">
-                                <button type="button" onClick={() => void handleExport()} className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-sky">Exportar JSON</button>
+                                <button type="button" onClick={() => void handleExport()} className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-fg shadow-sm transition hover:opacity-95">Exportar JSON</button>
                                 <button type="button" onClick={() => void handleCsvExport()} className="rounded-xl border border-primary/15 px-4 py-2.5 text-sm font-semibold text-primary-dark">Exportar movimientos CSV</button>
                                 <label className="cursor-pointer rounded-xl border border-primary/15 px-4 py-2.5 text-sm font-semibold text-primary-dark">Importar JSON<input type="file" accept="application/json,.json" onChange={(event) => void handleImport(event)} className="sr-only" /></label>
                             </div>

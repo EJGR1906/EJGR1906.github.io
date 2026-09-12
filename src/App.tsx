@@ -1,57 +1,98 @@
+import { useCallback, useEffect, useState, lazy, Suspense } from "react";
 import Dashboard from "./pages/Dashboard";
-import Transactions from "./pages/Transactions";
-import Budgets from "./pages/Budgets";
-import Goals from "./pages/Goals";
-import Diagnostic from "./pages/Diagnostic";
-import { useCallback, useEffect, useState } from "react";
 import { readStoredAppPage, writeStoredAppPage } from "./navigation/appPage";
-import { CurrencyCalculator } from "./components/calculator/CurrencyCalculator";
-import BalanceDetails from "./pages/BalanceDetails";
-import Settings from "./pages/Settings";
-import Accounts from "./pages/Accounts";
-import Categories from "./pages/Categories";
-import MenuPage from "./pages/Menu";
 import AppShell from "./components/layout/AppShell";
-import Recurring from "./pages/Recurring";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { useAuth } from "./context/useAuth";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import ResetPassword from "./pages/Auth/ResetPassword";
-import UpdatePassword from "./pages/Auth/UpdatePassword";
-import CompleteProfile from "./pages/Auth/CompleteProfile";
+
+const Transactions = lazy(() => import("./pages/Transactions"));
+const Budgets = lazy(() => import("./pages/Budgets"));
+const Goals = lazy(() => import("./pages/Goals"));
+const Diagnostic = lazy(() => import("./pages/Diagnostic"));
+const BalanceDetails = lazy(() => import("./pages/BalanceDetails"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Accounts = lazy(() => import("./pages/Accounts"));
+const Categories = lazy(() => import("./pages/Categories"));
+const MenuPage = lazy(() => import("./pages/Menu"));
+const Recurring = lazy(() => import("./pages/Recurring"));
+const CurrencyCalculator = lazy(() =>
+  import("./components/calculator/CurrencyCalculator").then((m) => ({
+    default: m.CurrencyCalculator,
+  }))
+);
+const Login = lazy(() => import("./pages/Auth/Login"));
+const Register = lazy(() => import("./pages/Auth/Register"));
+const ResetPassword = lazy(() => import("./pages/Auth/ResetPassword"));
+const UpdatePassword = lazy(() => import("./pages/Auth/UpdatePassword"));
+const CompleteProfile = lazy(() => import("./pages/Auth/CompleteProfile"));
+
+function PageFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background" aria-busy="true">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+    </div>
+  );
+}
+
 function App() {
   const { configured, loading, profileComplete, user } = useAuth();
   const [authMode, setAuthMode] = useState<"login" | "register" | "reset">("login");
   const [recoveringPassword, setRecoveringPassword] = useState(() => window.location.hash.includes("type=recovery"));
 
   if (loading) {
-    return <main className="flex min-h-screen items-center justify-center bg-background text-sm font-medium text-primary">Cargando tu espacio financiero...</main>;
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-background text-sm font-medium text-primary">
+        Cargando tu espacio financiero...
+      </main>
+    );
   }
 
   if (configured && recoveringPassword && user) {
-    return <UpdatePassword onDone={() => { window.history.replaceState({}, document.title, window.location.pathname); setRecoveringPassword(false); }} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <UpdatePassword
+          onDone={() => {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            setRecoveringPassword(false);
+          }}
+        />
+        <Analytics />
+        <SpeedInsights dsn="romeJqQD2OuUq1I5JNsNKXN43O2" />
+      </Suspense>
+    );
   }
 
   if (configured && !user) {
-    if (authMode === "register") return <Register onLogin={() => setAuthMode("login")} />;
-    if (authMode === "reset") return <ResetPassword onLogin={() => setAuthMode("login")} />;
-    return <Login onRegister={() => setAuthMode("register")} onForgotPassword={() => setAuthMode("reset")} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        {authMode === "register" && <Register onLogin={() => setAuthMode("login")} />}
+        {authMode === "reset" && <ResetPassword onLogin={() => setAuthMode("login")} />}
+        {authMode === "login" && (
+          <Login onRegister={() => setAuthMode("register")} onForgotPassword={() => setAuthMode("reset")} />
+        )}
+        <Analytics />
+        <SpeedInsights dsn="romeJqQD2OuUq1I5JNsNKXN43O2" />
+      </Suspense>
+    );
   }
 
   const showProfileGate = Boolean(configured && user && !profileComplete);
 
   return (
     <>
-      {showProfileGate && (
-        <div className="fixed inset-0 z-50">
-          <CompleteProfile />
+      <Suspense fallback={<PageFallback />}>
+        {showProfileGate && (
+          <div className="fixed inset-0 z-50">
+            <CompleteProfile />
+          </div>
+        )}
+        <div className={showProfileGate ? "hidden" : undefined} aria-hidden={showProfileGate || undefined}>
+          <AuthenticatedApp key={user?.id ?? "local"} />
         </div>
-      )}
-      <div className={showProfileGate ? "hidden" : undefined} aria-hidden={showProfileGate || undefined}>
-        <AuthenticatedApp key={user?.id ?? "local"} />
-      </div>
+      </Suspense>
+      <Analytics />
+      <SpeedInsights dsn="romeJqQD2OuUq1I5JNsNKXN43O2" />
     </>
   );
 }
@@ -74,37 +115,77 @@ function AuthenticatedApp() {
   }, [navigate]);
 
   if (page === "Movimientos") {
-    return <Transactions onNavigate={navigate} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Transactions onNavigate={navigate} />
+      </Suspense>
+    );
   }
   if (page === "Presupuestos") {
-    return <Budgets />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Budgets />
+      </Suspense>
+    );
   }
   if (page === "Metas") {
-    return <Goals />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Goals />
+      </Suspense>
+    );
   }
   if (page === "Diagnóstico") {
-    return <Diagnostic onNavigate={navigate} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Diagnostic onNavigate={navigate} />
+      </Suspense>
+    );
   }
   if (page === "Menú") {
-    return <MenuPage onNavigate={navigate} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <MenuPage onNavigate={navigate} />
+      </Suspense>
+    );
   }
   if (page === "Calculadora") {
     return <CurrencyCalculatorPage onNavigate={navigate} />;
   }
   if (page === "Recurrentes") {
-    return <Recurring onNavigate={navigate} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Recurring onNavigate={navigate} />
+      </Suspense>
+    );
   }
   if (page === "Configuración") {
-    return <Settings onNavigate={navigate} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Settings onNavigate={navigate} />
+      </Suspense>
+    );
   }
   if (page === "Cuentas") {
-    return <Accounts onNavigate={navigate} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Accounts onNavigate={navigate} />
+      </Suspense>
+    );
   }
   if (page === "Categorías") {
-    return <Categories onNavigate={navigate} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Categories onNavigate={navigate} />
+      </Suspense>
+    );
   }
   if (page.startsWith("Balances:")) {
-    return <BalanceDetails currency={page.split(":")[1] as "VES" | "USD" | "USDT"} onNavigate={navigate} />;
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <BalanceDetails currency={page.split(":")[1] as "VES" | "USD" | "USDT"} onNavigate={navigate} />
+      </Suspense>
+    );
   }
 
   return <Dashboard onNavigate={navigate} />;
@@ -120,14 +201,19 @@ function CurrencyCalculatorPage({ onNavigate }: { onNavigate: (label: string) =>
             <h1 className="mt-1 text-2xl font-bold text-primary-dark sm:text-3xl">Calculadora</h1>
             <p className="mt-1 text-sm text-primary-dark/60">Convierte entre VES, USD y USDT con la tasa disponible.</p>
           </div>
-          <CurrencyCalculator />
-          <button type="button" onClick={() => onNavigate("Inicio")} className="mt-4 text-sm font-semibold text-primary hover:text-primary-dark">Volver al inicio</button>
+          <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-white" />}>
+            <CurrencyCalculator />
+          </Suspense>
+          <button
+            type="button"
+            onClick={() => onNavigate("Inicio")}
+            className="mt-4 text-sm font-semibold text-primary hover:text-primary-dark"
+          >
+            Volver al inicio
+          </button>
         </div>
       </div>
-      <Analytics />
-      <SpeedInsights dsn="romeJqQD2OuUq1I5JNsNKXN43O2" />
     </AppShell>
-
   );
 }
 

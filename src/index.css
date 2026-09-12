@@ -3,7 +3,11 @@
 @theme {
   --color-primary-dark: #082F49;
   --color-primary: #0E7490;
-  --color-success: #22C55E;
+  --color-primary-fg: #FFFFFF;
+  --color-success: #16A34A;
+  --color-success-fg: #FFFFFF;
+  --color-danger: #DC2626;
+  --color-danger-fg: #FFFFFF;
   --color-sky: #BAE6FD;
   --color-background: #F0FDFF;
 }
@@ -84,7 +88,11 @@ textarea:focus-visible {
 [data-theme="dark"] {
   --color-primary-dark: #e2e8f0;
   --color-primary: rgb(173,228,36);
+  --color-primary-fg: #082F49;
   --color-success: #4ade80;
+  --color-success-fg: #052e16;
+  --color-danger: #f87171;
+  --color-danger-fg: #450a0a;
   --color-sky: #164e63;
   --color-background: #0f172a;
   color-scheme: dark;
@@ -115,6 +123,47 @@ textarea:focus-visible {
   background-color: #164e63;
 }
 
+[data-theme="dark"] .hover\:bg-red-50:hover {
+  background-color: rgba(239, 68, 68, 0.16);
+}
+
+[data-theme="dark"] .hover\:bg-gray-50:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+}
+
+[data-theme="dark"] .bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.14);
+}
+
+[data-theme="dark"] .text-red-700 {
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .text-red-600 {
+  color: #f87171;
+}
+
+[data-theme="dark"] .bg-green-50 {
+  background-color: rgba(34, 197, 94, 0.14);
+}
+
+[data-theme="dark"] .text-green-700 {
+  color: #86efac;
+}
+
+[data-theme="dark"] .border-gray-200,
+[data-theme="dark"] .border-gray-300 {
+  border-color: rgb(148 163 184 / 0.2);
+}
+
+[data-theme="dark"] .text-gray-700 {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .text-gray-400 {
+  color: rgb(203 213 225 / 0.72);
+}
+
 [data-theme="dark"] .border-slate-200,
 [data-theme="dark"] .border-slate-100,
 [data-theme="dark"] .border-sky-100,
@@ -137,6 +186,7 @@ textarea:focus-visible {
 [data-theme="dark"] .text-primary-dark\/70,
 [data-theme="dark"] .text-primary-dark\/50,
 [data-theme="dark"] .text-primary-dark\/45,
+[data-theme="dark"] .text-primary-dark\/40,
 [data-theme="dark"] .text-primary-dark\/55 {
   color: rgb(203 213 225 / 0.72);
 }
@@ -163,6 +213,12 @@ textarea:focus-visible {
 [data-theme="dark"] .shadow-sm,
 [data-theme="dark"] .shadow-lg {
   --tw-shadow-color: rgb(2 6 23 / 0.35);
+}
+
+[data-theme="dark"] button.bg-primary,
+[data-theme="dark"] .bg-primary.text-white,
+[data-theme="dark"] .bg-primary.text-sky {
+  color: var(--color-primary-fg) !important;
 }
 
 @layer components {

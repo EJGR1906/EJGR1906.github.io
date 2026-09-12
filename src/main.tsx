@@ -12,39 +12,48 @@ import {
   refreshExchangeRates,
 } from "./services/exchangeRateService";
 
-registerSW({ immediate: true });
-async function bootstrap() {
-  applyTheme(getTheme());
+// Aplicar tema inmediatamente para evitar FOUC
+applyTheme(getTheme());
 
-  // Inicializar la base de datos
-  await seedDatabase();
+// Iniciar aplicación inmediatamente
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </StrictMode>
+);
+
+// Tareas en segundo plano diferidas tras el render inicial
+const initBackgroundTasks = () => {
+  // Inicializar base de datos
+  seedDatabase().catch((error) => {
+    console.error("❌ Error inicializando base de datos:", error);
+  });
 
   // Actualizar tasas externas
-  try {
-    const result =
-      await refreshExchangeRates();
+  refreshExchangeRates()
+    .then((result) => {
+      console.log("💱 Tasas actualizadas:", result);
+    })
+    .catch((error) => {
+      console.error("❌ Error actualizando tasas:", error);
+    });
 
-    console.log(
-      "💱 Tasas actualizadas:",
-      result
-    );
-  } catch (error) {
-    console.error(
-      "❌ Error actualizando tasas:",
-      error
-    );
+  // Registrar Service Worker sin competir con la carga crítica
+  registerSW({ immediate: false });
+};
+
+if (typeof window !== "undefined") {
+  if (document.readyState === "complete") {
+    setTimeout(initBackgroundTasks, 100);
+  } else {
+    window.addEventListener("load", () => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(() => initBackgroundTasks(), { timeout: 3000 });
+      } else {
+        setTimeout(initBackgroundTasks, 300);
+      }
+    });
   }
-
-  // Iniciar aplicación
-  createRoot(
-    document.getElementById("root")!
-  ).render(
-    <StrictMode>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </StrictMode>
-  );
 }
-
-bootstrap();

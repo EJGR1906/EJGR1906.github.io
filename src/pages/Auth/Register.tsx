@@ -104,10 +104,10 @@ function Register({ onLogin }: RegisterProps) {
                     <label className="block text-sm font-medium text-primary-dark">Fecha de cumpleaños<input className="field mt-1" type="text" inputMode="numeric" placeholder="dd/mm/yyyy" maxLength={10} value={birthDate} onChange={(event) => setBirthDate(formatBirthDate(event.target.value))} required /></label>
                     <label className="mt-4 block text-sm font-medium text-primary-dark">Teléfono <span className="font-normal text-primary-dark/50">(opcional)</span><input className="field mt-1" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => { const value = event.target.value; setPhone(value.startsWith("+58") ? value : `+58 ${value.replace(/^\+?58\s*/, "")}`); }} placeholder="+58 414 5418304" /></label>
                 </>}
-                {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-                {message && <p role="status" className="mt-4 rounded-xl bg-green-50 p-3 text-sm text-green-700">{message}</p>}
+                {error && <p role="alert" className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm font-medium text-red-600 dark:text-red-400">{error}</p>}
+                {message && <p role="status" className="mt-4 rounded-xl border border-green-500/20 bg-green-500/10 p-3 text-sm font-medium text-green-700 dark:text-green-400">{message}</p>}
 
-                <button className="mt-6 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 font-semibold text-white disabled:opacity-50 hover:bg-primary-dark transition-colors" type="submit" disabled={submitting}>
+                <button className="mt-6 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 font-bold text-primary-fg shadow-sm transition hover:opacity-95 disabled:opacity-50" type="submit" disabled={submitting}>
                     {submitting ? "Creando..." : step === 1 ? "Continuar" : "Registrarme"}
                 </button>
 
@@ -116,15 +116,15 @@ function Register({ onLogin }: RegisterProps) {
                 {/* Separador visual */}
                 {step === 1 && <>
                     <div className="relative my-6 flex items-center justify-center">
-                        <div className="w-full border-t border-gray-200"></div>
-                        <span className="absolute bg-white px-3 text-xs font-medium text-gray-400">O</span>
+                        <div className="w-full border-t border-primary-dark/15 dark:border-white/15"></div>
+                        <span className="absolute bg-white px-3 text-xs font-semibold text-primary-dark/60">O</span>
                     </div>
 
                     {/* Botón de Google */}
                     <button
                         type="button"
                         onClick={handleGoogleSignIn}
-                        className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                        className="flex w-full items-center justify-center gap-3 rounded-xl border border-primary-dark/15 bg-white px-4 py-3 text-sm font-semibold text-primary-dark shadow-sm transition hover:bg-primary-dark/5 dark:border-white/15 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

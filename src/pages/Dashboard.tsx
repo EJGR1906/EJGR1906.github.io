@@ -1,10 +1,9 @@
-﻿import BalanceCard from "../components/dashboard/BalanceCard";
+import BalanceCard from "../components/dashboard/BalanceCard";
 import FinancialOverview from "../components/dashboard/FinancialOverview";
-import CashFlowChart from "../components/dashboard/CashFlowChart";
 import AccountsOverview from "../components/dashboard/AccountsOverview";
 import RecentTransactions from "../components/dashboard/RecentTransactions";
 import AppShell from "../components/layout/AppShell";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import {
     getDashboardSummary,
     getCashFlowSeries,
@@ -14,13 +13,72 @@ import {
     type CashFlowPoint,
     type ExpenseCategoryPoint,
 } from "../services/dashboardService";
-import ExpenseChart from "../components/dashboard/ExpenseChart";
 import type { CurrencyCode } from "../database/db";
-
 import { getBaseCurrency } from "../services/settingsService";
+
+const CashFlowChart = lazy(() => import("../components/dashboard/CashFlowChart"));
+const ExpenseChart = lazy(() => import("../components/dashboard/ExpenseChart"));
 
 interface DashboardProps {
     onNavigate?: (label: string) => void;
+}
+
+function ChartSkeleton({ title }: { title: string }) {
+    return (
+        <div className="flex h-[320px] w-full flex-col justify-between rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
+            <div>
+                <p className="h-5 w-40 animate-pulse rounded bg-slate-200 text-sm font-semibold">{title}</p>
+                <div className="mt-2 h-3 w-56 animate-pulse rounded bg-slate-100" />
+            </div>
+            <div className="flex h-44 w-full items-end gap-3 pt-6">
+                {[40, 65, 30, 85, 55, 75, 45].map((val, idx) => (
+                    <div
+                        key={idx}
+                        className="flex-1 animate-pulse rounded-t bg-slate-100"
+                        style={{ height: `${val}%` }}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function DashboardSkeleton({ onNavigate }: { onNavigate?: (label: string) => void }) {
+    return (
+        <AppShell onNavigate={onNavigate}>
+            <div className="p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto max-w-6xl space-y-6">
+                    {/* Header */}
+                    <div>
+                        <div className="h-4 w-32 animate-pulse rounded bg-slate-200" />
+                        <div className="mt-2 h-8 w-64 animate-pulse rounded bg-slate-200" />
+                        <div className="mt-2 h-4 w-80 animate-pulse rounded bg-slate-100" />
+                    </div>
+
+                    {/* Period selector */}
+                    <div className="flex h-10 w-72 animate-pulse rounded-xl bg-slate-200/60" />
+
+                    {/* Balance card */}
+                    <div className="h-40 w-full animate-pulse rounded-3xl bg-primary-dark/80" />
+
+                    {/* Overview */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="h-28 animate-pulse rounded-2xl bg-white ring-1 ring-primary/5" />
+                        <div className="h-28 animate-pulse rounded-2xl bg-white ring-1 ring-primary/5" />
+                    </div>
+
+                    {/* Accounts */}
+                    <div className="h-32 w-full animate-pulse rounded-3xl bg-white ring-1 ring-primary/5" />
+
+                    {/* Charts */}
+                    <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                        <ChartSkeleton title="Flujo de caja" />
+                        <div className="h-[320px] animate-pulse rounded-3xl bg-white ring-1 ring-primary/5" />
+                    </div>
+                </div>
+            </div>
+        </AppShell>
+    );
 }
 
 function createEmptySummary(currency: CurrencyCode): DashboardSummary {
@@ -76,7 +134,7 @@ function Dashboard({ onNavigate }: DashboardProps) {
         });
     }, [baseCurrency, period]);
 
-    if (!summary) return <main className="min-h-screen bg-background" aria-busy="true" />;
+    if (!summary) return <DashboardSkeleton onNavigate={onNavigate} />;
 
     return (
 
@@ -162,7 +220,9 @@ function Dashboard({ onNavigate }: DashboardProps) {
                         onNavigate={onNavigate}
                     />
                     <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-                        <CashFlowChart data={cashFlow} currency={baseCurrency} />
+                        <Suspense fallback={<ChartSkeleton title="Flujo de caja" />}>
+                            <CashFlowChart data={cashFlow} currency={baseCurrency} />
+                        </Suspense>
 
                         <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-primary/5 sm:p-6">
                             <h2 className="font-bold text-primary-dark">
@@ -221,7 +281,9 @@ function Dashboard({ onNavigate }: DashboardProps) {
                         </section>
                     </div>
                     <div className="mt-6">
-                        <ExpenseChart data={expensesByCategory} currency={baseCurrency} />
+                        <Suspense fallback={<ChartSkeleton title="Gastos por categoría" />}>
+                            <ExpenseChart data={expensesByCategory} currency={baseCurrency} />
+                        </Suspense>
                     </div>
                     <RecentTransactions transactions={summary.recentTransactions} onNavigate={onNavigate} />
                 </div>

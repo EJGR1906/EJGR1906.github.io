@@ -471,7 +471,7 @@ export function CurrencyCalculator({
                                         type="button"
                                         onClick={handleSaveManualRate}
                                         disabled={savingManualRate}
-                                        className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-sky transition hover:bg-primary-dark disabled:opacity-60"
+                                        className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-fg transition hover:opacity-95 disabled:opacity-60"
                                     >
                                         <Save size={14} />
                                         {savingManualRate ? "Guardando..." : "Guardar"}
@@ -482,11 +482,11 @@ export function CurrencyCalculator({
 
                         {source && (
                             <div className="flex items-center justify-between gap-4 text-xs">
-                                <span className="text-slate-400">
+                                <span className="text-slate-500 dark:text-slate-400">
                                     Fuente
                                 </span>
 
-                                <span className="text-slate-500">
+                                <span className="text-slate-600 dark:text-slate-300">
                                     {source}
                                 </span>
                             </div>
@@ -494,11 +494,11 @@ export function CurrencyCalculator({
 
                         {timestamp && (
                             <div className="flex items-center justify-between gap-4 text-xs">
-                                <span className="text-slate-400">
+                                <span className="text-slate-500 dark:text-slate-400">
                                     Actualizado
                                 </span>
 
-                                <span className="text-slate-500">
+                                <span className="text-slate-600 dark:text-slate-300">
                                     {new Date(
                                         timestamp
                                     ).toLocaleString(
@@ -513,7 +513,7 @@ export function CurrencyCalculator({
                         )}
                     </div>
                 ) : (
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                         No hay una tasa disponible para esta conversión.
                     </p>
                 )}

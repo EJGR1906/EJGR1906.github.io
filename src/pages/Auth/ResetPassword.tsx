@@ -38,9 +38,9 @@ function ResetPassword({ onLogin }: ResetPasswordProps) {
                     <p className="mt-2 text-sm text-primary-dark/60">Te enviaremos un enlace para crear una contraseña nueva.</p>
                 </div>
                 <label className="block text-sm font-medium text-primary-dark">Correo electrónico<input className="field mt-1" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
-                {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-                {message && <p role="status" className="mt-4 rounded-xl bg-green-50 p-3 text-sm text-green-700">{message}</p>}
-                <button className="mt-6 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 font-semibold text-white disabled:opacity-50" type="submit" disabled={submitting}>{submitting ? "Enviando..." : "Enviar enlace"}</button>
+                {error && <p role="alert" className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm font-medium text-red-600 dark:text-red-400">{error}</p>}
+                {message && <p role="status" className="mt-4 rounded-xl border border-green-500/20 bg-green-500/10 p-3 text-sm font-medium text-green-700 dark:text-green-400">{message}</p>}
+                <button className="mt-6 flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 font-bold text-primary-fg shadow-sm transition hover:opacity-95 disabled:opacity-50" type="submit" disabled={submitting}>{submitting ? "Enviando..." : "Enviar enlace"}</button>
                 <button className="mt-4 w-full text-sm font-semibold text-primary hover:text-primary-dark" type="button" onClick={onLogin}>Volver a iniciar sesión</button>
             </form>
         </main>
