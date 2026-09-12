@@ -4,6 +4,21 @@ import {
 } from "../repositories/exchangeRateRepository";
 import type { CurrencyCode } from "../database/db";
 
+// In-memory cache for conversion rates to avoid redundant DB queries during batch ops (e.g., dashboard summary calculation)
+const CACHE_TTL_MS = 5000;
+interface CacheEntry {
+  rate: number | null;
+  timestamp: number;
+}
+const rateCache = new Map<string, CacheEntry>();
+
+/**
+ * Clears the conversion rate cache. Useful for tests and when exchange rates are updated.
+ */
+export function clearConversionRateCache(): void {
+  rateCache.clear();
+}
+
 function normalizeRate(
   fromCurrency: CurrencyCode,
   toCurrency: CurrencyCode,
@@ -78,6 +93,14 @@ export async function getConversionRate(
     return 1;
   }
 
+  const cacheKey = `${fromCurrency}_${toCurrency}`;
+  const now = Date.now();
+  const cached = rateCache.get(cacheKey);
+
+  if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+    return cached.rate;
+  }
+
   // Intentar conversión directa
   const directRate = await getDirectRate(
     fromCurrency,
@@ -85,6 +108,7 @@ export async function getConversionRate(
   );
 
   if (directRate !== null) {
+    rateCache.set(cacheKey, { rate: directRate, timestamp: now });
     return directRate;
   }
 
@@ -106,11 +130,14 @@ export async function getConversionRate(
     fromToVES !== null &&
     vesToTarget !== null
   ) {
-    return new Decimal(fromToVES)
+    const rate = new Decimal(fromToVES)
       .mul(vesToTarget)
       .toNumber();
+    rateCache.set(cacheKey, { rate, timestamp: now });
+    return rate;
   }
 
+  rateCache.set(cacheKey, { rate: null, timestamp: now });
   return null;
 }
 
